@@ -359,7 +359,7 @@ export class Module7EmotionalCompass extends BaseScene {
     );
 
     this.time.delayedCall(600, () => {
-      this.transitionToScene(SCENE_KEYS.HUB);
+      this.transitionToScene(SCENE_KEYS.MODULE_8, { emotionId: this.emotionId });
     });
   }
 }

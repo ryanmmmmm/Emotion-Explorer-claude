@@ -317,7 +317,7 @@ export class Module3TempleEmbodiment extends BaseScene {
     );
 
     this.time.delayedCall(600, () => {
-      this.transitionToScene(SCENE_KEYS.HUB);
+      this.transitionToScene(SCENE_KEYS.MODULE_4, { emotionId: this.emotionId });
     });
   }
 }

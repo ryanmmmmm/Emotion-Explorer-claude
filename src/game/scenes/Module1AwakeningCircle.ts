@@ -506,18 +506,18 @@ export class Module1AwakeningCircle extends BaseScene {
       )
       .setOrigin(0.5);
 
-    const hubButton = this.createButton(
+    const continueButton = this.createButton(
       0,
       170,
-      'Return to Hub',
+      'Continue to Module 2',
       () => {
-        this.transitionToScene(SCENE_KEYS.HUB);
+        this.transitionToScene(SCENE_KEYS.MODULE_2, { emotionId: this.emotionId });
       },
       300,
       60
     );
 
-    overlay.add([bg, titleText, messageText, nextStepText, hubButton]);
+    overlay.add([bg, titleText, messageText, nextStepText, continueButton]);
     overlay.setAlpha(0);
 
     this.tweens.add({

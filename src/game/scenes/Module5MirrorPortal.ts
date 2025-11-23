@@ -378,7 +378,7 @@ export class Module5MirrorPortal extends BaseScene {
     );
 
     this.time.delayedCall(600, () => {
-      this.transitionToScene(SCENE_KEYS.HUB);
+      this.transitionToScene(SCENE_KEYS.MODULE_6, { emotionId: this.emotionId });
     });
   }
 }

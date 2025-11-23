@@ -222,7 +222,7 @@ export class Module2MemoryConstellation extends BaseScene {
 
     this.cameras.main.flash(500, 255, 215, 0);
     this.time.delayedCall(600, () => {
-      this.transitionToScene(SCENE_KEYS.HUB);
+      this.transitionToScene(SCENE_KEYS.MODULE_3, { emotionId: this.emotionId });
     });
   }
 }

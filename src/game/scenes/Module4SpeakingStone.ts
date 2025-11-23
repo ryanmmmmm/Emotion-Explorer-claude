@@ -313,7 +313,7 @@ export class Module4SpeakingStone extends BaseScene {
     );
 
     this.time.delayedCall(600, () => {
-      this.transitionToScene(SCENE_KEYS.HUB);
+      this.transitionToScene(SCENE_KEYS.MODULE_5, { emotionId: this.emotionId });
     });
   }
 }
