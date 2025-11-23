@@ -1,6 +1,6 @@
 /**
- * Character Creation Scene
- * Avatar customization and name input
+ * Character Creation Scene - RESPONSIVE REDESIGN
+ * Simplified, centered layout that works at any screen size
  */
 
 import { BaseScene } from './BaseScene';
@@ -29,13 +29,10 @@ export class CharacterCreationScene extends BaseScene {
   private companionName: string = '';
   private currentAvatar: AvatarCustomization;
   private previewContainer!: Phaser.GameObjects.Container;
-  private currentCategory: string = 'body';
 
   // UI state
   private nameText!: Phaser.GameObjects.Text;
   private companionNameText!: Phaser.GameObjects.Text;
-  private customizationPanel!: Phaser.GameObjects.Container;
-  private categoryButtons: Map<string, Phaser.GameObjects.Container> = new Map();
 
   constructor() {
     super(SCENE_KEYS.CHARACTER_CREATION);
@@ -59,16 +56,20 @@ export class CharacterCreationScene extends BaseScene {
   }
 
   create(): void {
-    this.setEmotion('playful'); // Creative, fun emotion
+    this.setEmotion('playful');
     this.fadeIn();
     this.cameras.main.setBackgroundColor('#1A1A2E');
     this.createStarfield();
     this.createEmotionalWisps();
 
+    // Responsive positioning
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+
     // Title
     this.add
-      .text(this.scale.width / 2, 80, 'Create Your Avatar', {
-        fontSize: '64px',
+      .text(centerX, 80, 'Create Your Avatar', {
+        fontSize: '56px',
         color: '#ffffff',
         fontFamily: 'Cinzel, serif',
       })
@@ -77,11 +78,11 @@ export class CharacterCreationScene extends BaseScene {
     // Subtitle
     this.add
       .text(
-        this.scale.width / 2,
-        150,
-        'Customize your appearance for your journey through the Realm of Emotions',
+        centerX,
+        140,
+        'Customize your appearance for your journey',
         {
-          fontSize: '24px',
+          fontSize: '22px',
           color: '#FFD700',
           fontFamily: 'Merriweather, serif',
           align: 'center',
@@ -89,36 +90,26 @@ export class CharacterCreationScene extends BaseScene {
       )
       .setOrigin(0.5);
 
-    // Layout: Preview on left, controls on right
+    // Create simplified UI
     this.createAvatarPreview();
-    this.createCategorySelector();
-    this.createCustomizationControls();
-    this.selectCategory('body'); // Initialize with body category
+    this.createQuickCustomization();
     this.createNameInput();
     this.createCompleteButton();
 
-    console.log('✅ Character Creation Scene: Ready');
+    console.log('✅ Character Creation Scene: Ready (Responsive)');
   }
 
   private createAvatarPreview(): void {
-    const previewX = 350;
-    const previewY = 500;
+    const centerX = this.scale.width / 2;
+    const previewY = 300;
 
     // Preview background
     this.add
-      .rectangle(previewX, previewY, 500, 600, 0x0f3460, 0.5)
+      .rectangle(centerX, previewY, 300, 300, 0x0f3460, 0.5)
       .setStrokeStyle(3, 0xffffff, 0.3);
 
-    this.add
-      .text(previewX, 240, 'Preview', {
-        fontSize: '32px',
-        color: '#ffffff',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-
     // Create preview container
-    this.previewContainer = this.add.container(previewX, previewY);
+    this.previewContainer = this.add.container(centerX, previewY);
     this.updateAvatarPreview();
   }
 
@@ -126,40 +117,39 @@ export class CharacterCreationScene extends BaseScene {
     // Clear existing preview
     this.previewContainer.removeAll(true);
 
-    const scale = 1.5;
+    const scale = 1.2;
 
-    // Body (simplified representation)
+    // Body
     const bodyColor = parseInt(this.currentAvatar.skinTone.replace('#', ''), 16);
-    const body = this.add.ellipse(0, 60, 80 * scale, 120 * scale, bodyColor, 1);
+    const body = this.add.ellipse(0, 40, 60 * scale, 90 * scale, bodyColor, 1);
     this.previewContainer.add(body);
 
     // Head
-    const head = this.add.circle(0, -40, 50 * scale, bodyColor, 1);
+    const head = this.add.circle(0, -30, 40 * scale, bodyColor, 1);
     this.previewContainer.add(head);
 
     // Hair
     const hairColor = parseInt(this.currentAvatar.hairColor.replace('#', ''), 16);
     let hair: Phaser.GameObjects.GameObject;
 
-    // Different hair shapes based on style
     if (this.currentAvatar.hairStyle.includes('short') || this.currentAvatar.hairStyle === 'pixie') {
-      hair = this.add.ellipse(0, -60, 100 * scale, 50 * scale, hairColor, 1);
+      hair = this.add.ellipse(0, -50, 80 * scale, 40 * scale, hairColor, 1);
     } else if (this.currentAvatar.hairStyle.includes('long')) {
-      hair = this.add.ellipse(0, -30, 110 * scale, 140 * scale, hairColor, 1);
+      hair = this.add.ellipse(0, -20, 90 * scale, 110 * scale, hairColor, 1);
     } else if (this.currentAvatar.hairStyle === 'afro') {
-      hair = this.add.circle(0, -50, 70 * scale, hairColor, 1);
+      hair = this.add.circle(0, -40, 55 * scale, hairColor, 1);
     } else {
-      hair = this.add.ellipse(0, -50, 100 * scale, 80 * scale, hairColor, 1);
+      hair = this.add.ellipse(0, -40, 80 * scale, 60 * scale, hairColor, 1);
     }
     this.previewContainer.add(hair);
 
     // Eyes
     const eyeColor = parseInt(this.currentAvatar.eyeColor.replace('#', ''), 16);
-    const leftEye = this.add.ellipse(-20, -40, 15, 20, eyeColor, 1);
-    const rightEye = this.add.ellipse(20, -40, 15, 20, eyeColor, 1);
+    const leftEye = this.add.ellipse(-15, -30, 12, 16, eyeColor, 1);
+    const rightEye = this.add.ellipse(15, -30, 12, 16, eyeColor, 1);
     this.previewContainer.add([leftEye, rightEye]);
 
-    // Outfit indicator (simplified)
+    // Outfit indicator
     const outfitColors = {
       wanderer: 0x8B4513,
       scholar: 0x4169E1,
@@ -167,399 +157,149 @@ export class CharacterCreationScene extends BaseScene {
       'free-spirit': 0xFF69B4,
     };
     const outfitColor = outfitColors[this.currentAvatar.outfit];
-    const outfit = this.add.rectangle(0, 150, 100 * scale, 80 * scale, outfitColor, 1);
+    const outfit = this.add.rectangle(0, 110, 80 * scale, 60 * scale, outfitColor, 1);
     this.previewContainer.add(outfit);
-
-    // Add sparkles around avatar
-    this.createSparkles();
   }
 
-  private createSparkles(): void {
-    for (let i = 0; i < 8; i++) {
-      const angle = (Math.PI * 2 * i) / 8;
-      const distance = 150;
-      const x = Math.cos(angle) * distance;
-      const y = Math.sin(angle) * distance;
+  private createQuickCustomization(): void {
+    const centerX = this.scale.width / 2;
+    const startY = 530;
+    const rowSpacing = 80;
 
-      const sparkle = this.add.star(x, y, 4, 4, 8, 0xFFD700, 0.8);
-      this.previewContainer.add(sparkle);
+    // Body Type
+    this.createCustomRow(
+      'Body Type:',
+      startY,
+      ['slender', 'athletic', 'average', 'curvy'],
+      (type: string) => {
+        this.currentAvatar.bodyType = type as BodyType;
+        this.updateAvatarPreview();
+      },
+      (type: string) => this.currentAvatar.bodyType === type
+    );
 
-      this.tweens.add({
-        targets: sparkle,
-        alpha: 0.3,
-        scale: 0.5,
-        duration: 1000 + i * 200,
-        yoyo: true,
-        repeat: -1,
-      });
-    }
-  }
+    // Hair Style
+    this.createCustomRow(
+      'Hair Style:',
+      startY + rowSpacing,
+      ['pixie', 'bob', 'shoulder-length', 'long'],
+      (style: string) => {
+        const styleMap: {[key:string]: HairStyle} = {
+          'long': 'straight-long',
+          'pixie': 'pixie',
+          'bob': 'bob',
+          'shoulder-length': 'shoulder-length'
+        };
+        this.currentAvatar.hairStyle = styleMap[style] || style as HairStyle;
+        this.updateAvatarPreview();
+      },
+      (style: string) => {
+        const styleMap: {[key:string]: HairStyle} = {
+          'long': 'straight-long',
+          'pixie': 'pixie',
+          'bob': 'bob',
+          'shoulder-length': 'shoulder-length'
+        };
+        return this.currentAvatar.hairStyle === (styleMap[style] || style);
+      }
+    );
 
-  private createCategorySelector(): void {
-    const categories = [
-      { id: 'body', label: 'Body', icon: '👤' },
-      { id: 'face', label: 'Face', icon: '😊' },
-      { id: 'hair', label: 'Hair', icon: '💇' },
-      { id: 'eyes', label: 'Eyes', icon: '👁️' },
-      { id: 'outfit', label: 'Outfit', icon: '👕' },
-    ];
+    // Outfit
+    this.createCustomRow(
+      'Outfit:',
+      startY + rowSpacing * 2,
+      ['wanderer', 'scholar', 'guardian', 'free-spirit'],
+      (outfit: string) => {
+        this.currentAvatar.outfit = outfit as OutfitType;
+        this.updateAvatarPreview();
+      },
+      (outfit: string) => this.currentAvatar.outfit === outfit
+    );
 
-    const startX = 800;
-    const startY = 250;
-    const spacing = 150;
+    // Color swatches
+    this.createColorRow('Hair Color:', startY + rowSpacing * 3, HAIR_COLORS.slice(0, 6), (color) => {
+      this.currentAvatar.hairColor = color;
+      this.updateAvatarPreview();
+    });
 
-    categories.forEach((cat, index) => {
-      const x = startX + (index % 3) * spacing;
-      const y = startY + Math.floor(index / 3) * 100;
-
-      const button = this.createCategoryButton(x, y, cat.id, cat.label, cat.icon);
-      this.categoryButtons.set(cat.id, button);
+    this.createColorRow('Skin Tone:', startY + rowSpacing * 4, SKIN_TONES.slice(0, 6), (color) => {
+      this.currentAvatar.skinTone = color;
+      this.updateAvatarPreview();
     });
   }
 
-  private createCategoryButton(
-    x: number,
-    y: number,
-    id: string,
+  private createCustomRow(
     label: string,
-    icon: string
-  ): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y);
-    const width = 120;
-    const height = 80;
+    y: number,
+    options: string[],
+    onClick: (value: string) => void,
+    isSelected: (value: string) => boolean
+  ): void {
+    const centerX = this.scale.width / 2;
+    const labelX = this.scale.width * 0.25; // 25% from left edge
 
-    const bg = this.add
-      .rectangle(0, 0, width, height, 0x4169E1, 0.6)
-      .setInteractive({ useHandCursor: true })
-      .setStrokeStyle(2, 0xffffff, 0.3);
-
-    const iconText = this.add
-      .text(0, -15, icon, {
-        fontSize: '32px',
-      })
-      .setOrigin(0.5);
-
-    const labelText = this.add
-      .text(0, 20, label, {
-        fontSize: '18px',
-        color: '#ffffff',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-
-    container.add([bg, iconText, labelText]);
-
-    bg.on('pointerdown', () => {
-      this.selectCategory(id);
-    });
-
-    bg.on('pointerover', () => {
-      if (this.currentCategory !== id) {
-        bg.setFillStyle(0x4169E1, 0.8);
-      }
-    });
-
-    bg.on('pointerout', () => {
-      if (this.currentCategory !== id) {
-        bg.setFillStyle(0x4169E1, 0.6);
-      }
-    });
-
-    return container;
-  }
-
-  private selectCategory(category: string): void {
-    // Deselect previous
-    const prevButton = this.categoryButtons.get(this.currentCategory);
-    if (prevButton) {
-      const bg = prevButton.getAt(0) as Phaser.GameObjects.Rectangle;
-      bg.setFillStyle(0x4169E1, 0.6);
-      bg.setStrokeStyle(2, 0xffffff, 0.3);
-    }
-
-    // Select new
-    this.currentCategory = category;
-    const button = this.categoryButtons.get(category);
-    if (button) {
-      const bg = button.getAt(0) as Phaser.GameObjects.Rectangle;
-      bg.setFillStyle(this.emotionColor, 1);
-      bg.setStrokeStyle(3, 0xffffff, 1);
-    }
-
-    this.updateCustomizationControls();
-  }
-
-  private createCustomizationControls(): void {
-    const panelX = 1100;
-    const panelY = 550;
-
-    // Background panel
     this.add
-      .rectangle(panelX, panelY, 700, 550, 0x0f3460, 0.5)
-      .setStrokeStyle(3, 0xffffff, 0.3);
-
-    this.customizationPanel = this.add.container(panelX, panelY);
-    this.updateCustomizationControls();
-  }
-
-  private updateCustomizationControls(): void {
-    this.customizationPanel.removeAll(true);
-
-    const startY = -200;
-    const spacing = 60;
-
-    switch (this.currentCategory) {
-      case 'body':
-        this.createBodyTypeSelector(startY, spacing);
-        this.createSkinToneSelector(startY + spacing * 4, spacing);
-        break;
-      case 'face':
-        this.createFaceShapeSelector(startY, spacing);
-        break;
-      case 'hair':
-        this.createHairStyleSelector(startY, spacing);
-        this.createHairColorSelector(startY + spacing * 6, spacing);
-        break;
-      case 'eyes':
-        this.createEyeShapeSelector(startY, spacing);
-        this.createEyeColorSelector(startY + spacing * 4, spacing);
-        break;
-      case 'outfit':
-        this.createOutfitSelector(startY, spacing);
-        break;
-    }
-  }
-
-  private createBodyTypeSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Body Type:', {
-        fontSize: '24px',
+      .text(labelX, y, label, {
+        fontSize: '20px',
         color: '#FFD700',
         fontFamily: 'Raleway, sans-serif',
       })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
+      .setOrigin(0, 0.5);
 
-    const bodyTypes: BodyType[] = ['slender', 'athletic', 'average', 'curvy'];
-    bodyTypes.forEach((type, index) => {
+    const buttonWidth = Math.min(120, this.scale.width * 0.08); // Scale button width
+    const buttonSpacing = buttonWidth + 10;
+    const startX = centerX - ((options.length - 1) * buttonSpacing) / 2;
+
+    options.forEach((option, index) => {
       const button = this.createOptionButton(
-        -250 + index * 130,
-        startY + spacing,
-        type.replace('-', ' '),
-        () => {
-          this.currentAvatar.bodyType = type;
-          this.updateAvatarPreview();
-        },
-        this.currentAvatar.bodyType === type
-      );
-      this.customizationPanel.add(button);
-    });
-  }
-
-  private createSkinToneSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Skin Tone:', {
-        fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
-
-    // Show color swatches
-    const displayTones = SKIN_TONES.slice(0, 8); // Show 8 tones
-    displayTones.forEach((tone, index) => {
-      const x = -280 + (index % 4) * 80;
-      const y = startY + spacing + Math.floor(index / 4) * 50;
-
-      const swatch = this.add
-        .circle(x, y, 20, parseInt(tone.value.replace('#', ''), 16), 1)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0xffffff, this.currentAvatar.skinTone === tone.value ? 1 : 0.3);
-
-      swatch.on('pointerdown', () => {
-        this.currentAvatar.skinTone = tone.value;
-        this.updateAvatarPreview();
-        this.updateCustomizationControls();
-      });
-
-      this.customizationPanel.add(swatch);
-    });
-  }
-
-  private createHairStyleSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Hair Style:', {
-        fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
-
-    const styles: HairStyle[] = ['pixie', 'bob', 'shoulder-length', 'straight-long', 'curly-long', 'afro'];
-    styles.forEach((style, index) => {
-      const x = -280 + (index % 3) * 190;
-      const y = startY + spacing + Math.floor(index / 3) * 50;
-
-      const button = this.createOptionButton(
-        x,
+        startX + index * buttonSpacing,
         y,
-        style.replace('-', ' '),
-        () => {
-          this.currentAvatar.hairStyle = style;
-          this.updateAvatarPreview();
-        },
-        this.currentAvatar.hairStyle === style,
-        170
+        option.replace('-', ' '),
+        () => onClick(option),
+        isSelected(option),
+        buttonWidth
       );
-      this.customizationPanel.add(button);
     });
   }
 
-  private createHairColorSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Hair Color:', {
-        fontSize: '24px',
+  private createColorRow(
+    label: string,
+    y: number,
+    colors: Array<{name: string; value: string}>,
+    onClick: (value: string) => void
+  ): void {
+    const centerX = this.scale.width / 2;
+    const labelX = this.scale.width * 0.25; // 25% from left edge
+
+    this.add
+      .text(labelX, y, label, {
+        fontSize: '20px',
         color: '#FFD700',
         fontFamily: 'Raleway, sans-serif',
       })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
+      .setOrigin(0, 0.5);
 
-    const displayColors = HAIR_COLORS.slice(0, 12);
-    displayColors.forEach((color, index) => {
-      const x = -280 + (index % 6) * 50;
-      const y = startY + spacing + Math.floor(index / 6) * 50;
+    const swatchSize = Math.min(18, this.scale.width * 0.012); // Scale swatch size
+    const swatchSpacing = Math.min(50, this.scale.width * 0.035); // Scale spacing
+    const startX = centerX - ((colors.length - 1) * swatchSpacing) / 2;
 
+    colors.forEach((color, index) => {
       const swatch = this.add
-        .circle(x, y, 18, parseInt(color.value.replace('#', ''), 16), 1)
+        .circle(startX + index * swatchSpacing, y, swatchSize, parseInt(color.value.replace('#', ''), 16), 1)
         .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0xffffff, this.currentAvatar.hairColor === color.value ? 1 : 0.3);
+        .setStrokeStyle(3, 0xffffff, 0.8);
 
       swatch.on('pointerdown', () => {
-        this.currentAvatar.hairColor = color.value;
-        this.updateAvatarPreview();
-        this.updateCustomizationControls();
+        onClick(color.value);
       });
 
-      this.customizationPanel.add(swatch);
-    });
-  }
-
-  private createFaceShapeSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Face Shape:', {
-        fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
-
-    const shapes: FaceShape[] = ['round', 'oval', 'heart', 'square'];
-    shapes.forEach((shape, index) => {
-      const button = this.createOptionButton(
-        -250 + index * 130,
-        startY + spacing,
-        shape,
-        () => {
-          this.currentAvatar.faceShape = shape;
-          this.updateAvatarPreview();
-        },
-        this.currentAvatar.faceShape === shape
-      );
-      this.customizationPanel.add(button);
-    });
-  }
-
-  private createEyeShapeSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Eye Shape:', {
-        fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
-
-    const shapes: EyeShape[] = ['almond', 'round', 'upturned', 'hooded'];
-    shapes.forEach((shape, index) => {
-      const button = this.createOptionButton(
-        -250 + index * 130,
-        startY + spacing,
-        shape,
-        () => {
-          this.currentAvatar.eyeShape = shape;
-          this.updateAvatarPreview();
-        },
-        this.currentAvatar.eyeShape === shape
-      );
-      this.customizationPanel.add(button);
-    });
-  }
-
-  private createEyeColorSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Eye Color:', {
-        fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
-
-    EYE_COLORS.slice(0, 8).forEach((color, index) => {
-      const x = -280 + (index % 4) * 80;
-      const y = startY + spacing + Math.floor(index / 4) * 50;
-
-      const swatch = this.add
-        .circle(x, y, 20, parseInt(color.value.replace('#', ''), 16), 1)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0xffffff, this.currentAvatar.eyeColor === color.value ? 1 : 0.3);
-
-      swatch.on('pointerdown', () => {
-        this.currentAvatar.eyeColor = color.value;
-        this.updateAvatarPreview();
-        this.updateCustomizationControls();
+      swatch.on('pointerover', () => {
+        swatch.setScale(1.2);
       });
 
-      this.customizationPanel.add(swatch);
-    });
-  }
-
-  private createOutfitSelector(startY: number, spacing: number): void {
-    const label = this.add
-      .text(0, startY, 'Starting Outfit:', {
-        fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-    this.customizationPanel.add(label);
-
-    const outfits: OutfitType[] = ['wanderer', 'scholar', 'guardian', 'free-spirit'];
-    const descriptions = {
-      wanderer: 'Explorer',
-      scholar: 'Wise',
-      guardian: 'Protector',
-      'free-spirit': 'Creative',
-    };
-
-    outfits.forEach((outfit, index) => {
-      const y = startY + spacing + index * 60;
-      const button = this.createOptionButton(
-        0,
-        y,
-        `${outfit.replace('-', ' ')} (${descriptions[outfit]})`,
-        () => {
-          this.currentAvatar.outfit = outfit;
-          this.updateAvatarPreview();
-        },
-        this.currentAvatar.outfit === outfit,
-        300
-      );
-      this.customizationPanel.add(button);
+      swatch.on('pointerout', () => {
+        swatch.setScale(1);
+      });
     });
   }
 
@@ -589,10 +329,7 @@ export class CharacterCreationScene extends BaseScene {
 
     container.add([bg, buttonText]);
 
-    bg.on('pointerdown', () => {
-      onClick();
-      this.updateCustomizationControls();
-    });
+    bg.on('pointerdown', onClick);
 
     bg.on('pointerover', () => {
       bg.setFillStyle(this.emotionColor, 0.8);
@@ -606,26 +343,26 @@ export class CharacterCreationScene extends BaseScene {
   }
 
   private createNameInput(): void {
-    const x = this.scale.width / 2;
-    const y = 880;
+    const centerX = this.scale.width / 2;
+    const y = 920;
 
     // Player name
     this.add
-      .text(x - 250, y - 40, 'Your Name:', {
-        fontSize: '24px',
+      .text(centerX - 250, y - 30, 'Your Name:', {
+        fontSize: '22px',
         color: '#FFD700',
         fontFamily: 'Raleway, sans-serif',
       })
       .setOrigin(0.5);
 
     const nameBox = this.add
-      .rectangle(x - 250, y + 20, 300, 55, 0x0f3460, 0.8)
+      .rectangle(centerX - 250, y + 10, 280, 50, 0x0f3460, 0.8)
       .setStrokeStyle(3, 0xffffff, 0.5)
       .setInteractive({ useHandCursor: true });
 
     this.nameText = this.add
-      .text(x - 250, y + 20, 'Click here...', {
-        fontSize: '20px',
+      .text(centerX - 250, y + 10, 'Click here...', {
+        fontSize: '18px',
         color: '#ffffff',
         fontFamily: 'Merriweather, serif',
       })
@@ -636,7 +373,7 @@ export class CharacterCreationScene extends BaseScene {
       const name = await this.showTextInputModal(
         'Choose Your Name',
         'Enter your character name...',
-        'This is how you will be addressed throughout your journey in the Realm of Emotions. Choose a name that feels right to you.',
+        'This is how you will be addressed throughout your journey.',
         0,
         this.playerName
       );
@@ -648,21 +385,21 @@ export class CharacterCreationScene extends BaseScene {
 
     // Companion name
     this.add
-      .text(x + 250, y - 40, "Companion's Name:", {
-        fontSize: '24px',
+      .text(centerX + 250, y - 30, "Companion's Name:", {
+        fontSize: '22px',
         color: '#9370DB',
         fontFamily: 'Raleway, sans-serif',
       })
       .setOrigin(0.5);
 
     const companionBox = this.add
-      .rectangle(x + 250, y + 20, 300, 55, 0x0f3460, 0.8)
+      .rectangle(centerX + 250, y + 10, 280, 50, 0x0f3460, 0.8)
       .setStrokeStyle(3, 0x9370db, 0.5)
       .setInteractive({ useHandCursor: true });
 
     this.companionNameText = this.add
-      .text(x + 250, y + 20, 'Click here...', {
-        fontSize: '20px',
+      .text(centerX + 250, y + 10, 'Lumina', {
+        fontSize: '18px',
         color: '#9370db',
         fontFamily: 'Merriweather, serif',
       })
@@ -671,9 +408,9 @@ export class CharacterCreationScene extends BaseScene {
 
     companionBox.on('pointerdown', async () => {
       const name = await this.showTextInputModal(
-        'Name Your Mystical Companion',
+        'Name Your Companion',
         'Enter a name or leave blank for "Lumina"...',
-        'Your companion will guide you through the Realm of Emotions, offering wisdom and support. Choose a name that resonates with you.',
+        'Your companion will guide you through your journey.',
         0,
         this.companionName === 'Lumina' ? '' : this.companionName
       );
@@ -684,17 +421,17 @@ export class CharacterCreationScene extends BaseScene {
 
     // Set default
     this.companionName = 'Lumina';
-    this.companionNameText.setText('Lumina').setAlpha(0.7);
   }
 
   private createCompleteButton(): void {
+    const centerX = this.scale.width / 2;
     const button = this.createButton(
-      this.scale.width / 2,
+      centerX,
       1000,
       'Begin Your Journey',
       () => this.completeCharacterCreation(),
-      400,
-      80
+      350,
+      70
     );
 
     // Pulsing animation
@@ -712,7 +449,7 @@ export class CharacterCreationScene extends BaseScene {
       // Show error
       const errorText = this.add
         .text(this.scale.width / 2, 950, 'Please enter your name!', {
-          fontSize: '24px',
+          fontSize: '22px',
           color: '#FF0000',
           fontFamily: 'Raleway, sans-serif',
         })
