@@ -38,6 +38,9 @@ export class Module1AwakeningCircle extends BaseScene {
   }
 
   create(): void {
+    // Initialize theme and narrative first
+    this.initializeTheme();
+
     this.fadeIn();
 
     // Initialize visual effects
@@ -45,29 +48,34 @@ export class Module1AwakeningCircle extends BaseScene {
 
     this.createBackground();
 
-    // Enhanced visual atmosphere
+    // Enhanced visual atmosphere (more particles for teens, less for adults)
     this.vfx.createAuroraBackground(this.emotionColor);
     this.vfx.createParallaxStars(2);
-    this.vfx.createFloatingOrbs(15, this.emotionColor);
+    this.vfx.createFloatingOrbs(this.isTeen() ? 15 : 8, this.emotionColor);
 
-    this.createEmotionalWisps();
+    if (this.isTeen()) {
+      this.createEmotionalWisps();
+    }
 
-    // Title
+    // Get narrative content based on age group
+    const narrative = this.narrative!.module1;
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
 
+    // Title - use narrative config
     this.add
-      .text(this.scale.width / 2, 80, 'The Awakening Circle', {
-        fontSize: '56px',
-        color: '#FFD700',
-        fontFamily: 'Cinzel, serif',
+      .text(this.scale.width / 2, 80, narrative.title, {
+        fontSize: this.isTeen() ? '56px' : '48px',
+        color: this.isTeen() ? '#FFD700' : '#4A90E2',
+        fontFamily: this.theme!.titleFont,
       })
       .setOrigin(0.5);
 
+    // Subtitle - use narrative config
     this.add
-      .text(this.scale.width / 2, 150, 'Module 1: Understanding Your Intensity', {
-        fontSize: '28px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+      .text(this.scale.width / 2, 150, narrative.subtitle, {
+        fontSize: this.isTeen() ? '28px' : '24px',
+        color: this.isTeen() ? '#ffffff' : '#2C3E50',
+        fontFamily: this.theme!.secondaryFont,
       })
       .setOrigin(0.5);
 
@@ -83,18 +91,19 @@ export class Module1AwakeningCircle extends BaseScene {
     // Central emotion visualization
     this.createEmotionVisualization();
 
-    // Instructions
+    // Instructions - use narrative config
     this.add
       .text(
         this.scale.width / 2,
         360,
-        'How intensely are you feeling this emotion right now?\nMove the slider to show the strength of your feeling.',
+        narrative.instructions,
         {
-          fontSize: '24px',
-          color: '#ffffff',
-          fontFamily: 'Merriweather, serif',
+          fontSize: this.isTeen() ? '24px' : '20px',
+          color: this.isTeen() ? '#ffffff' : '#2C3E50',
+          fontFamily: this.theme!.secondaryFont,
           align: 'center',
           lineSpacing: 8,
+          wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5);
@@ -394,11 +403,11 @@ export class Module1AwakeningCircle extends BaseScene {
       .text(
         280,
         0,
-        'Take your time. There\'s no right or wrong answer.\nNotice how this emotion feels in your body.',
+        this.narrative!.module1.companionGuidance,
         {
           fontSize: '18px',
-          color: '#ffffff',
-          fontFamily: 'Merriweather, serif',
+          color: this.isTeen() ? '#ffffff' : '#2C3E50',
+          fontFamily: this.theme!.secondaryFont,
           align: 'center',
           wordWrap: { width: bubbleWidth - 40 },
         }
@@ -482,15 +491,14 @@ export class Module1AwakeningCircle extends BaseScene {
       .text(
         0,
         -50,
-        `You've begun to understand your ${this.emotionName} emotion.\n\n` +
-        `Intensity Level: ${this.intensity}/10 (${this.intensityDescription})\n\n` +
-        'This awareness is the first step toward\nemotional understanding.',
+        this.narrative!.module1.completionMessage,
         {
           fontSize: '22px',
-          color: '#ffffff',
-          fontFamily: 'Merriweather, serif',
+          color: this.isTeen() ? '#ffffff' : '#2C3E50',
+          fontFamily: this.theme!.secondaryFont,
           align: 'center',
           lineSpacing: 10,
+          wordWrap: { width: 750 },
         }
       )
       .setOrigin(0.5);

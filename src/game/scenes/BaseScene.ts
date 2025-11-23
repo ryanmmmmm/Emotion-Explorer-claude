@@ -6,13 +6,57 @@
 import Phaser from 'phaser';
 import type { EmotionType } from '@/types';
 import { COLORS, DEPTHS, ANIMATIONS } from '../config/constants';
+import { usePlayerStore } from '@/stores/playerStore';
+import { getThemeForAgeGroup, type ThemeConfig, type AgeGroup } from '@/config/themeConfig';
+import { getNarrativeForAgeGroup, type NarrativeConfig } from '@/config/narrativeConfig';
 
 export abstract class BaseScene extends Phaser.Scene {
   protected currentEmotion?: EmotionType;
   protected emotionColor: number = COLORS.JOY;
+  protected theme?: ThemeConfig;
+  protected narrative?: NarrativeConfig;
+  protected ageGroup?: AgeGroup;
 
   constructor(key: string) {
     super({ key });
+  }
+
+  /**
+   * Initialize theme and narrative based on player's age group
+   * Call this in create() of child scenes
+   */
+  protected initializeTheme(): void {
+    const playerStore = usePlayerStore.getState();
+    const profile = playerStore.profile;
+
+    if (profile && profile.ageGroup) {
+      this.ageGroup = profile.ageGroup;
+      this.theme = getThemeForAgeGroup(this.ageGroup);
+      this.narrative = getNarrativeForAgeGroup(this.ageGroup);
+
+      console.log(`🎨 Theme initialized for ${this.ageGroup}`);
+    } else {
+      // Default to adult theme if no profile
+      this.ageGroup = 'Adult (18+)';
+      this.theme = getThemeForAgeGroup(this.ageGroup);
+      this.narrative = getNarrativeForAgeGroup(this.ageGroup);
+
+      console.warn('⚠️ No player profile found, defaulting to Adult theme');
+    }
+  }
+
+  /**
+   * Check if current player is a teen
+   */
+  protected isTeen(): boolean {
+    return this.ageGroup === 'Teen (12-18)';
+  }
+
+  /**
+   * Check if current player is an adult
+   */
+  protected isAdult(): boolean {
+    return this.ageGroup === 'Adult (18+)';
   }
 
   /**
