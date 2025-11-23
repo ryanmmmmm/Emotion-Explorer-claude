@@ -361,10 +361,14 @@ export class Module1AwakeningCircle extends BaseScene {
       .setOrigin(0.5)
       .setAlpha(0.7);
 
-    // For MVP, use browser prompt (React overlay better for production)
-    descBox.on('pointerdown', () => {
-      const description = prompt(
-        'Where do you feel this emotion in your body?\n(e.g., "tightness in my chest", "butterflies in stomach", "tension in shoulders")'
+    // Use beautiful modal system from BaseScene
+    descBox.on('pointerdown', async () => {
+      const description = await this.showTextInputModal(
+        'Physical Sensations',
+        'e.g., "tightness in my chest", "butterflies in stomach"',
+        'Where do you feel this emotion in your body? Physical sensations help us understand our emotions more deeply.',
+        0,
+        ''
       );
       if (description && description.trim()) {
         descText.setText(description.trim());

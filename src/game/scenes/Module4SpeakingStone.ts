@@ -245,9 +245,12 @@ export class Module4SpeakingStone extends BaseScene {
       .setOrigin(0.5);
   }
 
-  private openTextInput(): void {
-    const input = prompt(
-      `Describe your ${this.emotionName} emotion in your own words.\n\nWhat does this emotion feel like? What thoughts accompany it? What story does it tell?\n\n(Write at least 10 words)`,
+  private async openTextInput(): Promise<void> {
+    const input = await this.showTextInputModal(
+      `Express Your ${this.emotionName} Emotion`,
+      'Describe what you are feeling...',
+      'What does this emotion feel like? What thoughts accompany it? What story does it tell? Express yourself freely.',
+      10,
       this.userText
     );
 

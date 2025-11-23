@@ -632,8 +632,14 @@ export class CharacterCreationScene extends BaseScene {
       .setOrigin(0.5)
       .setAlpha(0.7);
 
-    nameBox.on('pointerdown', () => {
-      const name = prompt('Enter your character name:');
+    nameBox.on('pointerdown', async () => {
+      const name = await this.showTextInputModal(
+        'Choose Your Name',
+        'Enter your character name...',
+        'This is how you will be addressed throughout your journey in the Realm of Emotions. Choose a name that feels right to you.',
+        0,
+        this.playerName
+      );
       if (name && name.trim()) {
         this.playerName = name.trim();
         this.nameText.setText(this.playerName).setAlpha(1);
@@ -663,8 +669,14 @@ export class CharacterCreationScene extends BaseScene {
       .setOrigin(0.5)
       .setAlpha(0.7);
 
-    companionBox.on('pointerdown', () => {
-      const name = prompt('Name your mystical companion:\n(Leave blank for default "Lumina")');
+    companionBox.on('pointerdown', async () => {
+      const name = await this.showTextInputModal(
+        'Name Your Mystical Companion',
+        'Enter a name or leave blank for "Lumina"...',
+        'Your companion will guide you through the Realm of Emotions, offering wisdom and support. Choose a name that resonates with you.',
+        0,
+        this.companionName === 'Lumina' ? '' : this.companionName
+      );
       const companionName = name && name.trim() ? name.trim() : 'Lumina';
       this.companionName = companionName;
       this.companionNameText.setText(companionName).setAlpha(1);
