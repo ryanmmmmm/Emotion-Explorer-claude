@@ -4,7 +4,6 @@
  */
 
 import type { AgeGroup } from './themeConfig';
-import type { EmotionType } from '@/types/emotion.types';
 
 export interface ModuleNarrative {
   title: string;
