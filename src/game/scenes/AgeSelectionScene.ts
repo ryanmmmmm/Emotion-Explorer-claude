@@ -18,28 +18,16 @@ export class AgeSelectionScene extends BaseScene {
 
   private ageBrackets: AgeBracket[] = [
     {
-      range: '12-13',
+      range: 'Teen (12-18)',
       minAge: 12,
-      maxAge: 13,
-      description: 'Early Teens - Starting your journey',
+      maxAge: 18,
+      description: 'Adventure narrative with quests and discovery',
     },
     {
-      range: '14-15',
-      minAge: 14,
-      maxAge: 15,
-      description: 'Mid Teens - Growing and learning',
-    },
-    {
-      range: '16-17',
-      minAge: 16,
-      maxAge: 17,
-      description: 'Late Teens - Becoming independent',
-    },
-    {
-      range: '18-20',
+      range: 'Adult (18+)',
       minAge: 18,
-      maxAge: 20,
-      description: 'Young Adult - Stepping into the world',
+      maxAge: 99,
+      description: 'Therapeutic approach with evidence-based practices',
     },
   ];
 
@@ -71,7 +59,7 @@ export class AgeSelectionScene extends BaseScene {
       .text(
         this.scale.width / 2,
         300,
-        'First, tell us your age so we can personalize your journey',
+        'Choose your path through the Realm of Emotions',
         {
           fontSize: '32px',
           color: '#00CED1',
@@ -90,9 +78,9 @@ export class AgeSelectionScene extends BaseScene {
       ease: 'Power2',
     });
 
-    // Create age bracket buttons
-    const startY = 450;
-    const spacing = 140;
+    // Create age bracket buttons (centered vertically with more spacing)
+    const startY = 500;
+    const spacing = 200;
 
     this.ageBrackets.forEach((bracket, index) => {
       this.createAgeBracketButton(
@@ -108,11 +96,13 @@ export class AgeSelectionScene extends BaseScene {
       .text(
         this.scale.width / 2,
         this.scale.height - 100,
-        'Select your age range to continue',
+        'Choose Teen for an adventure narrative or Adult for therapeutic guidance',
         {
           fontSize: '24px',
           color: '#ffffff',
           fontFamily: 'Raleway, sans-serif',
+          align: 'center',
+          wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5)

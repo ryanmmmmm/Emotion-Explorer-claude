@@ -103,14 +103,8 @@ export const usePlayerStore = create<PlayerState>()(
         age: number,
         avatar: AvatarCustomization
       ): Promise<PlayerProfile> => {
-        const ageGroup =
-          age <= 13
-            ? '12-13'
-            : age <= 15
-            ? '14-15'
-            : age <= 17
-            ? '16-17'
-            : '18-20';
+        // Determine age bracket: Teen (12-18) or Adult (18+)
+        const ageGroup = age < 18 ? 'Teen (12-18)' : 'Adult (18+)';
 
         const newProfile: PlayerProfile = {
           id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
