@@ -9,7 +9,7 @@ export interface PlayerProfile {
   id: string;
   name: string;
   age: number;
-  ageGroup: '12-13' | '14-15' | '16-17' | '18-20';
+  ageGroup: 'Teen (12-18)' | 'Adult (18+)';
   avatar: AvatarCustomization;
   companionName?: string;
   createdAt: Date;
