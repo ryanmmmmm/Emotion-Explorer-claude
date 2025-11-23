@@ -167,7 +167,7 @@ export class Module6CatharticFalls extends BaseScene {
 
   private createWaterfallParticles(): void {
     // Waterfall effect on sides
-    const leftFall = this.add.particles(150, 200, 'particle', {
+    this.add.particles(150, 200, 'particle', {
       x: 0,
       y: { min: 0, max: this.scale.height },
       speedY: { min: 200, max: 300 },
@@ -180,7 +180,7 @@ export class Module6CatharticFalls extends BaseScene {
       blendMode: 'ADD',
     });
 
-    const rightFall = this.add.particles(this.scale.width - 150, 200, 'particle', {
+    this.add.particles(this.scale.width - 150, 200, 'particle', {
       x: 0,
       y: { min: 0, max: this.scale.height },
       speedY: { min: 200, max: 300 },
@@ -196,7 +196,7 @@ export class Module6CatharticFalls extends BaseScene {
 
   private createBreathingCircle(x: number, y: number): void {
     // Outer guide circle (stays same size)
-    const guideCircle = this.add
+    this.add
       .circle(x, y, 150, 0xffffff, 0)
       .setStrokeStyle(2, 0xffffff, 0.3);
 

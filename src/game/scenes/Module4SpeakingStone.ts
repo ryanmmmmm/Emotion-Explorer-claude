@@ -95,7 +95,7 @@ export class Module4SpeakingStone extends BaseScene {
     this.createSpeakingStone(centerX, 400);
 
     // Text display area
-    const textBox = this.add
+    this.add
       .rectangle(centerX, 580, 800, 200, 0x0f3460, 0.8)
       .setStrokeStyle(3, this.emotionColor, 0.6);
 

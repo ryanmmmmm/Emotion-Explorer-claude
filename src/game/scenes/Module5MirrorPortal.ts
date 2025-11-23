@@ -197,7 +197,7 @@ export class Module5MirrorPortal extends BaseScene {
     perspectives.forEach((p, index) => {
       const x = startX + (index % 2) * spacing + (Math.floor(index / 2) * spacing);
       const y = startY + Math.floor(index / 2) * 200;
-      this.createCard(p.id, p.question, p.perspective, x, y);
+      this.createCard(p.id, p.question, p.perspective, x, y, index);
     });
   }
 
@@ -206,7 +206,8 @@ export class Module5MirrorPortal extends BaseScene {
     question: string,
     perspective: string,
     x: number,
-    y: number
+    y: number,
+    index: number
   ): void {
     const container = this.add.container(x, y);
 
@@ -287,9 +288,7 @@ export class Module5MirrorPortal extends BaseScene {
         cardFront,
         cardBack,
         questionText,
-        perspectiveText,
-        x,
-        y
+        perspectiveText
       );
       card.revealed = true;
       this.revealedCount++;
@@ -326,9 +325,7 @@ export class Module5MirrorPortal extends BaseScene {
     front: Phaser.GameObjects.Rectangle,
     back: Phaser.GameObjects.Rectangle,
     frontText: Phaser.GameObjects.Text,
-    backText: Phaser.GameObjects.Text,
-    x: number,
-    y: number
+    backText: Phaser.GameObjects.Text
   ): void {
     // Flip animation
     this.tweens.add({

@@ -43,9 +43,9 @@ export class Module2MemoryConstellation extends BaseScene {
     this.fadeIn();
 
     this.vfx = new VisualEffectsManager(this);
-    this.createBackground();
 
     // Enhanced visual atmosphere
+    this.cameras.main.setBackgroundColor('#1A1A2E');
     this.vfx.createAuroraBackground(this.emotionColor);
     this.vfx.createParallaxStars(3);
     this.vfx.createFloatingOrbs(25, this.emotionColor);
@@ -216,7 +216,6 @@ export class Module2MemoryConstellation extends BaseScene {
     const progressStore = useGameProgressStore.getState();
     progressStore.completeModule(2, {
       emotionSelected: this.emotionId,
-      moduleName: 'Memory Constellation',
       memoriesPlaced: this.memoryCount,
     });
 

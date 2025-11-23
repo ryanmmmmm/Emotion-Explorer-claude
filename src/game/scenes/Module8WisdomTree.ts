@@ -268,7 +268,7 @@ export class Module8WisdomTree extends BaseScene {
       this.growBranch(treeX, treeY - 150, x, y);
 
       // Show wisdom text
-      this.showWisdomText(fact, x, y);
+      this.showWisdomText(fact);
     });
 
     this.wisdomOrbs.push({ id, fact, x, y, orb, glow, revealed: false });
@@ -308,7 +308,7 @@ export class Module8WisdomTree extends BaseScene {
     this.branches.push(branch);
   }
 
-  private showWisdomText(fact: string, x: number, y: number): void {
+  private showWisdomText(fact: string): void {
     // Show text popup
     const textBg = this.add
       .rectangle(this.scale.width / 2, 320, 700, 120, 0x0f3460, 0.95)
