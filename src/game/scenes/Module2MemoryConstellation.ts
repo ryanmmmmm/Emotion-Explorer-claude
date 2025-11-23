@@ -216,7 +216,6 @@ export class Module2MemoryConstellation extends BaseScene {
     const progressStore = useGameProgressStore.getState();
     progressStore.completeModule(2, {
       emotionSelected: this.emotionId,
-      memoriesPlaced: this.memoryCount,
     });
 
     console.log(`✅ Module 2 completed - ${this.memoryCount} memories mapped`);
