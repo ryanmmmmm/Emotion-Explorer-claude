@@ -313,9 +313,13 @@ export abstract class BaseScene extends Phaser.Scene {
 
       // Create actual DOM input
       const inputElement = document.createElement('textarea');
+
+      // Get canvas position in document to correctly position textarea
+      const canvas = this.game.canvas.getBoundingClientRect();
+
       inputElement.style.position = 'absolute';
-      inputElement.style.left = `${this.scale.width / 2 - 425}px`;
-      inputElement.style.top = `${this.scale.height / 2 - 150}px`;
+      inputElement.style.left = `${canvas.left + (this.scale.width / 2 - 425)}px`;
+      inputElement.style.top = `${canvas.top + (this.scale.height / 2 - 150)}px`;
       inputElement.style.width = '850px';
       inputElement.style.height = '200px';
       inputElement.style.fontSize = '18px';
