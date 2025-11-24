@@ -126,10 +126,56 @@ export class Module1AwakeningCircle extends BaseScene {
     // Companion guidance
     this.createCompanionGuidance();
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     // Continue button
     this.createContinueButton();
 
     console.log('✅ Module 1 - Awakening Circle: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    const centerX = this.scale.width / 2;
+    const centerY = 550;
+
+    // Add floating magical books around the circle
+    this.vfx.createFloatingBook(centerX - 250, centerY - 150, 0x8B4513);
+    this.vfx.createFloatingBook(centerX + 250, centerY - 150, 0x654321);
+    this.vfx.createFloatingBook(centerX - 280, centerY + 150, 0x8B4513);
+    this.vfx.createFloatingBook(centerX + 280, centerY + 150, 0x654321);
+
+    // Add mystical runes floating around the awakening circle
+    this.vfx.createFloatingRunes(10, this.emotionColor);
+
+    // Add magical compass as a guide
+    this.vfx.createMagicalCompass(centerX - 350, 250);
+
+    // Add ancient pillars to frame the circle
+    this.vfx.createAncientPillar(150, this.scale.height - 100, 150);
+    this.vfx.createAncientPillar(this.scale.width - 150, this.scale.height - 100, 150);
+
+    // Add magical torches
+    this.vfx.createMagicalTorch(200, 350, this.emotionColor);
+    this.vfx.createMagicalTorch(this.scale.width - 200, 350, this.emotionColor);
+
+    // Add periodic flying creatures
+    this.time.addEvent({
+      delay: 10000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(150, 350);
+        this.vfx.createFlyingCreature(startX, startY, this.emotionColor);
+      }
+    });
+
+    // Add guardian statues watching over the circle
+    this.vfx.createGuardianStatue(80, this.scale.height - 200);
+    this.vfx.createGuardianStatue(this.scale.width - 80, this.scale.height - 200);
   }
 
   private createBackground(): void {

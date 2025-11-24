@@ -158,7 +158,54 @@ export class Module8WisdomTree extends BaseScene {
       },
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 8 - The Wisdom Tree: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Ancient pillars as tree guardians
+    this.vfx.createAncientPillar(130, this.scale.height - 100, 210);
+    this.vfx.createAncientPillar(this.scale.width - 130, this.scale.height - 100, 230);
+    this.vfx.createAncientPillar(90, 360, 170);
+    this.vfx.createAncientPillar(this.scale.width - 90, 360, 180);
+
+    // Magical torches illuminating the wisdom tree
+    this.vfx.createMagicalTorch(160, 300, 0x228B22);
+    this.vfx.createMagicalTorch(this.scale.width - 160, 300, 0x32CD32);
+    this.vfx.createMagicalTorch(140, 450, this.emotionColor);
+    this.vfx.createMagicalTorch(this.scale.width - 140, 450, 0xFFD700);
+
+    // Floating mystical runes for wisdom
+    this.vfx.createFloatingRunes(12, 0xD4AF37);
+
+    // Many floating books for knowledge theme
+    this.vfx.createFloatingBook(200, 200, 0x8B4513);
+    this.vfx.createFloatingBook(this.scale.width - 200, 220, 0xA0522D);
+    this.vfx.createFloatingBook(250, 280, 0x654321);
+    this.vfx.createFloatingBook(this.scale.width - 250, 300, 0x8B4513);
+    this.vfx.createFloatingBook(this.scale.width / 2 - 120, 240, 0xA0522D);
+
+    // Guardian statues as tree protectors
+    this.vfx.createGuardianStatue(100, this.scale.height - 190);
+    this.vfx.createGuardianStatue(this.scale.width - 100, this.scale.height - 190);
+    this.vfx.createGuardianStatue(this.scale.width / 2 - 80, this.scale.height - 180);
+    this.vfx.createGuardianStatue(this.scale.width / 2 + 80, this.scale.height - 180);
+
+    // Flying creatures with ancient wisdom
+    this.time.addEvent({
+      delay: 14000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(250, 400);
+        this.vfx.createFlyingCreature(startX, startY, 0x228B22);
+      }
+    });
   }
 
   private createBackground(): void {

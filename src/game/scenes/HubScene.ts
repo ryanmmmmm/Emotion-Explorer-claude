@@ -115,10 +115,66 @@ export class HubScene extends BaseScene {
     // Create emotion crystals in a circular arrangement
     this.createEmotionCrystals();
 
+    // Add teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     // UI Elements
     this.createUIPanel();
 
     console.log('✅ Hub Scene: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Add ancient pillars in the background
+    this.vfx.createAncientPillar(150, this.scale.height - 50, 180);
+    this.vfx.createAncientPillar(this.scale.width - 150, this.scale.height - 50, 200);
+    this.vfx.createAncientPillar(300, this.scale.height - 80, 160);
+    this.vfx.createAncientPillar(this.scale.width - 300, this.scale.height - 80, 170);
+
+    // Add treasure chests around emotion crystals (every 4th crystal)
+    this.emotionCrystals.forEach((crystal, index) => {
+      if (index % 4 === 0) {
+        const emotion = EMOTION_DEFINITIONS[crystal.emotion];
+        const color = parseInt(emotion.color.replace('#', ''), 16);
+        this.vfx.createTreasureChest(
+          crystal.x + 60,
+          crystal.y,
+          color
+        );
+      }
+    });
+
+    // Add magical torches in corners
+    this.vfx.createMagicalTorch(120, 180, 0xFFA500);
+    this.vfx.createMagicalTorch(this.scale.width - 120, 180, 0xFF6347);
+    this.vfx.createMagicalTorch(200, this.scale.height - 180, 0xFFD700);
+    this.vfx.createMagicalTorch(this.scale.width - 200, this.scale.height - 180, 0xFF8C00);
+
+    // Add floating mystical runes
+    this.vfx.createFloatingRunes(6, 0xD4AF37);
+
+    // Add floating magical books
+    this.vfx.createFloatingBook(250, 250, 0x8B4513);
+    this.vfx.createFloatingBook(this.scale.width - 250, 300, 0x654321);
+
+    // Add periodic flying creatures
+    this.time.addEvent({
+      delay: 8000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(100, 300);
+        const colors = [0x9370DB, 0xD4AF37, 0xFF6B9D, 0x00CED1];
+        const color = Phaser.Utils.Array.GetRandom(colors);
+        this.vfx.createFlyingCreature(startX, startY, color);
+      }
+    });
+
+    // Add magical compass near player
+    this.vfx.createMagicalCompass(this.scale.width / 2, this.scale.height - 350);
   }
 
   private createHubBackground(): void {

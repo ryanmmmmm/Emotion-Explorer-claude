@@ -163,7 +163,37 @@ export class Module4SpeakingStone extends BaseScene {
       },
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 4 - The Speaking Stone: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Ancient pillars positioned around the scene
+    this.vfx.createAncientPillar(180, this.scale.height - 120, 200);
+    this.vfx.createAncientPillar(this.scale.width - 180, this.scale.height - 120, 220);
+    this.vfx.createAncientPillar(120, this.scale.height - 150, 160);
+    this.vfx.createAncientPillar(this.scale.width - 120, this.scale.height - 150, 180);
+
+    // Magical torches with warm colors for speaking/expression theme
+    this.vfx.createMagicalTorch(200, 350, this.emotionColor);
+    this.vfx.createMagicalTorch(this.scale.width - 200, 350, 0xFF8C00);
+    this.vfx.createMagicalTorch(150, 500, 0xFFD700);
+
+    // Floating mystical runes (emphasis on communication)
+    this.vfx.createFloatingRunes(12, 0xD4AF37);
+
+    // Floating books for wisdom and expression
+    this.vfx.createFloatingBook(250, 250, 0x8B4513);
+    this.vfx.createFloatingBook(this.scale.width - 250, 280, 0xA0522D);
+    this.vfx.createFloatingBook(this.scale.width / 2 - 100, 200, 0x654321);
+
+    // Guardian statues watching over the speaking stone
+    this.vfx.createGuardianStatue(100, this.scale.height - 200);
+    this.vfx.createGuardianStatue(this.scale.width - 100, this.scale.height - 200);
   }
 
   private createBackground(): void {

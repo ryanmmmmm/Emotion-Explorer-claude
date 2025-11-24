@@ -158,7 +158,57 @@ export class Module5MirrorPortal extends BaseScene {
       },
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 5 - The Mirror Portal: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Ancient pillars framing the mirror portal
+    this.vfx.createAncientPillar(150, this.scale.height - 100, 190);
+    this.vfx.createAncientPillar(this.scale.width - 150, this.scale.height - 100, 210);
+    this.vfx.createAncientPillar(100, 450, 150);
+    this.vfx.createAncientPillar(this.scale.width - 100, 450, 170);
+
+    // Magical torches with portal-themed colors (purples and blues)
+    this.vfx.createMagicalTorch(180, 320, 0x9370DB);
+    this.vfx.createMagicalTorch(this.scale.width - 180, 320, 0x8A2BE2);
+    this.vfx.createMagicalTorch(this.scale.width / 2 - 150, 280, this.emotionColor);
+    this.vfx.createMagicalTorch(this.scale.width / 2 + 150, 280, 0x4169E1);
+
+    // Floating mystical runes for mirror magic
+    this.vfx.createFloatingRunes(10, 0xBA55D3);
+
+    // Guardian statues guarding the portal
+    this.vfx.createGuardianStatue(120, this.scale.height - 180);
+    this.vfx.createGuardianStatue(this.scale.width - 120, this.scale.height - 180);
+    this.vfx.createGuardianStatue(this.scale.width / 2, this.scale.height - 160);
+
+    // Flying creatures crossing through the portal realm
+    this.time.addEvent({
+      delay: 10000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(300, 500);
+        this.vfx.createFlyingCreature(startX, startY, 0x9370DB);
+      }
+    });
+
+    // Additional flying creatures for portal atmosphere
+    this.time.addEvent({
+      delay: 15000,
+      loop: true,
+      callback: () => {
+        const startX = Phaser.Math.Between(100, this.scale.width - 100);
+        const startY = -50;
+        this.vfx.createFlyingCreature(startX, startY, this.emotionColor);
+      }
+    });
   }
 
   private createBackground(): void {

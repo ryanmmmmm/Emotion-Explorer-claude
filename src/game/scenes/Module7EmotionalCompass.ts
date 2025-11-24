@@ -163,7 +163,54 @@ export class Module7EmotionalCompass extends BaseScene {
       },
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 7 - The Emotional Compass: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Ancient pillars marking cardinal directions
+    this.vfx.createAncientPillar(140, this.scale.height - 100, 190);
+    this.vfx.createAncientPillar(this.scale.width - 140, this.scale.height - 100, 210);
+    this.vfx.createAncientPillar(100, 320, 160);
+    this.vfx.createAncientPillar(this.scale.width - 100, 320, 170);
+
+    // Magical torches at compass points
+    this.vfx.createMagicalTorch(170, 280, this.emotionColor);
+    this.vfx.createMagicalTorch(this.scale.width - 170, 280, 0xDAA520);
+    this.vfx.createMagicalTorch(this.scale.width / 2, 220, 0xFFD700);
+
+    // Floating mystical runes for navigation
+    this.vfx.createFloatingRunes(8, 0xD4AF37);
+
+    // Multiple magical compasses floating in the scene
+    this.vfx.createMagicalCompass(200, 200);
+    this.vfx.createMagicalCompass(this.scale.width - 200, 220);
+    this.vfx.createMagicalCompass(this.scale.width / 2 - 150, 180);
+    this.vfx.createMagicalCompass(this.scale.width / 2 + 150, 190);
+
+    // Floating books of trajectory wisdom
+    this.vfx.createFloatingBook(240, 260, 0x8B4513);
+    this.vfx.createFloatingBook(this.scale.width - 240, 280, 0xA0522D);
+
+    // Guardian statues as waypoint markers
+    this.vfx.createGuardianStatue(110, this.scale.height - 200);
+    this.vfx.createGuardianStatue(this.scale.width - 110, this.scale.height - 200);
+
+    // Flying creatures carrying compass wisdom
+    this.time.addEvent({
+      delay: 13000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(250, 350);
+        this.vfx.createFlyingCreature(startX, startY, 0xDAA520);
+      }
+    });
   }
 
   private createBackground(): void {

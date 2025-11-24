@@ -161,7 +161,46 @@ export class Module6CatharticFalls extends BaseScene {
       },
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 6 - The Cathartic Falls: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Ancient pillars with water erosion theme
+    this.vfx.createAncientPillar(160, this.scale.height - 110, 180);
+    this.vfx.createAncientPillar(this.scale.width - 160, this.scale.height - 110, 200);
+    this.vfx.createAncientPillar(120, 380, 140);
+    this.vfx.createAncientPillar(this.scale.width - 120, 380, 160);
+
+    // Magical torches with water/blue colors for falls theme
+    this.vfx.createMagicalTorch(190, 300, 0x00CED1);
+    this.vfx.createMagicalTorch(this.scale.width - 190, 300, 0x4682B4);
+    this.vfx.createMagicalTorch(150, 450, 0x5F9EA0);
+    this.vfx.createMagicalTorch(this.scale.width - 150, 450, 0x87CEEB);
+
+    // Floating mystical runes with aquatic theme
+    this.vfx.createFloatingRunes(10, 0x40E0D0);
+
+    // Floating book of breathing wisdom
+    this.vfx.createFloatingBook(220, 220, 0x4682B4);
+    this.vfx.createFloatingBook(this.scale.width - 220, 240, 0x5F9EA0);
+
+    // Guardian statues watching over the falls
+    this.vfx.createGuardianStatue(100, this.scale.height - 190);
+    this.vfx.createGuardianStatue(this.scale.width - 100, this.scale.height - 190);
+
+    // Shooting stars for cathartic release
+    this.time.addEvent({
+      delay: 18000,
+      loop: true,
+      callback: () => {
+        this.vfx.createShootingStar(0x87CEEB);
+      }
+    });
   }
 
   private createBackground(): void {

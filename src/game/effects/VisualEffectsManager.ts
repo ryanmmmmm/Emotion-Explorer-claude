@@ -448,4 +448,504 @@ export class VisualEffectsManager {
 
     return graphics;
   }
+
+  /**
+   * Create floating treasure chest
+   */
+  createTreasureChest(x: number, y: number, color: number = 0xD4AF37): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Chest body
+    graphics.fillStyle(0x8B4513, 1);
+    graphics.fillRect(-25, -15, 50, 30);
+
+    // Chest lid
+    graphics.fillStyle(0x654321, 1);
+    graphics.fillRect(-25, -25, 50, 12);
+
+    // Gold trim
+    graphics.lineStyle(3, color, 1);
+    graphics.strokeRect(-25, -15, 50, 30);
+    graphics.strokeRect(-25, -25, 50, 12);
+
+    // Keyhole
+    graphics.fillStyle(color, 1);
+    graphics.fillCircle(0, 0, 4);
+
+    // Sparkles from chest
+    const sparkle1 = this.scene.add.circle(-15, -30, 3, color, 0.8);
+    const sparkle2 = this.scene.add.circle(15, -30, 2, color, 0.8);
+    const sparkle3 = this.scene.add.circle(0, -35, 2, 0xFFFFFF, 0.8);
+    sparkle1.setBlendMode(Phaser.BlendModes.ADD);
+    sparkle2.setBlendMode(Phaser.BlendModes.ADD);
+    sparkle3.setBlendMode(Phaser.BlendModes.ADD);
+
+    container.add([graphics, sparkle1, sparkle2, sparkle3]);
+    container.setDepth(20);
+
+    // Floating animation
+    this.scene.tweens.add({
+      targets: container,
+      y: y - 10,
+      duration: 2000 + Math.random() * 1000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    // Sparkle twinkle
+    this.scene.tweens.add({
+      targets: [sparkle1, sparkle2, sparkle3],
+      alpha: 0.2,
+      scale: 0.5,
+      duration: 800 + Math.random() * 400,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return container;
+  }
+
+  /**
+   * Create flying bird/creature
+   */
+  createFlyingCreature(startX: number, startY: number, color: number = 0x9370DB): void {
+    const bird = this.scene.add.container(startX, startY);
+    const graphics = this.scene.add.graphics();
+
+    // Bird body (simple silhouette)
+    graphics.fillStyle(color, 0.7);
+    graphics.fillCircle(0, 0, 8);
+
+    // Wings (two triangles)
+    graphics.beginPath();
+    graphics.moveTo(-15, 0);
+    graphics.lineTo(-8, -5);
+    graphics.lineTo(-8, 5);
+    graphics.closePath();
+    graphics.fillPath();
+
+    graphics.beginPath();
+    graphics.moveTo(15, 0);
+    graphics.lineTo(8, -5);
+    graphics.lineTo(8, 5);
+    graphics.closePath();
+    graphics.fillPath();
+
+    // Glow trail
+    const glow = this.scene.add.circle(0, 0, 15, color, 0.2);
+    glow.setBlendMode(Phaser.BlendModes.ADD);
+
+    bird.add([glow, graphics]);
+    bird.setDepth(15);
+
+    // Wing flapping animation
+    this.scene.tweens.add({
+      targets: graphics,
+      scaleY: 0.8,
+      duration: 300,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    // Flight path across screen
+    const endX = startX > this.scene.scale.width / 2
+      ? -100
+      : this.scene.scale.width + 100;
+    const midY = startY + Phaser.Math.Between(-100, 100);
+
+    this.scene.tweens.add({
+      targets: bird,
+      x: endX,
+      y: midY,
+      duration: 8000 + Math.random() * 4000,
+      ease: 'Sine.easeInOut',
+      onComplete: () => bird.destroy()
+    });
+
+    // Bobbing motion
+    this.scene.tweens.add({
+      targets: bird,
+      y: `+=${Phaser.Math.Between(10, 30)}`,
+      duration: 1000 + Math.random() * 500,
+      yoyo: true,
+      repeat: 10,
+      ease: 'Sine.easeInOut'
+    });
+  }
+
+  /**
+   * Create ancient stone pillar
+   */
+  createAncientPillar(x: number, y: number, height: number = 200): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Pillar body
+    graphics.fillStyle(0x696969, 0.8);
+    graphics.fillRect(-20, -height, 40, height);
+
+    // Pillar top
+    graphics.fillStyle(0x555555, 0.9);
+    graphics.fillRect(-25, -height - 15, 50, 15);
+
+    // Cracks and weathering
+    graphics.lineStyle(2, 0x4A4A4A, 0.6);
+    graphics.lineBetween(-10, -height + 50, 15, -height + 70);
+    graphics.lineBetween(5, -height + 120, -15, -height + 150);
+
+    // Ancient runes
+    graphics.fillStyle(0xD4AF37, 0.4);
+    for (let i = 0; i < 3; i++) {
+      const runeY = -height + 40 + i * 50;
+      graphics.fillCircle(0, runeY, 4);
+      graphics.fillRect(-8, runeY, 16, 2);
+    }
+
+    container.add(graphics);
+    container.setDepth(5);
+
+    // Subtle glow on runes
+    const runeGlow = this.scene.add.circle(0, -height / 2, 30, 0xD4AF37, 0.1);
+    runeGlow.setBlendMode(Phaser.BlendModes.ADD);
+    container.add(runeGlow);
+
+    this.scene.tweens.add({
+      targets: runeGlow,
+      alpha: 0.05,
+      duration: 2000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return container;
+  }
+
+  /**
+   * Create magical torch/lantern
+   */
+  createMagicalTorch(x: number, y: number, color: number = 0xFFA500): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Torch handle
+    graphics.fillStyle(0x8B4513, 1);
+    graphics.fillRect(-5, 0, 10, 60);
+
+    // Torch top
+    graphics.fillStyle(0x654321, 1);
+    graphics.fillCircle(0, -5, 12);
+
+    container.add(graphics);
+
+    // Flame
+    const flame = this.scene.add.circle(0, -15, 15, color, 0.8);
+    flame.setBlendMode(Phaser.BlendModes.ADD);
+    container.add(flame);
+
+    // Flame glow
+    const glow = this.scene.add.circle(0, -15, 30, color, 0.3);
+    glow.setBlendMode(Phaser.BlendModes.ADD);
+    container.add(glow);
+
+    // Light particles
+    const emitter = this.scene.add.particles(x, y - 15, 'sparkle', {
+      speed: { min: 10, max: 30 },
+      angle: { min: 250, max: 290 },
+      scale: { start: 0.4, end: 0 },
+      alpha: { start: 0.8, end: 0 },
+      tint: color,
+      lifespan: 1000,
+      frequency: 100,
+      blendMode: Phaser.BlendModes.ADD
+    });
+    emitter.setDepth(21);
+
+    container.setDepth(20);
+
+    // Flickering animation
+    this.scene.tweens.add({
+      targets: [flame, glow],
+      scaleX: { from: 0.9, to: 1.1 },
+      scaleY: { from: 1.1, to: 0.9 },
+      alpha: { from: 0.6, to: 1 },
+      duration: 200 + Math.random() * 200,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return container;
+  }
+
+  /**
+   * Create shooting star effect
+   */
+  createShootingStar(color: number = 0xFFFFFF): void {
+    const startX = Phaser.Math.Between(0, this.scene.scale.width);
+    const startY = Phaser.Math.Between(0, this.scene.scale.height / 3);
+
+    const star = this.scene.add.circle(startX, startY, 4, color, 1);
+    star.setBlendMode(Phaser.BlendModes.ADD);
+    star.setDepth(100);
+
+    // Trail
+    const trail = this.scene.add.rectangle(startX, startY, 40, 2, color, 0.6);
+    trail.setOrigin(1, 0.5);
+    trail.setBlendMode(Phaser.BlendModes.ADD);
+    trail.setDepth(99);
+
+    const angle = Phaser.Math.Between(30, 60);
+    trail.setRotation(Phaser.Math.DegToRad(angle));
+
+    // Shooting animation
+    const distance = 400;
+    const endX = startX + Math.cos(Phaser.Math.DegToRad(angle)) * distance;
+    const endY = startY + Math.sin(Phaser.Math.DegToRad(angle)) * distance;
+
+    this.scene.tweens.add({
+      targets: [star, trail],
+      x: endX,
+      y: endY,
+      duration: 1500,
+      ease: 'Cubic.easeIn',
+      onComplete: () => {
+        star.destroy();
+        trail.destroy();
+      }
+    });
+
+    // Fade out
+    this.scene.tweens.add({
+      targets: [star, trail],
+      alpha: 0,
+      duration: 1500,
+      ease: 'Cubic.easeIn'
+    });
+  }
+
+  /**
+   * Create floating magical book
+   */
+  createFloatingBook(x: number, y: number, color: number = 0x8B4513): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Book pages
+    graphics.fillStyle(0xF5E6D3, 1);
+    graphics.fillRect(-20, -15, 40, 30);
+
+    // Book cover
+    graphics.fillStyle(color, 1);
+    graphics.fillRect(-22, -16, 3, 32);
+    graphics.fillRect(19, -16, 3, 32);
+
+    // Book spine
+    graphics.fillStyle(0x654321, 1);
+    graphics.fillRect(-2, -15, 4, 30);
+
+    // Magical glow
+    const glow = this.scene.add.circle(0, 0, 35, 0xD4AF37, 0.2);
+    glow.setBlendMode(Phaser.BlendModes.ADD);
+
+    // Sparkles
+    const sparkle = this.scene.add.circle(0, -20, 3, 0xFFD700, 0.8);
+    sparkle.setBlendMode(Phaser.BlendModes.ADD);
+
+    container.add([glow, graphics, sparkle]);
+    container.setDepth(20);
+
+    // Floating animation
+    this.scene.tweens.add({
+      targets: container,
+      y: y - 15,
+      duration: 2500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    // Gentle rotation
+    this.scene.tweens.add({
+      targets: container,
+      rotation: 0.2,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    // Sparkle twinkle
+    this.scene.tweens.add({
+      targets: sparkle,
+      alpha: 0.2,
+      scale: 0.5,
+      duration: 800,
+      yoyo: true,
+      repeat: -1
+    });
+
+    return container;
+  }
+
+  /**
+   * Create mystical runes floating around
+   */
+  createFloatingRunes(count: number = 8, color: number = 0xD4AF37): void {
+    const runeSymbols = ['◊', '⚡', '✦', '◈', '⬡', '⭐', '◬', '☆'];
+
+    for (let i = 0; i < count; i++) {
+      const x = Phaser.Math.Between(100, this.scene.scale.width - 100);
+      const y = Phaser.Math.Between(100, this.scene.scale.height - 100);
+
+      const rune = this.scene.add.text(x, y, runeSymbols[i % runeSymbols.length], {
+        fontSize: '32px',
+        color: `#${color.toString(16).padStart(6, '0')}`,
+        fontFamily: 'Arial'
+      });
+      rune.setOrigin(0.5);
+      rune.setAlpha(0.4);
+      rune.setBlendMode(Phaser.BlendModes.ADD);
+      rune.setDepth(15);
+
+      // Floating movement
+      this.scene.tweens.add({
+        targets: rune,
+        y: y + Phaser.Math.Between(-50, 50),
+        x: x + Phaser.Math.Between(-30, 30),
+        duration: 3000 + Math.random() * 2000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        delay: Math.random() * 1000
+      });
+
+      // Slow rotation
+      this.scene.tweens.add({
+        targets: rune,
+        rotation: Math.PI * 2,
+        duration: 8000,
+        repeat: -1,
+        ease: 'Linear'
+      });
+
+      // Pulsing glow
+      this.scene.tweens.add({
+        targets: rune,
+        alpha: 0.8,
+        duration: 2000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    }
+  }
+
+  /**
+   * Create ancient guardian statue
+   */
+  createGuardianStatue(x: number, y: number): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Statue body (simplified humanoid)
+    graphics.fillStyle(0x696969, 0.8);
+    graphics.fillRect(-15, -60, 30, 60);
+
+    // Head
+    graphics.fillCircle(0, -70, 15);
+
+    // Arms
+    graphics.fillRect(-25, -50, 10, 30);
+    graphics.fillRect(15, -50, 10, 30);
+
+    // Eyes (glowing)
+    const leftEye = this.scene.add.circle(-6, -70, 3, 0x00CED1, 0.8);
+    const rightEye = this.scene.add.circle(6, -70, 3, 0x00CED1, 0.8);
+    leftEye.setBlendMode(Phaser.BlendModes.ADD);
+    rightEye.setBlendMode(Phaser.BlendModes.ADD);
+
+    container.add([graphics, leftEye, rightEye]);
+    container.setDepth(10);
+
+    // Glowing eyes animation
+    this.scene.tweens.add({
+      targets: [leftEye, rightEye],
+      alpha: 0.3,
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return container;
+  }
+
+  /**
+   * Create magical compass
+   */
+  createMagicalCompass(x: number, y: number): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Compass body
+    graphics.lineStyle(3, 0xD4AF37, 1);
+    graphics.strokeCircle(0, 0, 40);
+
+    graphics.fillStyle(0x2C1810, 0.9);
+    graphics.fillCircle(0, 0, 40);
+
+    // Compass needle
+    graphics.fillStyle(0xFF0000, 1);
+    graphics.beginPath();
+    graphics.moveTo(0, -30);
+    graphics.lineTo(-5, 0);
+    graphics.lineTo(5, 0);
+    graphics.closePath();
+    graphics.fillPath();
+
+    graphics.fillStyle(0xFFFFFF, 1);
+    graphics.beginPath();
+    graphics.moveTo(0, 30);
+    graphics.lineTo(-5, 0);
+    graphics.lineTo(5, 0);
+    graphics.closePath();
+    graphics.fillPath();
+
+    // Cardinal directions
+    const north = this.scene.add.text(0, -55, 'N', {
+      fontSize: '16px',
+      color: '#D4AF37',
+      fontFamily: 'Cinzel, serif'
+    }).setOrigin(0.5);
+
+    container.add([graphics, north]);
+    container.setDepth(25);
+
+    // Needle rotation
+    const needle = this.scene.add.graphics();
+    needle.fillStyle(0xFF0000, 1);
+    needle.beginPath();
+    needle.moveTo(0, -30);
+    needle.lineTo(-5, 0);
+    needle.lineTo(5, 0);
+    needle.closePath();
+    needle.fillPath();
+
+    container.add(needle);
+
+    this.scene.tweens.add({
+      targets: needle,
+      rotation: Math.PI * 2,
+      duration: 4000,
+      repeat: -1,
+      ease: 'Linear'
+    });
+
+    return container;
+  }
 }

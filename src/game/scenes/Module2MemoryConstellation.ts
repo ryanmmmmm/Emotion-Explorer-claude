@@ -149,6 +149,11 @@ export class Module2MemoryConstellation extends BaseScene {
     // Add text input for memory associations
     this.createMemoryAssociationsInput(centerX);
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     // Continue button (appears after placing at least 3 memories AND writing associations)
     const continueBtn = this.createButton(
       centerX,
@@ -172,6 +177,54 @@ export class Module2MemoryConstellation extends BaseScene {
     });
 
     console.log('✅ Module 2 - Memory Constellation: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    const centerX = this.scale.width / 2;
+
+    // Add periodic shooting stars
+    this.time.addEvent({
+      delay: 5000,
+      loop: true,
+      callback: () => {
+        const color = parseInt(EMOTION_DEFINITIONS[this.emotionId].color.replace('#', ''), 16);
+        this.vfx.createShootingStar(color);
+      }
+    });
+
+    // Add mystical runes forming constellations
+    this.vfx.createFloatingRunes(12, this.emotionColor);
+
+    // Add floating books containing star maps
+    this.vfx.createFloatingBook(200, 250, 0x2C1810);
+    this.vfx.createFloatingBook(this.scale.width - 200, 280, 0x3D2F24);
+
+    // Add magical torches to illuminate the stargazing area
+    this.vfx.createMagicalTorch(150, 400, 0x87CEEB);
+    this.vfx.createMagicalTorch(this.scale.width - 150, 400, 0xB0C4DE);
+
+    // Add ancient pillars framing the constellation area
+    this.vfx.createAncientPillar(100, this.scale.height - 80, 120);
+    this.vfx.createAncientPillar(this.scale.width - 100, this.scale.height - 80, 120);
+
+    // Add guardian statues protecting the memories
+    this.vfx.createGuardianStatue(80, this.scale.height - 150);
+    this.vfx.createGuardianStatue(this.scale.width - 80, this.scale.height - 150);
+
+    // Add flying creatures representing fleeting memories
+    this.time.addEvent({
+      delay: 12000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(200, 400);
+        this.vfx.createFlyingCreature(startX, startY, 0x87CEEB);
+      }
+    });
+
+    // Add magical compass to guide memory placement
+    this.vfx.createMagicalCompass(centerX + 350, 200);
   }
 
   private createMemoryAssociationsInput(centerX: number): void {

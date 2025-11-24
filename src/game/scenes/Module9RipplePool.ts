@@ -185,7 +185,68 @@ export class Module9RipplePool extends BaseScene {
       callback: () => this.updateRipples(),
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 9 - The Ripple Pool: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Ancient pillars around the pool
+    this.vfx.createAncientPillar(140, this.scale.height - 110, 200);
+    this.vfx.createAncientPillar(this.scale.width - 140, this.scale.height - 110, 220);
+    this.vfx.createAncientPillar(110, 360, 170);
+    this.vfx.createAncientPillar(this.scale.width - 110, 360, 180);
+
+    // Magical torches with water-themed colors
+    this.vfx.createMagicalTorch(170, 290, 0x00CED1);
+    this.vfx.createMagicalTorch(this.scale.width - 170, 290, 0x48D1CC);
+    this.vfx.createMagicalTorch(150, 420, 0x5F9EA0);
+    this.vfx.createMagicalTorch(this.scale.width - 150, 420, this.emotionColor);
+
+    // Floating mystical runes for ripple magic
+    this.vfx.createFloatingRunes(10, 0x40E0D0);
+
+    // Floating books of reflection wisdom
+    this.vfx.createFloatingBook(210, 210, 0x4682B4);
+    this.vfx.createFloatingBook(this.scale.width - 210, 230, 0x5F9EA0);
+    this.vfx.createFloatingBook(this.scale.width / 2, 190, 0x87CEEB);
+
+    // Guardian statues watching the pool
+    this.vfx.createGuardianStatue(100, this.scale.height - 200);
+    this.vfx.createGuardianStatue(this.scale.width - 100, this.scale.height - 200);
+
+    // Shooting stars for journey completion
+    this.time.addEvent({
+      delay: 12000,
+      loop: true,
+      callback: () => {
+        this.vfx.createShootingStar(0x87CEEB);
+      }
+    });
+
+    // Additional shooting stars for celebration
+    this.time.addEvent({
+      delay: 16000,
+      loop: true,
+      callback: () => {
+        this.vfx.createShootingStar(this.emotionColor);
+      }
+    });
+
+    // Flying creatures celebrating completion
+    this.time.addEvent({
+      delay: 11000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(250, 400);
+        this.vfx.createFlyingCreature(startX, startY, 0x40E0D0);
+      }
+    });
   }
 
   private createBackground(): void {

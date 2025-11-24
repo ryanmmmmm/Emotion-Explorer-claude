@@ -183,7 +183,54 @@ export class Module3TempleEmbodiment extends BaseScene {
       },
     });
 
+    // Teen-only adventure visuals
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
     console.log('✅ Module 3 - Temple of Embodiment: Ready (Adventure Theme)');
+  }
+
+  private createAdventureElements(): void {
+    // Add temple pillars around the body figure
+    this.vfx.createAncientPillar(150, this.scale.height - 100, 200);
+    this.vfx.createAncientPillar(this.scale.width - 150, this.scale.height - 100, 200);
+    this.vfx.createAncientPillar(250, 400, 180);
+    this.vfx.createAncientPillar(this.scale.width - 250, 400, 180);
+
+    // Add sacred torches around the temple
+    this.vfx.createMagicalTorch(180, 300, this.emotionColor);
+    this.vfx.createMagicalTorch(this.scale.width - 180, 300, this.emotionColor);
+    this.vfx.createMagicalTorch(200, this.scale.height - 200, 0xFF6347);
+    this.vfx.createMagicalTorch(this.scale.width - 200, this.scale.height - 200, 0xFF8C00);
+
+    // Add guardian statues watching over the temple
+    this.vfx.createGuardianStatue(100, this.scale.height - 180);
+    this.vfx.createGuardianStatue(this.scale.width - 100, this.scale.height - 180);
+    this.vfx.createGuardianStatue(120, 380);
+    this.vfx.createGuardianStatue(this.scale.width - 120, 380);
+
+    // Add mystical runes floating in the temple
+    this.vfx.createFloatingRunes(10, 0xD4AF37);
+
+    // Add floating wisdom books
+    this.vfx.createFloatingBook(220, 200, 0x8B4513);
+    this.vfx.createFloatingBook(this.scale.width - 220, 220, 0x654321);
+
+    // Add treasure chest for emotional discoveries
+    this.vfx.createTreasureChest(this.scale.width / 2, this.scale.height - 120, 0xD4AF37);
+
+    // Add periodic flying creatures
+    this.time.addEvent({
+      delay: 15000,
+      loop: true,
+      callback: () => {
+        const side = Math.random() > 0.5;
+        const startX = side ? -50 : this.scale.width + 50;
+        const startY = Phaser.Math.Between(200, 400);
+        this.vfx.createFlyingCreature(startX, startY, this.emotionColor);
+      }
+    });
   }
 
   private createBackground(): void {
