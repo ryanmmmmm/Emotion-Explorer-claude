@@ -47,6 +47,7 @@ export class Module7EmotionalCompass extends BaseScene {
 
   create(): void {
     this.fadeIn();
+    this.initializeTheme(); // Initialize age-based theme
 
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
@@ -60,9 +61,10 @@ export class Module7EmotionalCompass extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Title - age-appropriate
+    const title = this.isAdult() ? 'Emotional Trajectories' : 'The Emotional Compass';
     this.add
-      .text(centerX, 60, 'The Emotional Compass', {
+      .text(centerX, 60, title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -351,13 +353,94 @@ export class Module7EmotionalCompass extends BaseScene {
     const boxHeight = 80;
     const spacing = 380;
 
-    const trajectories = [
-      { x: centerX - spacing, label: 'PAST: Where did it come from?', key: 'trajectoryPast', prompt: 'Describe where this emotion originated. What events or experiences led to this feeling?' },
-      { x: centerX, label: 'PRESENT: Where is it now?', key: 'trajectoryPresent', prompt: 'Describe where this emotion is right now. How is it showing up in your current life?' },
-      { x: centerX + spacing, label: 'FUTURE: Where might it be going?', key: 'trajectoryFuture', prompt: 'Describe where this emotion might go in the future. How do you see it evolving?' },
-    ];
+    const isAdult = this.isAdult();
 
-    trajectories.forEach(({ x, label, key, prompt }) => {
+    // Age-appropriate labels and guidance
+    const trajectories = isAdult
+      ? [
+          {
+            x: centerX - spacing,
+            label: 'PAST:\nOrigins',
+            key: 'trajectoryPast',
+            modalTitle: 'Past: Origins',
+            guidance: `<p><strong>Trace the origin of this emotion.</strong> Reflect on:</p>
+                       <ul style="margin: 8px 0; padding-left: 20px;">
+                         <li><strong>First instances:</strong> When did you first experience this emotion?</li>
+                         <li><strong>Triggering events:</strong> What circumstances or experiences led to it?</li>
+                         <li><strong>Early patterns:</strong> How did this emotion show up in your past?</li>
+                       </ul>
+                       <p style="margin-top: 12px;">Understanding origins helps identify the roots of current emotional patterns.</p>`
+          },
+          {
+            x: centerX,
+            label: 'PRESENT:\nCurrent State',
+            key: 'trajectoryPresent',
+            modalTitle: 'Present: Current State',
+            guidance: `<p><strong>Examine this emotion's current presence.</strong> Consider:</p>
+                       <ul style="margin: 8px 0; padding-left: 20px;">
+                         <li><strong>Frequency:</strong> How often does this emotion appear now?</li>
+                         <li><strong>Intensity:</strong> How strong is it when it arises?</li>
+                         <li><strong>Impact:</strong> How is it affecting your daily life and relationships?</li>
+                       </ul>
+                       <p style="margin-top: 12px;">Awareness of the present helps you understand your current emotional landscape.</p>`
+          },
+          {
+            x: centerX + spacing,
+            label: 'FUTURE:\nProjected Path',
+            key: 'trajectoryFuture',
+            modalTitle: 'Future: Projected Path',
+            guidance: `<p><strong>Envision this emotion's future trajectory.</strong> Explore:</p>
+                       <ul style="margin: 8px 0; padding-left: 20px;">
+                         <li><strong>Natural evolution:</strong> Where might this emotion go if unchanged?</li>
+                         <li><strong>Desired direction:</strong> How would you like this emotion to evolve?</li>
+                         <li><strong>Action steps:</strong> What can you do to guide its development?</li>
+                       </ul>
+                       <p style="margin-top: 12px;">Anticipating the future empowers you to shape your emotional journey.</p>`
+          },
+        ]
+      : [
+          {
+            x: centerX - spacing,
+            label: 'PAST:\nWhere did it come from?',
+            key: 'trajectoryPast',
+            modalTitle: 'Journey Through Time: Past',
+            guidance: `<p><strong>Discover the origins of your emotion!</strong> Think about:</p>
+                       <ul style="margin: 8px 0; padding-left: 20px;">
+                         <li><strong>The beginning:</strong> When did you first feel this way?</li>
+                         <li><strong>What happened:</strong> What events or experiences brought this emotion to life?</li>
+                         <li><strong>Early signs:</strong> How did it show up before?</li>
+                       </ul>
+                       <p style="margin-top: 12px;">Understanding your past helps you make sense of today!</p>`
+          },
+          {
+            x: centerX,
+            label: 'PRESENT:\nWhere is it now?',
+            key: 'trajectoryPresent',
+            modalTitle: 'Journey Through Time: Present',
+            guidance: `<p><strong>Explore where your emotion lives right now!</strong> Consider:</p>
+                       <ul style="margin: 8px 0; padding-left: 20px;">
+                         <li><strong>How often:</strong> When does this emotion visit you these days?</li>
+                         <li><strong>How strong:</strong> What's the power level of this feeling?</li>
+                         <li><strong>Its effects:</strong> How is it changing your days and relationships?</li>
+                       </ul>
+                       <p style="margin-top: 12px;">Being aware of now helps you navigate your emotional journey!</p>`
+          },
+          {
+            x: centerX + spacing,
+            label: 'FUTURE:\nWhere might it be going?',
+            key: 'trajectoryFuture',
+            modalTitle: 'Journey Through Time: Future',
+            guidance: `<p><strong>Imagine where your emotion might travel next!</strong> Dream about:</p>
+                       <ul style="margin: 8px 0; padding-left: 20px;">
+                         <li><strong>Natural path:</strong> Where might it go if nothing changes?</li>
+                         <li><strong>Your hope:</strong> Where would you like it to go instead?</li>
+                         <li><strong>Your power:</strong> What can you do to guide it on its journey?</li>
+                       </ul>
+                       <p style="margin-top: 12px;">You have the power to shape your emotional future!</p>`
+          },
+        ];
+
+    trajectories.forEach(({ x, label, key, modalTitle, guidance }) => {
       this.add
         .text(x, y - 30, label, {
           fontSize: '16px',
@@ -396,9 +479,9 @@ export class Module7EmotionalCompass extends BaseScene {
       textBox.on('pointerdown', async () => {
         const currentValue = (this as any)[key] as string;
         const response = await this.showTextInputModal(
-          label,
+          modalTitle,
           'Write your thoughts...',
-          prompt,
+          guidance,
           15, // minimum 15 words
           currentValue
         );

@@ -43,6 +43,7 @@ export class Module5MirrorPortal extends BaseScene {
 
   create(): void {
     this.fadeIn();
+    this.initializeTheme(); // Initialize age-based theme
 
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
@@ -56,9 +57,10 @@ export class Module5MirrorPortal extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Title - age-appropriate
+    const title = this.isAdult() ? 'Reverse Letter Writing' : 'The Mirror Portal';
     this.add
-      .text(centerX, 60, 'The Mirror Portal', {
+      .text(centerX, 60, title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -86,12 +88,16 @@ export class Module5MirrorPortal extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Instructions
+    // Instructions - age-appropriate
+    const instructions = this.isAdult()
+      ? 'Click the cards to explore different perspectives on your emotion.\nThen write a letter from one of these alternative viewpoints.'
+      : 'Click the floating cards to reveal different perspectives.\nEach view offers a new way to understand your emotion.';
+
     this.instructionText = this.add
       .text(
         centerX,
         220,
-        'Click the floating cards to reveal different perspectives.\nEach view offers a new way to understand your emotion.',
+        instructions,
         {
           fontSize: '20px',
           color: '#D4C5B0',
@@ -364,8 +370,12 @@ export class Module5MirrorPortal extends BaseScene {
   private createReverseLetterInput(centerX: number): void {
     const y = this.scale.height - 220;
 
+    const labelText = this.isAdult()
+      ? 'Write from an alternative perspective:'
+      : 'Write a letter from a different perspective:';
+
     this.add
-      .text(centerX, y - 50, 'Write a letter from a different perspective:', {
+      .text(centerX, y - 50, labelText, {
         fontSize: '22px',
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
@@ -375,8 +385,12 @@ export class Module5MirrorPortal extends BaseScene {
       })
       .setOrigin(0.5);
 
+    const subtitleText = this.isAdult()
+      ? '(Another person, your future self, or a compassionate observer)'
+      : '(From someone else involved, your future self, or a compassionate observer)';
+
     this.add
-      .text(centerX, y - 20, '(From someone else involved, your future self, or a compassionate observer)', {
+      .text(centerX, y - 20, subtitleText, {
         fontSize: '16px',
         color: '#D4C5B0',
         fontFamily: 'Crimson Text, serif',
@@ -411,18 +425,30 @@ export class Module5MirrorPortal extends BaseScene {
     });
 
     textBox.on('pointerdown', async () => {
-      const guidance = `
-        <p><strong>Shift your perspective</strong> and write from a different point of view:</p>
-        <ul style="margin: 8px 0; padding-left: 20px;">
-          <li><strong>Another person involved:</strong> What might they think or feel about this situation?</li>
-          <li><strong>Your future self:</strong> Looking back a year from now, what wisdom would you offer?</li>
-          <li><strong>A compassionate observer:</strong> What would a wise, kind friend say about your feelings?</li>
-        </ul>
-        <p style="margin-top: 12px;">This exercise helps you gain insight and empathy by seeing the emotion from outside yourself.</p>
-      `;
+      const isAdult = this.isAdult();
+
+      // Age-appropriate title
+      const modalTitle = isAdult ? 'Reverse Letter Writing' : 'The Mirror Portal';
+
+      // Age-appropriate guidance
+      const guidance = isAdult
+        ? `<p><strong>Write from an alternative perspective.</strong> Choose one viewpoint:</p>
+           <ul style="margin: 8px 0; padding-left: 20px;">
+             <li><strong>Another person involved:</strong> How might they perceive this situation?</li>
+             <li><strong>Your future self (6-12 months ahead):</strong> What wisdom would your future self offer?</li>
+             <li><strong>A compassionate observer:</strong> What would a caring, objective observer say?</li>
+           </ul>
+           <p style="margin-top: 12px;">This technique builds empathy and reveals new insights by examining your emotion from outside your current perspective.</p>`
+        : `<p><strong>Shift your perspective</strong> and write from a different point of view:</p>
+           <ul style="margin: 8px 0; padding-left: 20px;">
+             <li><strong>Another person involved:</strong> What might they think or feel about this situation?</li>
+             <li><strong>Your future self:</strong> Looking back a year from now, what wisdom would you offer?</li>
+             <li><strong>A compassionate observer:</strong> What would a wise, kind friend say about your feelings?</li>
+           </ul>
+           <p style="margin-top: 12px;">This exercise helps you gain insight and empathy by seeing the emotion from outside yourself.</p>`;
 
       const response = await this.showTextInputModal(
-        'The Mirror Portal',
+        modalTitle,
         'Begin writing your reverse letter...',
         guidance,
         30, // minimum 30 words

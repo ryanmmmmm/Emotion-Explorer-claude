@@ -36,6 +36,7 @@ export class Module4SpeakingStone extends BaseScene {
 
   create(): void {
     this.fadeIn();
+    this.initializeTheme(); // Initialize age-based theme
 
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
@@ -50,9 +51,10 @@ export class Module4SpeakingStone extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title - adventure theme
+    // Title - age-appropriate
+    const title = this.isAdult() ? 'Letter Writing' : 'The Speaking Stone';
     this.add
-      .text(centerX, 60, 'The Speaking Stone', {
+      .text(centerX, 60, title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -81,12 +83,16 @@ export class Module4SpeakingStone extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Instructions - adventure theme
+    // Instructions - age-appropriate
+    const instructions = this.isAdult()
+      ? 'Click to write a letter describing this emotion.\nExpress your thoughts and feelings in your own words.'
+      : 'Click the glowing stone to describe this emotion in your own words.\nExpress what this feeling means to you.';
+
     this.instructionText = this.add
       .text(
         centerX,
         220,
-        'Click the glowing stone to describe this emotion in your own words.\nExpress what this feeling means to you.',
+        instructions,
         {
           fontSize: '20px',
           color: '#D4C5B0',
@@ -145,9 +151,10 @@ export class Module4SpeakingStone extends BaseScene {
 
         if (this.wordCount >= 10) {
           continueBtn.setAlpha(1);
-          this.instructionText.setText(
-            'Perfect! Your words have power.\nYou can add more or continue when ready.'
-          );
+          const completeText = this.isAdult()
+            ? 'Excellent. Your letter is complete.\nYou can add more or continue when ready.'
+            : 'Perfect! Your words have power.\nYou can add more or continue when ready.';
+          this.instructionText.setText(completeText);
         } else if (this.wordCount > 0) {
           this.instructionText.setText(
             `Keep going! Write at least ${10 - this.wordCount} more words to continue.`
@@ -243,10 +250,36 @@ export class Module4SpeakingStone extends BaseScene {
   }
 
   private async openTextInput(): Promise<void> {
+    const isAdult = this.isAdult();
+
+    // Age-appropriate title
+    const title = isAdult
+      ? `Letter About ${this.emotionName}`
+      : `Express Your ${this.emotionName} Emotion`;
+
+    // Age-appropriate guidance
+    const guidance = isAdult
+      ? `<p><strong>Write a letter describing this emotion.</strong> Consider the following:</p>
+         <ul style="margin: 8px 0; padding-left: 20px;">
+           <li><strong>Physical sensations:</strong> Where do you feel this emotion in your body?</li>
+           <li><strong>Thoughts and beliefs:</strong> What thoughts accompany this feeling?</li>
+           <li><strong>Context:</strong> What situation or event triggered this emotion?</li>
+           <li><strong>Impact:</strong> How is this emotion affecting your life right now?</li>
+         </ul>
+         <p style="margin-top: 12px;">Write freely and honestly. This is a safe space for your expression.</p>`
+      : `<p><strong>Channel your emotion into words!</strong> Let the Speaking Stone help you express yourself:</p>
+         <ul style="margin: 8px 0; padding-left: 20px;">
+           <li><strong>What it feels like:</strong> Describe the sensation in your body and mind</li>
+           <li><strong>The story:</strong> What caused this emotion? What happened?</li>
+           <li><strong>Your thoughts:</strong> What are you thinking about while feeling this way?</li>
+           <li><strong>The effect:</strong> How is this emotion changing things for you?</li>
+         </ul>
+         <p style="margin-top: 12px;">The Speaking Stone amplifies your truth. Express yourself freely!</p>`;
+
     const input = await this.showTextInputModal(
-      `Express Your ${this.emotionName} Emotion`,
+      title,
       'Describe what you are feeling...',
-      'What does this emotion feel like? What thoughts accompany it? What story does it tell? Express yourself freely.',
+      guidance,
       10,
       this.userText
     );

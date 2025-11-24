@@ -37,6 +37,7 @@ export class Module6CatharticFalls extends BaseScene {
 
   create(): void {
     this.fadeIn();
+    this.initializeTheme(); // Initialize age-based theme
 
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
@@ -50,9 +51,10 @@ export class Module6CatharticFalls extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Title - age-appropriate
+    const title = this.isAdult() ? 'Feelings Journal' : 'The Cathartic Falls';
     this.add
-      .text(centerX, 60, 'The Cathartic Falls', {
+      .text(centerX, 60, title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -309,8 +311,12 @@ export class Module6CatharticFalls extends BaseScene {
   private createJournalInput(centerX: number): void {
     const y = 650;
 
+    const labelText = this.isAdult()
+      ? 'Record your observations in your journal:'
+      : 'Journal about your emotional experience:';
+
     this.add
-      .text(centerX, y, 'Journal about your emotional experience:', {
+      .text(centerX, y, labelText, {
         fontSize: '20px',
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
@@ -345,10 +351,34 @@ export class Module6CatharticFalls extends BaseScene {
     });
 
     textBox.on('pointerdown', async () => {
+      const isAdult = this.isAdult();
+
+      // Age-appropriate title
+      const modalTitle = isAdult ? 'Feelings Journal' : 'Emotional Reflection';
+
+      // Age-appropriate guidance
+      const guidance = isAdult
+        ? `<p><strong>Journal about your emotional state.</strong> Reflect on these aspects:</p>
+           <ul style="margin: 8px 0; padding-left: 20px;">
+             <li><strong>Current feelings:</strong> What emotions are you experiencing right now?</li>
+             <li><strong>Breathing effects:</strong> What did you notice during the breathing exercise?</li>
+             <li><strong>Physical sensations:</strong> How does your body feel after the breathing practice?</li>
+             <li><strong>Emerging insights:</strong> What understanding or clarity has emerged?</li>
+           </ul>
+           <p style="margin-top: 12px;">Write freely without judgment. This journal is a safe space for honest self-exploration.</p>`
+        : `<p><strong>Capture your experience!</strong> Write about what you felt and discovered:</p>
+           <ul style="margin: 8px 0; padding-left: 20px;">
+             <li><strong>Your emotions now:</strong> How do you feel after the breathing?</li>
+             <li><strong>What you noticed:</strong> What happened during the Falls experience?</li>
+             <li><strong>In your body:</strong> How does your body feel different?</li>
+             <li><strong>What you learned:</strong> What insights or wisdom emerged?</li>
+           </ul>
+           <p style="margin-top: 12px;">Let your thoughts flow freely like water! Express yourself without worrying about getting it perfect.</p>`;
+
       const response = await this.showTextInputModal(
-        'Feelings Journal',
+        modalTitle,
         'Write your thoughts...',
-        'Journal freely about your emotional experience. Let your thoughts flow without judgment or editing. How do you feel right now? What insights emerged from the breathing exercise?',
+        guidance,
         20, // minimum 20 words
         this.journalEntry
       );
