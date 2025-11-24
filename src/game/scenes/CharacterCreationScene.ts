@@ -102,7 +102,111 @@ export class CharacterCreationScene extends BaseScene {
     // Complete button
     this.createCompleteButton(centerX, centerY + 260);
 
+    // Add age-appropriate visual elements
+    if (this.isTeen()) {
+      this.createAdventureElements();
+    }
+
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Character Creation Scene: Ready (Adventure Theme)');
+  }
+
+  /**
+   * Create adventure-themed visual elements for teens
+   */
+  private createAdventureElements(): void {
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+
+    // Add ancient pillars flanking the scene
+    this.vfx.createAncientPillar(120, this.scale.height - 50, 200);
+    this.vfx.createAncientPillar(this.scale.width - 120, this.scale.height - 50, 200);
+
+    // Add treasure chest for the journey ahead
+    this.vfx.createTreasureChest(centerX - 400, centerY + 100, 0xD4AF37);
+
+    // Add magical torches in corners
+    this.vfx.createMagicalTorch(150, 200, 0xFF6B35);
+    this.vfx.createMagicalTorch(this.scale.width - 150, 200, 0xFF6B35);
+
+    // Add floating mystical runes around the scene
+    this.vfx.createFloatingRunes(8, 0x9370DB);
+
+    // Add floating wisdom books for the journey
+    this.vfx.createFloatingBook(centerX - 450, centerY - 100, 0xD4AF37);
+    this.vfx.createFloatingBook(centerX + 450, centerY - 100, 0x9370DB);
+
+    // Add guardian statues watching over
+    this.vfx.createGuardianStatue(200, this.scale.height - 200);
+    this.vfx.createGuardianStatue(this.scale.width - 200, this.scale.height - 200);
+
+    // Add magical compass for guidance
+    this.vfx.createMagicalCompass(centerX, this.scale.height - 100);
+
+    // Add periodic flying creatures
+    this.time.addEvent({
+      delay: 8000,
+      callback: () => {
+        const startX = Phaser.Math.Between(0, 100);
+        const startY = Phaser.Math.Between(200, 400);
+        const color = Phaser.Utils.Array.GetRandom([0xFF6B9D, 0x9370DB, 0xD4AF37]);
+        this.vfx.createFlyingCreature(startX, startY, color);
+      },
+      loop: true
+    });
+
+    // Add shooting stars periodically
+    this.time.addEvent({
+      delay: 6000,
+      callback: () => {
+        this.vfx.createShootingStar(0xD4AF37);
+      },
+      loop: true
+    });
+  }
+
+  /**
+   * Create calming therapeutic visual elements for adults
+   */
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+
+    // Add gentle breathing circles for mindfulness
+    this.vfx.createBreathingCircle(centerX - 400, centerY, 0x87CEEB, 80);
+    this.vfx.createBreathingCircle(centerX + 400, centerY, 0xB0C4DE, 70);
+
+    // Add calm ambient particles throughout
+    this.vfx.createCalmAmbientParticles(15, 0xB0C4DE);
+
+    // Add mindfulness ripples at center
+    this.vfx.createMindfulnessRipples(centerX, centerY + 200, 0x87CEEB);
+
+    // Add grounding elements for stability
+    this.vfx.createGroundingElement(200, this.scale.height - 150, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 200, this.scale.height - 150, 0x8B7355);
+
+    // Add therapeutic halos in layers
+    this.vfx.createTherapeuticHalo(centerX, centerY - 150, 0x87CEEB, 120);
+    this.vfx.createTherapeuticHalo(centerX, centerY - 150, 0xB0C4DE, 180);
+
+    // Add calm waves at bottom for tranquility
+    this.vfx.createCalmWaves(this.scale.height - 80, 0x87CEEB);
+
+    // Add therapeutic gradient overlay
+    this.vfx.createTherapeuticGradient(0x87CEEB);
+
+    // Add meditation dot for focus
+    this.vfx.createMeditationDot(centerX, this.scale.height - 100, 0xFFE4B5);
+
+    // Add mindfulness symbols floating gently
+    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
+
+    // Add focus rings around center
+    this.vfx.createFocusRings(centerX, centerY - 150, 0x87CEEB);
   }
 
   private createAvatarButton(x: number, y: number): void {
