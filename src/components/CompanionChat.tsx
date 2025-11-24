@@ -39,12 +39,14 @@ export const CompanionChat: React.FC<CompanionChatProps> = ({ isOpen, onClose })
     setIsLoading(true);
 
     try {
-      // Get current context
+      // Get current context with full awareness
       const currentSession = progress?.currentSession;
       const context = {
         currentEmotion: currentSession?.emotionId,
         currentModule: currentSession?.currentModule || 0,
-        playerAge: playerProfile?.age || 16,
+        playerAge: playerProfile?.age,
+        playerMood: 'engaged', // Could track this
+        recentPlayerWriting: undefined, // TODO: Pass recent module writings for better context
       };
 
       await sendMessage(userMessage, context);

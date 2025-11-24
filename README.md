@@ -22,6 +22,33 @@ Transform emotional exploration into an epic adventure. Help players aged 12-20 
 
 ---
 
+## 🔑 Setup: Claude API Key (Required for Companion Chat)
+
+The AI companion chat requires a Claude API key to function. Follow these steps:
+
+**1. Get Your API Key:**
+- Go to [https://console.anthropic.com/](https://console.anthropic.com/)
+- Sign up or log in
+- Navigate to "API Keys" and create a new key
+
+**2. Configure Locally:**
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your API key:
+VITE_CLAUDE_API_KEY=sk-ant-your-actual-key-here
+```
+
+**3. Restart Dev Server:**
+```bash
+npm run dev
+```
+
+**Note**: Without the API key, the companion chat will use fallback responses. The rest of the game works fine without it.
+
+---
+
 ## 📚 Complete Documentation
 
 This project has comprehensive documentation split into 5 parts to stay under token limits:
