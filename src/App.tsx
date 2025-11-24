@@ -22,8 +22,12 @@ import { Module8WisdomTree } from './game/scenes/Module8WisdomTree';
 import { Module9RipplePool } from './game/scenes/Module9RipplePool';
 import { CompanionChat } from './components/CompanionChat';
 import { CompanionChatButton } from './components/CompanionChatButton';
+import { TextInputModal } from './components/TextInputModal';
+import { ReadyPlayerMeAvatar } from './components/ReadyPlayerMeAvatar';
 import { useCompanionStore } from './stores/companionStore';
 import { usePlayerStore } from './stores/playerStore';
+import { useModalStore } from './stores/modalStore';
+import { useAvatarStore } from './stores/avatarStore';
 import './App.css';
 
 function App() {
@@ -32,6 +36,8 @@ function App() {
 
   const playerProfile = usePlayerStore((state) => state.profile);
   const { initializeCompanion } = useCompanionStore();
+  const modalState = useModalStore();
+  const avatarState = useAvatarStore();
 
   useEffect(() => {
     // Initialize Phaser game
@@ -103,6 +109,26 @@ function App() {
           </>
         )}
       </div>
+
+      {/* Text Input Modal */}
+      <TextInputModal
+        isOpen={modalState.isOpen}
+        title={modalState.title}
+        placeholder={modalState.placeholder}
+        initialValue={modalState.initialValue}
+        onSubmit={(value) => modalState.onSubmit?.(value)}
+        onCancel={() => modalState.onCancel?.()}
+      />
+
+      {/* Ready Player Me Avatar Creator */}
+      <ReadyPlayerMeAvatar
+        isOpen={avatarState.isAvatarCreatorOpen}
+        onAvatarCreated={(url) => {
+          avatarState.setAvatarUrl(url);
+          avatarState.closeAvatarCreator();
+        }}
+        onClose={() => avatarState.closeAvatarCreator()}
+      />
     </div>
   );
 }

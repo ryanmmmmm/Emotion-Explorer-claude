@@ -1,18 +1,15 @@
 /**
- * Character Creation Scene - RESPONSIVE REDESIGN
- * Simplified, centered layout that works at any screen size
+ * Character Creation Scene - MVP SIMPLIFIED
+ * Just name entry - customization moved to v2
  */
 
 import { BaseScene } from './BaseScene';
 import { SCENE_KEYS } from '../config/constants';
 import { usePlayerStore } from '@/stores/playerStore';
+import { showTextInput } from '@/stores/modalStore';
+import { useAvatarStore } from '@/stores/avatarStore';
 import {
   AvatarCustomization,
-  BodyType,
-  HairStyle,
-  FaceShape,
-  EyeShape,
-  OutfitType,
   SKIN_TONES,
   HAIR_COLORS,
   EYE_COLORS,
@@ -37,15 +34,15 @@ export class CharacterCreationScene extends BaseScene {
   constructor() {
     super(SCENE_KEYS.CHARACTER_CREATION);
 
-    // Default avatar
+    // Default avatar (no customization in MVP)
     this.currentAvatar = {
       bodyType: 'average',
-      skinTone: SKIN_TONES[3].value, // Medium
+      skinTone: SKIN_TONES[3].value,
       hairStyle: 'shoulder-length',
-      hairColor: HAIR_COLORS[2].value, // Brown
+      hairColor: HAIR_COLORS[2].value,
       faceShape: 'oval',
       eyeShape: 'almond',
-      eyeColor: EYE_COLORS[0].value, // Brown
+      eyeColor: EYE_COLORS[0].value,
       outfit: 'wanderer',
       accessories: [],
     };
@@ -58,360 +55,217 @@ export class CharacterCreationScene extends BaseScene {
   create(): void {
     this.setEmotion('playful');
     this.fadeIn();
-    this.cameras.main.setBackgroundColor('#1A1A2E');
-    this.createStarfield();
+
+    // Adventure theme background
+    this.cameras.main.setBackgroundColor('#1A0F08');
+    this.createParchmentBackground();
+    this.createOrnateFrame();
     this.createEmotionalWisps();
 
-    // Responsive positioning
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
 
-    // Title
+    // Title with adventure styling
     this.add
-      .text(centerX, 80, 'Create Your Avatar', {
-        fontSize: '56px',
-        color: '#ffffff',
+      .text(centerX, centerY - 300, 'Welcome to Your Journey', {
+        fontSize: '64px',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 4, 'rgba(0, 0, 0, 0.8)', 10);
 
-    // Subtitle
+    // Subtitle with gold italics
     this.add
       .text(
         centerX,
-        140,
-        'Customize your appearance for your journey',
+        centerY - 220,
+        "Let's begin by introducing ourselves",
         {
-          fontSize: '22px',
-          color: '#FFD700',
-          fontFamily: 'Merriweather, serif',
-          align: 'center',
+          fontSize: '28px',
+          color: '#D4AF37',
+          fontFamily: 'Crimson Text, serif',
+          fontStyle: 'italic',
         }
       )
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.8)', 6);
 
-    // Create simplified UI
-    this.createAvatarPreview();
-    this.createQuickCustomization();
-    this.createNameInput();
-    this.createCompleteButton();
+    // Avatar creation button
+    this.createAvatarButton(centerX, centerY - 80);
 
-    console.log('✅ Character Creation Scene: Ready (Responsive)');
+    // Name inputs
+    this.createNameInputs(centerX, centerY + 120);
+
+    // Complete button
+    this.createCompleteButton(centerX, centerY + 260);
+
+    console.log('✅ Character Creation Scene: Ready (Adventure Theme)');
   }
 
-  private createAvatarPreview(): void {
-    const centerX = this.scale.width / 2;
-    const previewY = 300;
+  private createAvatarButton(x: number, y: number): void {
+    // Check if avatar already created
+    const avatarUrl = useAvatarStore.getState().avatarUrl;
 
-    // Preview background
-    this.add
-      .rectangle(centerX, previewY, 300, 300, 0x0f3460, 0.5)
-      .setStrokeStyle(3, 0xffffff, 0.3);
+    if (avatarUrl) {
+      // Extract avatar ID from URL for rendering
+      // URL format: https://models.readyplayer.me/[id].glb
+      const avatarId = avatarUrl.split('/').pop()?.replace('.glb', '');
 
-    // Create preview container
-    this.previewContainer = this.add.container(centerX, previewY);
-    this.updateAvatarPreview();
-  }
+      // Use Ready Player Me render API to display avatar as 2D image
+      const avatarImageUrl = `https://models.readyplayer.me/${avatarId}.png?scene=fullbody-portrait-v1&quality=high`;
 
-  private updateAvatarPreview(): void {
-    // Clear existing preview
-    this.previewContainer.removeAll(true);
+      // Load and display avatar image
+      this.load.image(`avatar_${avatarId}`, avatarImageUrl);
+      this.load.once('complete', () => {
+        // Avatar portrait frame
+        const frame = this.add.rectangle(x, y, 220, 300, 0x2C1810, 0.9)
+          .setStrokeStyle(4, 0xD4AF37, 1);
 
-    const scale = 1.2;
+        // Display avatar image
+        const avatarImage = this.add.image(x, y, `avatar_${avatarId}`)
+          .setDisplaySize(200, 280);
 
-    // Body
-    const bodyColor = parseInt(this.currentAvatar.skinTone.replace('#', ''), 16);
-    const body = this.add.ellipse(0, 40, 60 * scale, 90 * scale, bodyColor, 1);
-    this.previewContainer.add(body);
+        // Gold border glow
+        this.tweens.add({
+          targets: frame,
+          alpha: 0.95,
+          duration: 2000,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
 
-    // Head
-    const head = this.add.circle(0, -30, 40 * scale, bodyColor, 1);
-    this.previewContainer.add(head);
+        // Label
+        this.add.text(x, y - 170, 'Your Avatar', {
+          fontSize: '20px',
+          color: '#D4AF37',
+          fontFamily: 'Cinzel, serif',
+          fontStyle: 'bold',
+        }).setOrigin(0.5);
 
-    // Hair
-    const hairColor = parseInt(this.currentAvatar.hairColor.replace('#', ''), 16);
-    let hair: Phaser.GameObjects.GameObject;
-
-    if (this.currentAvatar.hairStyle.includes('short') || this.currentAvatar.hairStyle === 'pixie') {
-      hair = this.add.ellipse(0, -50, 80 * scale, 40 * scale, hairColor, 1);
-    } else if (this.currentAvatar.hairStyle.includes('long')) {
-      hair = this.add.ellipse(0, -20, 90 * scale, 110 * scale, hairColor, 1);
-    } else if (this.currentAvatar.hairStyle === 'afro') {
-      hair = this.add.circle(0, -40, 55 * scale, hairColor, 1);
+        // Edit button below avatar
+        this.createButton(x, y + 180, 'Edit Avatar', () => {
+          console.log('Opening Ready Player Me to edit avatar...');
+          useAvatarStore.getState().openAvatarCreator();
+        }, 200, 50);
+      });
+      this.load.start();
     } else {
-      hair = this.add.ellipse(0, -40, 80 * scale, 60 * scale, hairColor, 1);
-    }
-    this.previewContainer.add(hair);
+      // Create avatar button with adventure styling
+      const btn = this.createButton(x, y, '🎭 Create Your Avatar', () => {
+        console.log('Opening Ready Player Me...');
+        useAvatarStore.getState().openAvatarCreator();
+      }, 300, 70);
 
-    // Eyes
-    const eyeColor = parseInt(this.currentAvatar.eyeColor.replace('#', ''), 16);
-    const leftEye = this.add.ellipse(-15, -30, 12, 16, eyeColor, 1);
-    const rightEye = this.add.ellipse(15, -30, 12, 16, eyeColor, 1);
-    this.previewContainer.add([leftEye, rightEye]);
-
-    // Outfit indicator
-    const outfitColors = {
-      wanderer: 0x8B4513,
-      scholar: 0x4169E1,
-      guardian: 0x696969,
-      'free-spirit': 0xFF69B4,
-    };
-    const outfitColor = outfitColors[this.currentAvatar.outfit];
-    const outfit = this.add.rectangle(0, 110, 80 * scale, 60 * scale, outfitColor, 1);
-    this.previewContainer.add(outfit);
-  }
-
-  private createQuickCustomization(): void {
-    const centerX = this.scale.width / 2;
-    const startY = 530;
-    const rowSpacing = 80;
-
-    // Body Type
-    this.createCustomRow(
-      'Body Type:',
-      startY,
-      ['slender', 'athletic', 'average', 'curvy'],
-      (type: string) => {
-        this.currentAvatar.bodyType = type as BodyType;
-        this.updateAvatarPreview();
-      },
-      (type: string) => this.currentAvatar.bodyType === type
-    );
-
-    // Hair Style
-    this.createCustomRow(
-      'Hair Style:',
-      startY + rowSpacing,
-      ['pixie', 'bob', 'shoulder-length', 'long'],
-      (style: string) => {
-        const styleMap: {[key:string]: HairStyle} = {
-          'long': 'straight-long',
-          'pixie': 'pixie',
-          'bob': 'bob',
-          'shoulder-length': 'shoulder-length'
-        };
-        this.currentAvatar.hairStyle = styleMap[style] || style as HairStyle;
-        this.updateAvatarPreview();
-      },
-      (style: string) => {
-        const styleMap: {[key:string]: HairStyle} = {
-          'long': 'straight-long',
-          'pixie': 'pixie',
-          'bob': 'bob',
-          'shoulder-length': 'shoulder-length'
-        };
-        return this.currentAvatar.hairStyle === (styleMap[style] || style);
-      }
-    );
-
-    // Outfit
-    this.createCustomRow(
-      'Outfit:',
-      startY + rowSpacing * 2,
-      ['wanderer', 'scholar', 'guardian', 'free-spirit'],
-      (outfit: string) => {
-        this.currentAvatar.outfit = outfit as OutfitType;
-        this.updateAvatarPreview();
-      },
-      (outfit: string) => this.currentAvatar.outfit === outfit
-    );
-
-    // Color swatches
-    this.createColorRow('Hair Color:', startY + rowSpacing * 3, HAIR_COLORS.slice(0, 6), (color) => {
-      this.currentAvatar.hairColor = color;
-      this.updateAvatarPreview();
-    });
-
-    this.createColorRow('Skin Tone:', startY + rowSpacing * 4, SKIN_TONES.slice(0, 6), (color) => {
-      this.currentAvatar.skinTone = color;
-      this.updateAvatarPreview();
-    });
-  }
-
-  private createCustomRow(
-    label: string,
-    y: number,
-    options: string[],
-    onClick: (value: string) => void,
-    isSelected: (value: string) => boolean
-  ): void {
-    const centerX = this.scale.width / 2;
-    const labelX = this.scale.width * 0.25; // 25% from left edge
-
-    this.add
-      .text(labelX, y, label, {
-        fontSize: '20px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0, 0.5);
-
-    const buttonWidth = Math.min(120, this.scale.width * 0.08); // Scale button width
-    const buttonSpacing = buttonWidth + 10;
-    const startX = centerX - ((options.length - 1) * buttonSpacing) / 2;
-
-    options.forEach((option, index) => {
-      const button = this.createOptionButton(
-        startX + index * buttonSpacing,
-        y,
-        option.replace('-', ' '),
-        () => onClick(option),
-        isSelected(option),
-        buttonWidth
-      );
-    });
-  }
-
-  private createColorRow(
-    label: string,
-    y: number,
-    colors: Array<{name: string; value: string}>,
-    onClick: (value: string) => void
-  ): void {
-    const centerX = this.scale.width / 2;
-    const labelX = this.scale.width * 0.25; // 25% from left edge
-
-    this.add
-      .text(labelX, y, label, {
-        fontSize: '20px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0, 0.5);
-
-    const swatchSize = Math.min(18, this.scale.width * 0.012); // Scale swatch size
-    const swatchSpacing = Math.min(50, this.scale.width * 0.035); // Scale spacing
-    const startX = centerX - ((colors.length - 1) * swatchSpacing) / 2;
-
-    colors.forEach((color, index) => {
-      const swatch = this.add
-        .circle(startX + index * swatchSpacing, y, swatchSize, parseInt(color.value.replace('#', ''), 16), 1)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(3, 0xffffff, 0.8);
-
-      swatch.on('pointerdown', () => {
-        onClick(color.value);
+      // Add glow animation
+      this.tweens.add({
+        targets: btn,
+        alpha: 0.8,
+        duration: 1500,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
       });
 
-      swatch.on('pointerover', () => {
-        swatch.setScale(1.2);
-      });
-
-      swatch.on('pointerout', () => {
-        swatch.setScale(1);
-      });
-    });
-  }
-
-  private createOptionButton(
-    x: number,
-    y: number,
-    text: string,
-    onClick: () => void,
-    isSelected: boolean,
-    width: number = 120
-  ): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y);
-    const height = 40;
-
-    const bg = this.add
-      .rectangle(0, 0, width, height, isSelected ? this.emotionColor : 0x4169E1, isSelected ? 1 : 0.6)
-      .setInteractive({ useHandCursor: true })
-      .setStrokeStyle(2, 0xffffff, isSelected ? 1 : 0.3);
-
-    const buttonText = this.add
-      .text(0, 0, text, {
+      // Add helper text
+      this.add.text(x, y + 55, '(Optional - You can skip this)', {
         fontSize: '16px',
-        color: '#ffffff',
-        fontFamily: 'Raleway, sans-serif',
-      })
-      .setOrigin(0.5);
-
-    container.add([bg, buttonText]);
-
-    bg.on('pointerdown', onClick);
-
-    bg.on('pointerover', () => {
-      bg.setFillStyle(this.emotionColor, 0.8);
-    });
-
-    bg.on('pointerout', () => {
-      bg.setFillStyle(isSelected ? this.emotionColor : 0x4169E1, isSelected ? 1 : 0.6);
-    });
-
-    return container;
+        color: '#888888',
+        fontFamily: 'Crimson Text, serif',
+      }).setOrigin(0.5);
+    }
   }
 
-  private createNameInput(): void {
-    const centerX = this.scale.width / 2;
-    const y = 920;
+  private createNameInputs(centerX: number, startY: number): void {
+    const inputWidth = 400;
+    const inputHeight = 60;
+    const spacing = 100;
 
-    // Player name
+    // Your Name with adventure styling
     this.add
-      .text(centerX - 250, y - 30, 'Your Name:', {
-        fontSize: '22px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
+      .text(centerX, startY, 'Your Name:', {
+        fontSize: '28px',
+        color: '#D4AF37',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
     const nameBox = this.add
-      .rectangle(centerX - 250, y + 10, 280, 50, 0x0f3460, 0.8)
-      .setStrokeStyle(3, 0xffffff, 0.5)
+      .rectangle(centerX, startY + 40, inputWidth, inputHeight, 0x3D2F24, 0.9)
+      .setStrokeStyle(3, 0x5C4A3A, 0.8)
       .setInteractive({ useHandCursor: true });
 
     this.nameText = this.add
-      .text(centerX - 250, y + 10, 'Click here...', {
-        fontSize: '18px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+      .text(centerX, startY + 40, 'Click to enter...', {
+        fontSize: '24px',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5)
-      .setAlpha(0.7);
+      .setAlpha(0.6);
+
+    nameBox.on('pointerover', () => {
+      nameBox.setStrokeStyle(3, 0xD4AF37, 1);
+    });
+
+    nameBox.on('pointerout', () => {
+      nameBox.setStrokeStyle(3, 0x5C4A3A, 0.8);
+    });
 
     nameBox.on('pointerdown', async () => {
-      const name = await this.showTextInputModal(
-        'Choose Your Name',
-        'Enter your character name...',
-        'This is how you will be addressed throughout your journey.',
-        0,
+      const name = await showTextInput(
+        'What is your name?',
+        'Enter your name...',
         this.playerName
       );
       if (name && name.trim()) {
         this.playerName = name.trim();
-        this.nameText.setText(this.playerName).setAlpha(1);
+        this.nameText.setText(this.playerName).setAlpha(1).setColor('#F4E5B8');
       }
     });
 
-    // Companion name
+    // Companion Name with adventure styling
+    const companionY = startY + spacing;
+
     this.add
-      .text(centerX + 250, y - 30, "Companion's Name:", {
-        fontSize: '22px',
+      .text(centerX, companionY, "Your Guide's Name:", {
+        fontSize: '28px',
         color: '#9370DB',
-        fontFamily: 'Raleway, sans-serif',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5);
 
     const companionBox = this.add
-      .rectangle(centerX + 250, y + 10, 280, 50, 0x0f3460, 0.8)
-      .setStrokeStyle(3, 0x9370db, 0.5)
+      .rectangle(centerX, companionY + 40, inputWidth, inputHeight, 0x3D2F24, 0.9)
+      .setStrokeStyle(3, 0x9370DB, 0.8)
       .setInteractive({ useHandCursor: true });
 
     this.companionNameText = this.add
-      .text(centerX + 250, y + 10, 'Lumina', {
-        fontSize: '18px',
-        color: '#9370db',
-        fontFamily: 'Merriweather, serif',
+      .text(centerX, companionY + 40, 'Lumina', {
+        fontSize: '24px',
+        color: '#9370DB',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5)
-      .setAlpha(0.7);
+      .setAlpha(0.9);
+
+    companionBox.on('pointerover', () => {
+      companionBox.setStrokeStyle(3, 0xD4AF37, 1);
+    });
+
+    companionBox.on('pointerout', () => {
+      companionBox.setStrokeStyle(3, 0x9370DB, 0.8);
+    });
 
     companionBox.on('pointerdown', async () => {
-      const name = await this.showTextInputModal(
-        'Name Your Companion',
-        'Enter a name or leave blank for "Lumina"...',
-        'Your companion will guide you through your journey.',
-        0,
+      const name = await showTextInput(
+        "Name Your Guide",
+        'Enter a name (or leave empty for Lumina)...',
         this.companionName === 'Lumina' ? '' : this.companionName
       );
       const companionName = name && name.trim() ? name.trim() : 'Lumina';
@@ -423,15 +277,14 @@ export class CharacterCreationScene extends BaseScene {
     this.companionName = 'Lumina';
   }
 
-  private createCompleteButton(): void {
-    const centerX = this.scale.width / 2;
+  private createCompleteButton(centerX: number, y: number): void {
     const button = this.createButton(
       centerX,
-      1000,
+      y,
       'Begin Your Journey',
       () => this.completeCharacterCreation(),
-      350,
-      70
+      400,
+      80
     );
 
     // Pulsing animation
@@ -441,6 +294,7 @@ export class CharacterCreationScene extends BaseScene {
       duration: 1000,
       yoyo: true,
       repeat: -1,
+      ease: 'Sine.easeInOut',
     });
   }
 
@@ -448,9 +302,9 @@ export class CharacterCreationScene extends BaseScene {
     if (!this.playerName) {
       // Show error
       const errorText = this.add
-        .text(this.scale.width / 2, 950, 'Please enter your name!', {
-          fontSize: '22px',
-          color: '#FF0000',
+        .text(this.scale.width / 2, this.scale.height / 2 + 200, 'Please enter your name first!', {
+          fontSize: '28px',
+          color: '#FF4444',
           fontFamily: 'Raleway, sans-serif',
         })
         .setOrigin(0.5);
@@ -459,7 +313,7 @@ export class CharacterCreationScene extends BaseScene {
         targets: errorText,
         alpha: 0,
         duration: 2000,
-        delay: 1000,
+        delay: 1500,
         onComplete: () => errorText.destroy(),
       });
       return;
@@ -476,27 +330,99 @@ export class CharacterCreationScene extends BaseScene {
     // Update with companion name
     await playerStore.updateCompanionName(this.companionName);
 
-    console.log('✅ Player profile created:', this.playerName, 'with companion:', this.companionName);
+    console.log('✅ Player profile created:', this.playerName, 'with guide:', this.companionName);
 
     // Visual feedback
-    this.cameras.main.flash(500, 255, 215, 0);
+    this.cameras.main.flash(800, 255, 215, 0);
 
     // Transition to Hub
-    this.time.delayedCall(600, () => {
+    this.time.delayedCall(1000, () => {
       this.transitionToScene(SCENE_KEYS.HUB);
     });
   }
 
-  private createStarfield(): void {
+  private createParchmentBackground(): void {
     const graphics = this.add.graphics();
-    for (let i = 0; i < 200; i++) {
-      const x = Phaser.Math.Between(0, this.scale.width);
-      const y = Phaser.Math.Between(0, this.scale.height);
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
       const size = Phaser.Math.Between(1, 3);
-      const alpha = Phaser.Math.FloatBetween(0.3, 1);
-      graphics.fillStyle(0xffffff, alpha);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+      graphics.fillStyle(0x5C4A3A, alpha);
       graphics.fillCircle(x, y, size);
     }
+
     graphics.setDepth(0);
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.8,
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + (cornerSize - 15) * flipX, corner.y + 10 * flipY);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + 10 * flipX, corner.y + (cornerSize - 15) * flipY);
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
+    });
+
+    graphics.setDepth(1);
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.7,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
   }
 }

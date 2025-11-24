@@ -22,6 +22,7 @@ export class Module6CatharticFalls extends BaseScene {
   private cyclesCompleted: number = 0;
   private isBreathing: boolean = false;
   private instructionText!: Phaser.GameObjects.Text;
+  private journalEntry: string = '';
 
   constructor() {
     super(SCENE_KEYS.MODULE_6);
@@ -53,16 +54,20 @@ export class Module6CatharticFalls extends BaseScene {
     this.add
       .text(centerX, 60, 'The Cathartic Falls', {
         fontSize: '52px',
-        color: '#FFD700',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
     this.add
       .text(centerX, 120, 'Module 6: Breath and Release', {
         fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        fontStyle: 'italic',
       })
       .setOrigin(0.5);
 
@@ -83,8 +88,8 @@ export class Module6CatharticFalls extends BaseScene {
         'Follow the breathing circle to regulate your emotion.\nBreathe in, hold, breathe out. Complete 3 full cycles.',
         {
           fontSize: '20px',
-          color: '#AACCFF',
-          fontFamily: 'Merriweather, serif',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
         }
@@ -116,6 +121,9 @@ export class Module6CatharticFalls extends BaseScene {
       })
       .setOrigin(0.5);
 
+    // Add journal input below breathing circle
+    this.createJournalInput(centerX);
+
     // Continue button
     const continueBtn = this.createButton(
       centerX,
@@ -134,24 +142,30 @@ export class Module6CatharticFalls extends BaseScene {
       callback: () => {
         counterText.setText(`Breath Cycles: ${this.cyclesCompleted} / 3`);
 
-        if (this.cyclesCompleted >= 3) {
+        if (this.cyclesCompleted < 3) {
           this.instructionText.setText(
-            'Excellent work! Notice how your breath can calm your emotions.\nYou can continue breathing or move on.'
+            'Follow the breathing circle to regulate your emotion.\nThen journal about your experience below.'
+          );
+        } else if (this.cyclesCompleted >= 3 && this.journalEntry.trim().length === 0) {
+          this.instructionText.setText(
+            'Excellent breathing! Now journal about your emotional experience below.'
+          );
+        } else if (this.journalEntry.trim().length > 0) {
+          this.instructionText.setText(
+            'Perfect! You have practiced breath regulation and reflection.\nYou can continue when ready.'
           );
           continueBtn.setAlpha(1);
-        } else if (this.cyclesCompleted > 0) {
-          this.instructionText.setText(
-            `Good! ${3 - this.cyclesCompleted} more cycles to complete this exercise.`
-          );
         }
       },
     });
 
-    console.log('✅ Module 6 - The Cathartic Falls: Ready');
+    console.log('✅ Module 6 - The Cathartic Falls: Ready (Adventure Theme)');
   }
 
   private createBackground(): void {
-    this.cameras.main.setBackgroundColor('#1A1A2E');
+    this.cameras.main.setBackgroundColor('#1A0F08');
+    this.createParchmentBackground();
+    this.createOrnateFrame();
 
     const graphics = this.add.graphics();
 
@@ -292,6 +306,64 @@ export class Module6CatharticFalls extends BaseScene {
     });
   }
 
+  private createJournalInput(centerX: number): void {
+    const y = 650;
+
+    this.add
+      .text(centerX, y, 'Journal about your emotional experience:', {
+        fontSize: '20px',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        fontStyle: 'italic',
+        align: 'center',
+        wordWrap: { width: 800 },
+      })
+      .setOrigin(0.5);
+
+    const textBox = this.add
+      .rectangle(centerX, y + 70, 800, 120, 0x2C1810, 0.9)
+      .setStrokeStyle(3, 0xD4AF37, 0.7)
+      .setInteractive({ useHandCursor: true });
+
+    const boxText = this.add
+      .text(centerX, y + 70, 'Click to write your journal entry...', {
+        fontSize: '18px',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
+        align: 'center',
+        wordWrap: { width: 760 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0.7);
+
+    textBox.on('pointerover', () => {
+      textBox.setStrokeStyle(4, 0xD4AF37, 1);
+    });
+
+    textBox.on('pointerout', () => {
+      textBox.setStrokeStyle(3, 0xD4AF37, 0.7);
+    });
+
+    textBox.on('pointerdown', async () => {
+      const response = await this.showTextInputModal(
+        'Feelings Journal',
+        'Write your thoughts...',
+        'Journal freely about your emotional experience. Let your thoughts flow without judgment or editing. How do you feel right now? What insights emerged from the breathing exercise?',
+        20, // minimum 20 words
+        this.journalEntry
+      );
+
+      if (response && response.trim()) {
+        const displayText = response.trim().length > 200
+          ? response.trim().substring(0, 197) + '...'
+          : response.trim();
+        boxText.setText(displayText);
+        boxText.setAlpha(1);
+        this.journalEntry = response.trim();
+      }
+    });
+  }
+
   private hexToRgb(hex: number): [number, number, number] {
     const r = (hex >> 16) & 0xff;
     const g = (hex >> 8) & 0xff;
@@ -300,16 +372,17 @@ export class Module6CatharticFalls extends BaseScene {
   }
 
   private completeModule(): void {
-    if (this.cyclesCompleted < 3) {
-      return; // Need 3 breath cycles
+    if (this.cyclesCompleted < 3 || this.journalEntry.trim().length === 0) {
+      return; // Need 3 breath cycles AND journal entry
     }
 
     console.log(`✅ Module 6 completed - ${this.cyclesCompleted} breath cycles`);
+    console.log(`Journal entry: ${this.journalEntry.substring(0, 100)}...`);
 
     const progressStore = useGameProgressStore.getState();
     progressStore.completeModule(6, {
       emotionSelected: this.emotionId,
-      journalEntry: `Completed ${this.cyclesCompleted} breathing cycles`,
+      journalEntry: this.journalEntry,
     });
 
     this.cameras.main.flash(500, 255, 215, 0);
@@ -322,6 +395,91 @@ export class Module6CatharticFalls extends BaseScene {
 
     this.time.delayedCall(600, () => {
       this.transitionToScene(SCENE_KEYS.MODULE_7, { emotionId: this.emotionId });
+    });
+  }
+
+  private createParchmentBackground(): void {
+    const graphics = this.add.graphics();
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const size = Phaser.Math.Between(1, 3);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+      graphics.fillStyle(0x5C4A3A, alpha);
+      graphics.fillCircle(x, y, size);
+    }
+
+    graphics.setDepth(0);
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.8,
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + (cornerSize - 15) * flipX, corner.y + 10 * flipY);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + 10 * flipX, corner.y + (cornerSize - 15) * flipY);
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
+    });
+
+    graphics.setDepth(1);
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.7,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
     });
   }
 }

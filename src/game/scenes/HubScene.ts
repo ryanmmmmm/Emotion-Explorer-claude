@@ -7,6 +7,7 @@ import { BaseScene } from './BaseScene';
 import { SCENE_KEYS } from '../config/constants';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameProgressStore } from '@/stores/gameProgressStore';
+import { useAvatarStore } from '@/stores/avatarStore';
 import { EMOTION_DEFINITIONS, EmotionType } from '@/types/emotion.types';
 import { VisualEffectsManager } from '../effects/VisualEffectsManager';
 
@@ -36,20 +37,22 @@ export class HubScene extends BaseScene {
     // Initialize visual effects manager
     this.vfx = new VisualEffectsManager(this);
 
-    // Enhanced background with effects
+    // Adventure-themed background
     this.createHubBackground();
+    this.createParchmentBackground();
+    this.createOrnateFrame();
 
-    // Add stunning visual effects
-    this.vfx.createAuroraBackground(0x9370db);
+    // Add stunning visual effects with gold theme
+    this.vfx.createAuroraBackground(0x5C4A3A);
     this.vfx.createParallaxStars(3);
-    this.vfx.createFloatingOrbs(25, 0x9370db);
-    this.vfx.createFireflies(20, 0xffd700);
+    this.vfx.createFloatingOrbs(25, 0xD4AF37);
+    this.vfx.createFireflies(20, 0xD4AF37);
 
-    // Center portal effect
+    // Center portal effect with gold
     this.vfx.createPortalEffect(
       this.scale.width / 2,
       this.scale.height / 2 - 50,
-      0x00ced1
+      0xD4AF37
     );
 
     this.createEmotionalWisps();
@@ -58,14 +61,42 @@ export class HubScene extends BaseScene {
     const playerProfile = usePlayerStore.getState().profile;
     const playerName = playerProfile?.name || 'Explorer';
 
-    // Title
-    this.add
-      .text(this.scale.width / 2, 60, 'The Emotional Realm', {
+    const centerX = this.scale.width / 2;
+
+    // Title with adventure styling
+    const title = this.add
+      .text(centerX, 60, 'The Emotional Realm', {
         fontSize: '56px',
-        color: '#ffffff',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 4, 'rgba(0, 0, 0, 0.8)', 10);
+
+    // Gold glow around title
+    const titleGlow = this.add
+      .text(centerX, 60, 'The Emotional Realm', {
+        fontSize: '56px',
+        color: '#D4AF37',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setAlpha(0.3)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(-1);
+
+    // Gentle glow animation
+    this.tweens.add({
+      targets: [titleGlow],
+      alpha: 0.15,
+      duration: 2500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
 
     // Welcome message (first time only)
     if (!this.welcomeShown) {
@@ -85,37 +116,26 @@ export class HubScene extends BaseScene {
     // UI Elements
     this.createUIPanel();
 
-    console.log('✅ Hub Scene: Ready');
+    console.log('✅ Hub Scene: Ready (Adventure Theme)');
   }
 
   private createHubBackground(): void {
-    // Gradient background
+    // Deep brown adventure background with gradient
     const graphics = this.add.graphics();
 
-    // Create vertical gradient
+    // Create vertical gradient (brown tones)
     const gradientStops = [
-      { offset: 0, color: 0x0f3460 },
-      { offset: 0.5, color: 0x16213e },
-      { offset: 1, color: 0x1a1a2e },
+      { offset: 0, color: 0x2C1810 },
+      { offset: 0.5, color: 0x1A0F08 },
+      { offset: 1, color: 0x3D2F24 },
     ];
 
-    graphics.fillStyle(gradientStops[0].color);
+    graphics.fillStyle(gradientStops[1].color);
     graphics.fillRect(0, 0, this.scale.width, this.scale.height);
 
-    // Add stars
-    for (let i = 0; i < 150; i++) {
-      const x = Phaser.Math.Between(0, this.scale.width);
-      const y = Phaser.Math.Between(0, this.scale.height);
-      const size = Phaser.Math.Between(1, 2);
-      const alpha = Phaser.Math.FloatBetween(0.2, 0.8);
-
-      graphics.fillStyle(0xffffff, alpha);
-      graphics.fillCircle(x, y, size);
-    }
-
-    // Add mystical ground platform
+    // Add mystical ground platform (brown wood)
     const platformY = this.scale.height - 150;
-    graphics.fillStyle(0x2c3e50, 0.6);
+    graphics.fillStyle(0x5C4A3A, 0.6);
     graphics.fillRoundedRect(
       this.scale.width / 2 - 500,
       platformY,
@@ -124,12 +144,12 @@ export class HubScene extends BaseScene {
       5
     );
 
-    // Add ethereal glow
+    // Add golden ethereal glow
     const glow = this.add.circle(
       this.scale.width / 2,
       this.scale.height / 2,
       400,
-      0x00ced1,
+      0xD4AF37,
       0.05
     );
 
@@ -147,15 +167,19 @@ export class HubScene extends BaseScene {
     const overlay = this.add.container(this.scale.width / 2, this.scale.height / 2);
     overlay.setDepth(1000);
 
-    const bg = this.add.rectangle(0, 0, 900, 400, 0x000000, 0.85);
+    // Adventure-styled background
+    const bg = this.add.rectangle(0, 0, 900, 400, 0x2C1810, 0.95)
+      .setStrokeStyle(4, 0xD4AF37, 0.8);
 
     const welcomeText = this.add
       .text(0, -120, `Welcome, ${playerName}!`, {
         fontSize: '52px',
-        color: '#FFD700',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
     const messageText = this.add
       .text(
@@ -166,8 +190,8 @@ export class HubScene extends BaseScene {
         'Choose one to begin your journey of discovery.',
         {
           fontSize: '24px',
-          color: '#ffffff',
-          fontFamily: 'Merriweather, serif',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 10,
         }
@@ -209,35 +233,79 @@ export class HubScene extends BaseScene {
     const playerProfile = usePlayerStore.getState().profile;
     if (!playerProfile) return;
 
-    // Simplified avatar representation
-    const avatar = playerProfile.avatar;
-    const bodyColor = parseInt(avatar.skinTone.replace('#', ''), 16);
-    const hairColor = parseInt(avatar.hairColor.replace('#', ''), 16);
+    // Check if Ready Player Me avatar exists
+    const avatarUrl = useAvatarStore.getState().avatarUrl;
 
-    // Body
-    const body = this.add.ellipse(0, 20, 40, 60, bodyColor);
+    if (avatarUrl) {
+      // Use Ready Player Me avatar
+      const avatarId = avatarUrl.split('/').pop()?.replace('.glb', '');
+      const avatarImageUrl = `https://models.readyplayer.me/${avatarId}.png?scene=halfbody-portrait-v1&quality=high`;
 
-    // Head
-    const head = this.add.circle(0, -20, 25, bodyColor);
+      // Load and display avatar
+      this.load.image(`hub_avatar_${avatarId}`, avatarImageUrl);
+      this.load.once('complete', () => {
+        // Avatar frame with gold border
+        const frame = this.add.rectangle(0, 0, 110, 140, 0x2C1810, 0.9)
+          .setStrokeStyle(3, 0xD4AF37, 1);
 
-    // Hair
-    const hair = this.add.ellipse(0, -30, 50, 40, hairColor);
+        // Display avatar image
+        const avatarImage = this.add.image(0, 0, `hub_avatar_${avatarId}`)
+          .setDisplaySize(100, 130);
 
-    // Simple eyes
-    const leftEye = this.add.circle(-8, -20, 4, 0x000000);
-    const rightEye = this.add.circle(8, -20, 4, 0x000000);
+        this.playerSprite.add([frame, avatarImage]);
 
-    this.playerSprite.add([hair, body, head, leftEye, rightEye]);
+        // Gentle idle animation
+        this.tweens.add({
+          targets: this.playerSprite,
+          y: y - 10,
+          duration: 2000,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
 
-    // Gentle idle animation
-    this.tweens.add({
-      targets: this.playerSprite,
-      y: y - 10,
-      duration: 2000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
+        // Gold border glow
+        this.tweens.add({
+          targets: frame,
+          alpha: 0.95,
+          duration: 2000,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut',
+        });
+      });
+      this.load.start();
+    } else {
+      // Fallback to simple avatar representation
+      const avatar = playerProfile.avatar;
+      const bodyColor = parseInt(avatar.skinTone.replace('#', ''), 16);
+      const hairColor = parseInt(avatar.hairColor.replace('#', ''), 16);
+
+      // Body
+      const body = this.add.ellipse(0, 20, 40, 60, bodyColor);
+
+      // Head
+      const head = this.add.circle(0, -20, 25, bodyColor);
+
+      // Hair
+      const hair = this.add.ellipse(0, -30, 50, 40, hairColor);
+
+      // Simple eyes
+      const leftEye = this.add.circle(-8, -20, 4, 0x000000);
+      const rightEye = this.add.circle(8, -20, 4, 0x000000);
+
+      this.playerSprite.add([hair, body, head, leftEye, rightEye]);
+
+      // Gentle idle animation
+      this.tweens.add({
+        targets: this.playerSprite,
+        y: y - 10,
+        duration: 2000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    }
   }
 
   private createCompanion(): void {
@@ -436,22 +504,25 @@ export class HubScene extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[emotionId];
     const color = parseInt(emotion.color.replace('#', ''), 16);
 
-    const bg = this.add.rectangle(0, 0, 800, 500, 0x000000, 0.9)
-      .setStrokeStyle(4, color);
+    // Adventure-styled background
+    const bg = this.add.rectangle(0, 0, 800, 500, 0x2C1810, 0.95)
+      .setStrokeStyle(4, 0xD4AF37, 0.9);
 
     const titleText = this.add
       .text(0, -180, emotionName.toUpperCase(), {
         fontSize: '48px',
         color: emotion.color,
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
     const domainText = this.add
       .text(0, -120, emotion.domainName, {
         fontSize: '28px',
-        color: '#FFD700',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
         fontStyle: 'italic',
       })
       .setOrigin(0.5);
@@ -459,8 +530,8 @@ export class HubScene extends BaseScene {
     const descText = this.add
       .text(0, -50, emotion.description, {
         fontSize: '20px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
         align: 'center',
         wordWrap: { width: 700 },
         lineSpacing: 8,
@@ -471,7 +542,7 @@ export class HubScene extends BaseScene {
       .text(0, 60, `"${emotion.companionDialogue}"`, {
         fontSize: '18px',
         color: '#9370db',
-        fontFamily: 'Merriweather, serif',
+        fontFamily: 'Crimson Text, serif',
         fontStyle: 'italic',
         align: 'center',
         wordWrap: { width: 700 },
@@ -553,7 +624,7 @@ export class HubScene extends BaseScene {
   }
 
   private createUIPanel(): void {
-    // Top-right info panel
+    // Top-right info panel with adventure styling
     const panelX = this.scale.width - 20;
     const panelY = 20;
 
@@ -563,16 +634,18 @@ export class HubScene extends BaseScene {
     this.add
       .text(panelX, panelY, `${playerProfile.name}`, {
         fontSize: '24px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
+        color: '#F4E5B8',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(1, 0);
+      .setOrigin(1, 0)
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.8)', 4);
 
     this.add
       .text(panelX, panelY + 30, `Age: ${playerProfile.ageGroup}`, {
         fontSize: '18px',
-        color: '#ffffff',
-        fontFamily: 'Raleway, sans-serif',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(1, 0);
 
@@ -587,6 +660,114 @@ export class HubScene extends BaseScene {
       200,
       50
     );
+  }
+
+  private createParchmentBackground(): void {
+    const graphics = this.add.graphics();
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    // Create layered parchment effect
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    // Add subtle texture noise
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const size = Phaser.Math.Between(1, 3);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+
+      graphics.fillStyle(0x5C4A3A, alpha);
+      graphics.fillCircle(x, y, size);
+    }
+
+    graphics.setDepth(0);
+
+    // Subtle animation
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.8,
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+
+    // Top border
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    // Bottom border
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    // Left border
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    // Right border
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    // Ornate corners
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(
+        corner.x + 10 * flipX,
+        corner.y + 10 * flipY,
+        corner.x + (cornerSize - 15) * flipX,
+        corner.y + 10 * flipY
+      );
+      graphics.lineBetween(
+        corner.x + 10 * flipX,
+        corner.y + 10 * flipY,
+        corner.x + 10 * flipX,
+        corner.y + (cornerSize - 15) * flipY
+      );
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
+    });
+
+    graphics.setDepth(1);
+
+    // Subtle pulse animation
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.7,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
   }
 
   private hexToRgb(hex: string): [number, number, number] {

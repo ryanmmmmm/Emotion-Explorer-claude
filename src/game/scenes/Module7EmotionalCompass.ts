@@ -30,6 +30,9 @@ export class Module7EmotionalCompass extends BaseScene {
   private triggers: CompassTrigger[] = [];
   private selectedCount: number = 0;
   private instructionText!: Phaser.GameObjects.Text;
+  private trajectoryPast: string = '';
+  private trajectoryPresent: string = '';
+  private trajectoryFuture: string = '';
 
   constructor() {
     super(SCENE_KEYS.MODULE_7);
@@ -61,16 +64,20 @@ export class Module7EmotionalCompass extends BaseScene {
     this.add
       .text(centerX, 60, 'The Emotional Compass', {
         fontSize: '52px',
-        color: '#FFD700',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
     this.add
       .text(centerX, 120, 'Module 7: Identifying Triggers and Patterns', {
         fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        fontStyle: 'italic',
       })
       .setOrigin(0.5);
 
@@ -91,8 +98,8 @@ export class Module7EmotionalCompass extends BaseScene {
         'Click the triggers around the compass that relate to your emotion.\nRecognizing patterns helps you understand when this feeling arises.',
         {
           fontSize: '20px',
-          color: '#AACCFF',
-          fontFamily: 'Merriweather, serif',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
         }
@@ -109,7 +116,10 @@ export class Module7EmotionalCompass extends BaseScene {
       .setOrigin(0.5);
 
     // Create compass with triggers
-    this.createCompass(centerX, 500);
+    this.createCompass(centerX, 400);
+
+    // Add trajectory text inputs
+    this.createTrajectoryInputs(centerX);
 
     // Continue button
     const continueBtn = this.createButton(
@@ -129,26 +139,35 @@ export class Module7EmotionalCompass extends BaseScene {
       callback: () => {
         counterText.setText(`Triggers Selected: ${this.selectedCount}`);
 
-        if (this.selectedCount === 1) {
-          this.instructionText.setText(
-            'Good start! Select at least one more trigger to continue.'
-          );
-        }
+        const allTrajectoriesFilled =
+          this.trajectoryPast.trim().length > 0 &&
+          this.trajectoryPresent.trim().length > 0 &&
+          this.trajectoryFuture.trim().length > 0;
 
-        if (this.selectedCount >= 2) {
+        if (this.selectedCount < 2) {
           this.instructionText.setText(
-            'Excellent! Understanding your triggers empowers you.\nSelect more or continue when ready.'
+            'Click the triggers around the compass that relate to your emotion.\nThen write about past, present, and future below.'
+          );
+        } else if (!allTrajectoriesFilled) {
+          this.instructionText.setText(
+            'Good! Now write about the trajectory of this emotion: past, present, and future.'
+          );
+        } else {
+          this.instructionText.setText(
+            'Excellent! You understand your emotional patterns.\nYou can continue when ready.'
           );
           continueBtn.setAlpha(1);
         }
       },
     });
 
-    console.log('✅ Module 7 - The Emotional Compass: Ready');
+    console.log('✅ Module 7 - The Emotional Compass: Ready (Adventure Theme)');
   }
 
   private createBackground(): void {
-    this.cameras.main.setBackgroundColor('#1A1A2E');
+    this.cameras.main.setBackgroundColor('#1A0F08');
+    this.createParchmentBackground();
+    this.createOrnateFrame();
 
     const graphics = this.add.graphics();
 
@@ -326,6 +345,75 @@ export class Module7EmotionalCompass extends BaseScene {
     });
   }
 
+  private createTrajectoryInputs(centerX: number): void {
+    const y = 650;
+    const boxWidth = 350;
+    const boxHeight = 80;
+    const spacing = 380;
+
+    const trajectories = [
+      { x: centerX - spacing, label: 'PAST: Where did it come from?', key: 'trajectoryPast', prompt: 'Describe where this emotion originated. What events or experiences led to this feeling?' },
+      { x: centerX, label: 'PRESENT: Where is it now?', key: 'trajectoryPresent', prompt: 'Describe where this emotion is right now. How is it showing up in your current life?' },
+      { x: centerX + spacing, label: 'FUTURE: Where might it be going?', key: 'trajectoryFuture', prompt: 'Describe where this emotion might go in the future. How do you see it evolving?' },
+    ];
+
+    trajectories.forEach(({ x, label, key, prompt }) => {
+      this.add
+        .text(x, y - 30, label, {
+          fontSize: '16px',
+          color: '#D4AF37',
+          fontFamily: 'Crimson Text, serif',
+          fontStyle: 'italic',
+          align: 'center',
+          wordWrap: { width: boxWidth - 20 },
+        })
+        .setOrigin(0.5);
+
+      const textBox = this.add
+        .rectangle(x, y + 40, boxWidth, boxHeight, 0x2C1810, 0.9)
+        .setStrokeStyle(2, 0xD4AF37, 0.7)
+        .setInteractive({ useHandCursor: true });
+
+      const boxText = this.add
+        .text(x, y + 40, 'Click to write...', {
+          fontSize: '14px',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
+          align: 'center',
+          wordWrap: { width: boxWidth - 20 },
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.7);
+
+      textBox.on('pointerover', () => {
+        textBox.setStrokeStyle(3, 0xD4AF37, 1);
+      });
+
+      textBox.on('pointerout', () => {
+        textBox.setStrokeStyle(2, 0xD4AF37, 0.7);
+      });
+
+      textBox.on('pointerdown', async () => {
+        const response = await this.showTextInputModal(
+          label,
+          'Write your thoughts...',
+          prompt,
+          15, // minimum 15 words
+          this[key as keyof Module7EmotionalCompass] as string
+        );
+
+        if (response && response.trim()) {
+          const displayText = response.trim().length > 60
+            ? response.trim().substring(0, 57) + '...'
+            : response.trim();
+          boxText.setText(displayText);
+          boxText.setAlpha(1);
+          (this as any)[key] = response.trim();
+        }
+      });
+    });
+  }
+
   private hexToRgb(hex: number): [number, number, number] {
     const r = (hex >> 16) & 0xff;
     const g = (hex >> 8) & 0xff;
@@ -334,8 +422,13 @@ export class Module7EmotionalCompass extends BaseScene {
   }
 
   private completeModule(): void {
-    if (this.selectedCount < 2) {
-      return; // Need at least 2 triggers
+    const allTrajectoriesFilled =
+      this.trajectoryPast.trim().length > 0 &&
+      this.trajectoryPresent.trim().length > 0 &&
+      this.trajectoryFuture.trim().length > 0;
+
+    if (this.selectedCount < 2 || !allTrajectoriesFilled) {
+      return; // Need at least 2 triggers AND all 3 trajectories
     }
 
     const selectedTriggers = this.triggers
@@ -344,10 +437,16 @@ export class Module7EmotionalCompass extends BaseScene {
       .join(', ');
 
     console.log(`✅ Module 7 completed - Triggers: ${selectedTriggers}`);
+    console.log(`Trajectories - Past: ${this.trajectoryPast.substring(0, 50)}...`);
+    console.log(`Trajectories - Present: ${this.trajectoryPresent.substring(0, 50)}...`);
+    console.log(`Trajectories - Future: ${this.trajectoryFuture.substring(0, 50)}...`);
 
     const progressStore = useGameProgressStore.getState();
     progressStore.completeModule(7, {
       emotionSelected: this.emotionId,
+      trajectoryPast: this.trajectoryPast,
+      trajectoryPresent: this.trajectoryPresent,
+      trajectoryFuture: this.trajectoryFuture,
     });
 
     this.cameras.main.flash(500, 255, 215, 0);
@@ -360,6 +459,91 @@ export class Module7EmotionalCompass extends BaseScene {
 
     this.time.delayedCall(600, () => {
       this.transitionToScene(SCENE_KEYS.MODULE_8, { emotionId: this.emotionId });
+    });
+  }
+
+  private createParchmentBackground(): void {
+    const graphics = this.add.graphics();
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const size = Phaser.Math.Between(1, 3);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+      graphics.fillStyle(0x5C4A3A, alpha);
+      graphics.fillCircle(x, y, size);
+    }
+
+    graphics.setDepth(0);
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.8,
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + (cornerSize - 15) * flipX, corner.y + 10 * flipY);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + 10 * flipX, corner.y + (cornerSize - 15) * flipY);
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
+    });
+
+    graphics.setDepth(1);
+    this.tweens.add({
+      targets: graphics,
+      alpha: 0.7,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
     });
   }
 }

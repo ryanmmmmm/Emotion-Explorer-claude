@@ -61,29 +61,34 @@ export class Module1AwakeningCircle extends BaseScene {
     const narrative = this.narrative!.module1;
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
 
-    // Title - use narrative config
+    // Title - adventure theme
     this.add
       .text(this.scale.width / 2, 80, narrative.title, {
-        fontSize: this.isTeen() ? '56px' : '48px',
-        color: this.isTeen() ? '#FFD700' : '#4A90E2',
-        fontFamily: this.theme!.titleFont,
+        fontSize: '56px',
+        color: '#F4E5B8',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 10);
 
-    // Subtitle - use narrative config
+    // Subtitle - adventure theme
     this.add
       .text(this.scale.width / 2, 150, narrative.subtitle, {
-        fontSize: this.isTeen() ? '28px' : '24px',
-        color: this.isTeen() ? '#ffffff' : '#2C3E50',
-        fontFamily: this.theme!.secondaryFont,
+        fontSize: '28px',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        fontStyle: 'italic',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.8)', 6);
 
     // Emotion display
     this.add
       .text(this.scale.width / 2, 230, `Exploring: ${this.emotionName}`, {
         fontSize: '36px',
-        color: emotion.color,
+        color: '#D4AF37',
         fontFamily: 'Cinzel, serif',
       })
       .setOrigin(0.5);
@@ -91,16 +96,16 @@ export class Module1AwakeningCircle extends BaseScene {
     // Central emotion visualization
     this.createEmotionVisualization();
 
-    // Instructions - use narrative config
+    // Instructions - adventure theme
     this.add
       .text(
         this.scale.width / 2,
         360,
         narrative.instructions,
         {
-          fontSize: this.isTeen() ? '24px' : '20px',
-          color: this.isTeen() ? '#ffffff' : '#2C3E50',
-          fontFamily: this.theme!.secondaryFont,
+          fontSize: '22px',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 8,
           wordWrap: { width: this.scale.width * 0.8 },
@@ -111,7 +116,10 @@ export class Module1AwakeningCircle extends BaseScene {
     // Create intensity slider
     this.createIntensitySlider();
 
-    // Create intensity description input
+    // Create intensity description text area (LARGE)
+    this.createIntensityDescriptionInput();
+
+    // Create body sensation input
     this.createDescriptionInput();
 
     // Companion guidance
@@ -120,32 +128,28 @@ export class Module1AwakeningCircle extends BaseScene {
     // Continue button
     this.createContinueButton();
 
-    console.log('✅ Module 1 - Awakening Circle: Ready');
+    console.log('✅ Module 1 - Awakening Circle: Ready (Adventure Theme)');
   }
 
   private createBackground(): void {
-    this.cameras.main.setBackgroundColor('#1A1A2E');
+    // Deep brown adventure background
+    this.cameras.main.setBackgroundColor('#1A0F08');
 
-    // Create mystical circle pattern
+    // Create aged parchment texture
+    this.createParchmentBackground();
+
+    // Ornate border frame
+    this.createOrnateFrame();
+
+    // Mystical circles (concentric) with adventure colors
     const graphics = this.add.graphics();
-
-    // Starfield
-    for (let i = 0; i < 100; i++) {
-      const x = Phaser.Math.Between(0, this.scale.width);
-      const y = Phaser.Math.Between(0, this.scale.height);
-      const size = Phaser.Math.Between(1, 2);
-      graphics.fillStyle(0xffffff, Phaser.Math.FloatBetween(0.2, 0.6));
-      graphics.fillCircle(x, y, size);
-    }
-
-    // Mystical circles (concentric)
     const centerX = this.scale.width / 2;
     const centerY = 550;
 
     for (let i = 3; i > 0; i--) {
       const radius = i * 120;
       const alpha = 0.05 + (i * 0.02);
-      graphics.lineStyle(2, this.emotionColor, alpha);
+      graphics.lineStyle(2, 0xD4AF37, alpha);
       graphics.strokeCircle(centerX, centerY, radius);
     }
   }
@@ -344,28 +348,78 @@ export class Module1AwakeningCircle extends BaseScene {
     this.emotionCircle.setAlpha(alpha);
   }
 
+  private createIntensityDescriptionInput(): void {
+    const centerX = this.scale.width / 2;
+    const y = 800;
+
+    this.add
+      .text(centerX, y, 'Describe how this intensity feels in your inner life and day:', {
+        fontSize: '24px',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        align: 'center',
+        wordWrap: { width: 700 },
+      })
+      .setOrigin(0.5);
+
+    const textBox = this.add
+      .rectangle(centerX, y + 80, 750, 120, 0x2C1810, 0.9)
+      .setStrokeStyle(3, 0xD4AF37, 0.7)
+      .setInteractive({ useHandCursor: true });
+
+    const boxText = this.add
+      .text(centerX, y + 80, 'Click to write about this intensity...', {
+        fontSize: '18px',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
+        align: 'center',
+        wordWrap: { width: 700 },
+      })
+      .setOrigin(0.5)
+      .setAlpha(0.7);
+
+    textBox.on('pointerdown', async () => {
+      const description = await this.showTextInputModal(
+        'Describe Your Intensity',
+        'Write a few words or phrases...',
+        'Describe the intensity of this emotion, how it plays out in your inner life and your day. Move the slider to show how much or how little you are feeling this emotion.',
+        15,
+        ''
+      );
+      if (description && description.trim()) {
+        // Truncate display text if too long
+        const displayText = description.trim().length > 150
+          ? description.trim().substring(0, 147) + '...'
+          : description.trim();
+        boxText.setText(displayText);
+        boxText.setAlpha(1);
+        this.intensityDescription = description.trim();
+      }
+    });
+  }
+
   private createDescriptionInput(): void {
     const centerX = this.scale.width / 2;
-    const y = 850;
+    const y = 960;
 
     this.add
       .text(centerX, y, 'Where do you feel this in your body?', {
         fontSize: '28px',
-        color: '#FFD700',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5);
 
     const descBox = this.add
-      .rectangle(centerX, y + 60, 600, 60, 0x0f3460, 0.8)
-      .setStrokeStyle(3, this.emotionColor, 0.5)
+      .rectangle(centerX, y + 60, 600, 60, 0x2C1810, 0.9)
+      .setStrokeStyle(3, 0xD4AF37, 0.7)
       .setInteractive({ useHandCursor: true });
 
     const descText = this.add
       .text(centerX, y + 60, 'Click to describe...', {
         fontSize: '20px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5)
       .setAlpha(0.7);
@@ -406,8 +460,8 @@ export class Module1AwakeningCircle extends BaseScene {
         this.narrative!.module1.companionGuidance,
         {
           fontSize: '18px',
-          color: this.isTeen() ? '#ffffff' : '#2C3E50',
-          fontFamily: this.theme!.secondaryFont,
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           wordWrap: { width: bubbleWidth - 40 },
         }
@@ -561,6 +615,70 @@ export class Module1AwakeningCircle extends BaseScene {
     this.time.delayedCall(3000, () => {
       emitter.stop();
       this.time.delayedCall(2000, () => emitter.destroy());
+    });
+  }
+
+  private createParchmentBackground(): void {
+    const graphics = this.add.graphics();
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const size = Phaser.Math.Between(1, 3);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+      graphics.fillStyle(0x5C4A3A, alpha);
+      graphics.fillCircle(x, y, size);
+    }
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + (cornerSize - 15) * flipX, corner.y + 10 * flipY);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + 10 * flipX, corner.y + (cornerSize - 15) * flipY);
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
     });
   }
 }

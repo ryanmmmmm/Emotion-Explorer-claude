@@ -49,33 +49,38 @@ export class Module4SpeakingStone extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Title - adventure theme
     this.add
       .text(centerX, 60, 'The Speaking Stone', {
         fontSize: '52px',
-        color: '#FFD700',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 10);
 
     this.add
       .text(centerX, 120, 'Module 4: Expression Through Words', {
         fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        fontStyle: 'italic',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.8)', 6);
 
     // Emotion display
     this.add
       .text(centerX, 170, `Exploring: ${this.emotionName}`, {
         fontSize: '28px',
-        color: emotion.color,
+        color: '#D4AF37',
         fontFamily: 'Cinzel, serif',
       })
       .setOrigin(0.5);
 
-    // Instructions
+    // Instructions - adventure theme
     this.instructionText = this.add
       .text(
         centerX,
@@ -83,8 +88,8 @@ export class Module4SpeakingStone extends BaseScene {
         'Click the glowing stone to describe this emotion in your own words.\nExpress what this feeling means to you.',
         {
           fontSize: '20px',
-          color: '#AACCFF',
-          fontFamily: 'Merriweather, serif',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
         }
@@ -94,28 +99,28 @@ export class Module4SpeakingStone extends BaseScene {
     // Create glowing stone
     this.createSpeakingStone(centerX, 400);
 
-    // Text display area
+    // Text display area - adventure theme
     this.add
-      .rectangle(centerX, 580, 800, 200, 0x0f3460, 0.8)
-      .setStrokeStyle(3, this.emotionColor, 0.6);
+      .rectangle(centerX, 580, 800, 200, 0x2C1810, 0.9)
+      .setStrokeStyle(3, 0xD4AF37, 0.7);
 
     this.textDisplay = this.add
       .text(centerX, 580, 'Your words will appear here...', {
         fontSize: '18px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4C5B0',
+        fontFamily: 'Crimson Text, serif',
         align: 'center',
         wordWrap: { width: 750 },
       })
       .setOrigin(0.5)
-      .setAlpha(0.5);
+      .setAlpha(0.7);
 
-    // Word counter
+    // Word counter - adventure theme
     const counterText = this.add
       .text(centerX, 700, 'Words: 0 / 10 minimum', {
         fontSize: '20px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5);
 
@@ -150,22 +155,13 @@ export class Module4SpeakingStone extends BaseScene {
       },
     });
 
-    console.log('✅ Module 4 - The Speaking Stone: Ready');
+    console.log('✅ Module 4 - The Speaking Stone: Ready (Adventure Theme)');
   }
 
   private createBackground(): void {
-    this.cameras.main.setBackgroundColor('#1A1A2E');
-
-    const graphics = this.add.graphics();
-
-    // Starfield
-    for (let i = 0; i < 80; i++) {
-      const x = Phaser.Math.Between(0, this.scale.width);
-      const y = Phaser.Math.Between(0, this.scale.height);
-      const size = Phaser.Math.Between(1, 2);
-      graphics.fillStyle(0xffffff, Phaser.Math.FloatBetween(0.2, 0.6));
-      graphics.fillCircle(x, y, size);
-    }
+    this.cameras.main.setBackgroundColor('#1A0F08');
+    this.createParchmentBackground();
+    this.createOrnateFrame();
   }
 
   private createSpeakingStone(x: number, y: number): void {
@@ -317,6 +313,70 @@ export class Module4SpeakingStone extends BaseScene {
 
     this.time.delayedCall(600, () => {
       this.transitionToScene(SCENE_KEYS.MODULE_5, { emotionId: this.emotionId });
+    });
+  }
+
+  private createParchmentBackground(): void {
+    const graphics = this.add.graphics();
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const size = Phaser.Math.Between(1, 3);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+      graphics.fillStyle(0x5C4A3A, alpha);
+      graphics.fillCircle(x, y, size);
+    }
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + (cornerSize - 15) * flipX, corner.y + 10 * flipY);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + 10 * flipX, corner.y + (cornerSize - 15) * flipY);
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
     });
   }
 }

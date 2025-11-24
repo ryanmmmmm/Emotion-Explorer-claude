@@ -267,129 +267,31 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Show a beautiful text input modal (replaces terrible prompt())
+   * Show a beautiful text input modal using React component (replaces terrible prompt())
    */
-  protected showTextInputModal(
+  protected async showTextInputModal(
     title: string,
     placeholder: string,
     guidance: string,
     minWords: number = 0,
     initialValue: string = ''
   ): Promise<string | null> {
-    return new Promise((resolve) => {
-      const overlay = this.add.container(this.scale.width / 2, this.scale.height / 2);
-      overlay.setDepth(2000);
-
-      // Dark background overlay
-      const darkBg = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.85);
-      darkBg.setOrigin(0.5);
-
-      // Modal background
-      const modalBg = this.add.rectangle(0, 0, 900, 600, 0x1a1a2e, 0.98)
-        .setStrokeStyle(4, this.emotionColor, 0.9);
-
-      // Title
-      const titleText = this.add.text(0, -240, title, {
-        fontSize: '38px',
-        color: '#FFD700',
-        fontFamily: 'Cinzel, serif',
-        align: 'center',
-        wordWrap: { width: 850 }
-      }).setOrigin(0.5);
-
-      // Guidance text
-      const guidanceText = this.add.text(0, -180, guidance, {
-        fontSize: '18px',
-        color: '#AACCFF',
-        fontFamily: 'Merriweather, serif',
-        align: 'center',
-        lineSpacing: 6,
-        wordWrap: { width: 850 }
-      }).setOrigin(0.5);
-
-      // Text input area (simulated with DOM)
-      const inputBg = this.add.rectangle(0, -50, 850, 200, 0x2d3748, 1)
-        .setStrokeStyle(3, this.emotionColor, 0.7);
-
-      // Create actual DOM input
-      const inputElement = document.createElement('textarea');
-
-      // Get canvas position in document to correctly position textarea
-      const canvas = this.game.canvas.getBoundingClientRect();
-
-      inputElement.style.position = 'absolute';
-      inputElement.style.left = `${canvas.left + (this.scale.width / 2 - 425)}px`;
-      inputElement.style.top = `${canvas.top + (this.scale.height / 2 - 150)}px`;
-      inputElement.style.width = '850px';
-      inputElement.style.height = '200px';
-      inputElement.style.fontSize = '18px';
-      inputElement.style.fontFamily = 'Merriweather, serif';
-      inputElement.style.padding = '15px';
-      inputElement.style.backgroundColor = '#2d3748';
-      inputElement.style.color = '#ffffff';
-      inputElement.style.border = `3px solid ${this.emotionColor.toString(16).padStart(6, '0')}`;
-      inputElement.style.borderRadius = '8px';
-      inputElement.style.resize = 'none';
-      inputElement.style.outline = 'none';
-      inputElement.style.zIndex = '2001';
-      inputElement.placeholder = placeholder;
-      inputElement.value = initialValue;
-      document.body.appendChild(inputElement);
-      inputElement.focus();
-
-      // Word count display
-      const wordCountText = this.add.text(0, 120, `Words: 0 ${minWords > 0 ? `(minimum ${minWords})` : ''}`, {
-        fontSize: '20px',
-        color: '#888888',
-        fontFamily: 'Raleway, sans-serif'
-      }).setOrigin(0.5);
-
-      // Update word count
-      const updateWordCount = () => {
-        const words = inputElement.value.trim().split(/\s+/).filter(w => w.length > 0);
-        const wordCount = words.length;
-        const meetsMinimum = wordCount >= minWords;
-        wordCountText.setText(`Words: ${wordCount} ${minWords > 0 ? `(minimum ${minWords})` : ''}`);
-        wordCountText.setColor(meetsMinimum ? '#4ADE80' : '#888888');
-        submitBtn.setAlpha(meetsMinimum || minWords === 0 ? 1 : 0.5);
-      };
-
-      inputElement.addEventListener('input', updateWordCount);
-      updateWordCount();
-
-      // Submit button
-      const submitBtn = this.createButton(0, 210, 'Submit', () => {
-        const words = inputElement.value.trim().split(/\s+/).filter(w => w.length > 0);
-        if (words.length >= minWords || minWords === 0) {
-          document.body.removeChild(inputElement);
-          overlay.destroy();
-          resolve(inputElement.value.trim());
-        }
-      }, 250, 60);
-
-      // Cancel button
-      const cancelBtn = this.createButton(-280, 210, 'Cancel', () => {
-        document.body.removeChild(inputElement);
-        overlay.destroy();
-        resolve(null);
-      }, 180, 60);
-
-      overlay.add([darkBg, modalBg, titleText, guidanceText, inputBg, wordCountText, submitBtn, cancelBtn]);
-
-      // Fade in
-      overlay.setAlpha(0);
-      this.tweens.add({
-        targets: overlay,
-        alpha: 1,
-        duration: 300
-      });
-    });
+    const { showTextInput } = await import('@/stores/modalStore');
+    return showTextInput(title, placeholder, initialValue);
   }
 
   /**
    * Clean up when leaving scene
    */
   shutdown(): void {
+    // Clean up any lingering DOM textareas
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+      if (textarea.parentNode) {
+        textarea.parentNode.removeChild(textarea);
+      }
+    });
+
     this.cameras.main.fadeEffect.reset();
     this.scene.stop();
   }

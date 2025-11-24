@@ -24,6 +24,14 @@ interface BodyPart {
   selected: boolean;
 }
 
+interface BodyLanguageResponses {
+  whereFeeling: string;
+  whatFeelsLike: string;
+  ifCouldTalk: string;
+  ifCouldAsk: string;
+  actionWouldTake: string;
+}
+
 export class Module3TempleEmbodiment extends BaseScene {
   private emotionId!: EmotionType;
   private emotionName!: string;
@@ -31,6 +39,13 @@ export class Module3TempleEmbodiment extends BaseScene {
   private bodyParts: BodyPart[] = [];
   private selectedParts: Set<string> = new Set();
   private instructionText!: Phaser.GameObjects.Text;
+  private bodyLanguageResponses: BodyLanguageResponses = {
+    whereFeeling: '',
+    whatFeelsLike: '',
+    ifCouldTalk: '',
+    ifCouldAsk: '',
+    actionWouldTake: '',
+  };
 
   constructor() {
     super(SCENE_KEYS.MODULE_3);
@@ -58,33 +73,38 @@ export class Module3TempleEmbodiment extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Title - adventure theme
     this.add
       .text(centerX, 60, 'Temple of Embodiment', {
         fontSize: '52px',
-        color: '#FFD700',
+        color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#2C1810', 6)
+      .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 10);
 
     this.add
       .text(centerX, 120, 'Module 3: Body Awareness', {
         fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'Merriweather, serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
+        fontStyle: 'italic',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.8)', 6);
 
     // Emotion display
     this.add
       .text(centerX, 170, `Exploring: ${this.emotionName}`, {
         fontSize: '28px',
-        color: emotion.color,
+        color: '#D4AF37',
         fontFamily: 'Cinzel, serif',
       })
       .setOrigin(0.5);
 
-    // Instructions
+    // Instructions - adventure theme
     this.instructionText = this.add
       .text(
         centerX,
@@ -92,27 +112,30 @@ export class Module3TempleEmbodiment extends BaseScene {
         'Click on the body parts where you feel this emotion.\nEach area you select will glow with energy.',
         {
           fontSize: '20px',
-          color: '#AACCFF',
-          fontFamily: 'Merriweather, serif',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
         }
       )
       .setOrigin(0.5);
 
-    // Selection counter
+    // Selection counter - adventure theme
     const counterText = this.add
       .text(centerX, 280, 'Areas Selected: 0', {
         fontSize: '22px',
-        color: '#FFD700',
-        fontFamily: 'Raleway, sans-serif',
+        color: '#D4AF37',
+        fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5);
 
     // Create body silhouette with interactive zones
     this.createBodyMap(centerX, 550);
 
-    // Continue button (enabled after selecting 2 body parts)
+    // Create 5 text input boxes for body language questions
+    this.createBodyLanguageInputs(centerX, 550);
+
+    // Continue button (enabled after all 5 responses filled)
     const continueBtn = this.createButton(
       centerX,
       this.scale.height - 80,
@@ -123,44 +146,39 @@ export class Module3TempleEmbodiment extends BaseScene {
     );
     continueBtn.setAlpha(0.3);
 
-    // Update UI based on selections
+    // Update UI based on responses
     this.time.addEvent({
       delay: 100,
       loop: true,
       callback: () => {
         counterText.setText(`Areas Selected: ${this.selectedParts.size}`);
 
-        if (this.selectedParts.size === 1) {
-          this.instructionText.setText(
-            'Good! Click more areas where you feel this emotion.\nSelect at least 2 areas to continue.'
-          );
-        }
+        const responsesCount = Object.values(this.bodyLanguageResponses).filter(r => r.trim().length > 0).length;
 
-        if (this.selectedParts.size >= 2) {
+        if (this.selectedParts.size === 0) {
           this.instructionText.setText(
-            'Excellent! Your body holds important wisdom.\nYou can select more areas or continue.'
+            'Click on the body parts where you feel this emotion.\nThen answer the 5 questions below.'
+          );
+        } else if (responsesCount < 5) {
+          this.instructionText.setText(
+            `Good! Now answer all 5 questions below (${responsesCount}/5 complete).`
+          );
+        } else {
+          this.instructionText.setText(
+            'Excellent! Your body holds important wisdom.\nYou can continue to the next module.'
           );
           continueBtn.setAlpha(1);
         }
       },
     });
 
-    console.log('✅ Module 3 - Temple of Embodiment: Ready');
+    console.log('✅ Module 3 - Temple of Embodiment: Ready (Adventure Theme)');
   }
 
   private createBackground(): void {
-    this.cameras.main.setBackgroundColor('#1A1A2E');
-
-    const graphics = this.add.graphics();
-
-    // Starfield
-    for (let i = 0; i < 80; i++) {
-      const x = Phaser.Math.Between(0, this.scale.width);
-      const y = Phaser.Math.Between(0, this.scale.height);
-      const size = Phaser.Math.Between(1, 2);
-      graphics.fillStyle(0xffffff, Phaser.Math.FloatBetween(0.2, 0.6));
-      graphics.fillCircle(x, y, size);
-    }
+    this.cameras.main.setBackgroundColor('#1A0F08');
+    this.createParchmentBackground();
+    this.createOrnateFrame();
   }
 
   private createBodyMap(centerX: number, centerY: number): void {
@@ -268,9 +286,9 @@ export class Module3TempleEmbodiment extends BaseScene {
         const label = this.add
           .text(x, y - radius - 20, name, {
             fontSize: '18px',
-            color: '#FFD700',
-            fontFamily: 'Raleway, sans-serif',
-            stroke: '#000000',
+            color: '#D4AF37',
+            fontFamily: 'Crimson Text, serif',
+            stroke: '#2C1810',
             strokeThickness: 4,
           })
           .setOrigin(0.5);
@@ -295,17 +313,91 @@ export class Module3TempleEmbodiment extends BaseScene {
     return [r, g, b];
   }
 
+  private createBodyLanguageInputs(centerX: number, bodyY: number): void {
+    // Position around the body diagram
+    const positions = [
+      { x: centerX - 280, y: bodyY - 150, key: 'whereFeeling', label: 'Where do you feel it?', prompt: 'Where in your body do you feel this emotion?' },
+      { x: centerX + 280, y: bodyY - 150, key: 'whatFeelsLike', label: 'What does it feel like?', prompt: 'What physical sensations do you notice? (achy, tight, butterflies, warm, cold, etc.)' },
+      { x: centerX + 280, y: bodyY + 50, key: 'ifCouldTalk', label: 'If it could talk?', prompt: 'If that part of your body could talk, what would it say?' },
+      { x: centerX - 280, y: bodyY + 250, key: 'ifCouldAsk', label: 'If it could ask?', prompt: 'If that part of your body could ask for something, what would it ask for?' },
+      { x: centerX, y: bodyY + 350, key: 'actionWouldTake', label: 'What action?', prompt: 'If that part of your body could take action, what would it do?' },
+    ];
+
+    positions.forEach(({ x, y, key, label, prompt }) => {
+      // Label text
+      this.add
+        .text(x, y - 25, label, {
+          fontSize: '18px',
+          color: '#D4AF37',
+          fontFamily: 'Crimson Text, serif',
+          fontStyle: 'italic',
+          align: 'center',
+          wordWrap: { width: 200 },
+        })
+        .setOrigin(0.5);
+
+      // Input box
+      const textBox = this.add
+        .rectangle(x, y + 20, 220, 80, 0x2C1810, 0.9)
+        .setStrokeStyle(2, 0xD4AF37, 0.7)
+        .setInteractive({ useHandCursor: true });
+
+      const boxText = this.add
+        .text(x, y + 20, 'Click to write...', {
+          fontSize: '16px',
+          color: '#D4C5B0',
+          fontFamily: 'Crimson Text, serif',
+          align: 'center',
+          wordWrap: { width: 200 },
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.7);
+
+      textBox.on('pointerover', () => {
+        textBox.setStrokeStyle(3, 0xD4AF37, 1);
+      });
+
+      textBox.on('pointerout', () => {
+        textBox.setStrokeStyle(2, 0xD4AF37, 0.7);
+      });
+
+      textBox.on('pointerdown', async () => {
+        const response = await this.showTextInputModal(
+          label,
+          'Write your thoughts...',
+          prompt,
+          10, // minimum 10 words
+          this.bodyLanguageResponses[key as keyof BodyLanguageResponses]
+        );
+
+        if (response && response.trim()) {
+          const displayText = response.trim().length > 80
+            ? response.trim().substring(0, 77) + '...'
+            : response.trim();
+          boxText.setText(displayText);
+          boxText.setAlpha(1);
+          this.bodyLanguageResponses[key as keyof BodyLanguageResponses] = response.trim();
+        }
+      });
+    });
+  }
+
   private completeModule(): void {
-    if (this.selectedParts.size < 2) {
-      return; // Need at least 2 body parts
+    // Check that all 5 responses are filled
+    const allResponsesFilled = Object.values(this.bodyLanguageResponses).every(r => r.trim().length > 0);
+
+    if (!allResponsesFilled) {
+      return; // Need all 5 responses
     }
 
-    console.log(`✅ Module 3 completed - Selected parts: ${Array.from(this.selectedParts).join(', ')}`);
+    console.log(`✅ Module 3 completed - Body parts: ${Array.from(this.selectedParts).join(', ')}`);
+    console.log(`Body Language Responses:`, this.bodyLanguageResponses);
 
     const progressStore = useGameProgressStore.getState();
     progressStore.completeModule(3, {
       emotionSelected: this.emotionId,
       bodyLocation: Array.from(this.selectedParts).join(', '),
+      bodyLanguageResponses: this.bodyLanguageResponses,
     });
 
     this.cameras.main.flash(500, 255, 215, 0);
@@ -318,6 +410,70 @@ export class Module3TempleEmbodiment extends BaseScene {
 
     this.time.delayedCall(600, () => {
       this.transitionToScene(SCENE_KEYS.MODULE_4, { emotionId: this.emotionId });
+    });
+  }
+
+  private createParchmentBackground(): void {
+    const graphics = this.add.graphics();
+    const parchmentColors = [0x2C1810, 0x1A0F08, 0x3D2F24];
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    for (let i = 0; i < 30; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const radius = Phaser.Math.Between(50, 200);
+      const color = Phaser.Utils.Array.GetRandom(parchmentColors);
+      const alpha = Phaser.Math.FloatBetween(0.05, 0.15);
+      graphics.fillStyle(color, alpha);
+      graphics.fillCircle(x, y, radius);
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      const size = Phaser.Math.Between(1, 3);
+      const alpha = Phaser.Math.FloatBetween(0.1, 0.3);
+      graphics.fillStyle(0x5C4A3A, alpha);
+      graphics.fillCircle(x, y, size);
+    }
+  }
+
+  private createOrnateFrame(): void {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const margin = 40;
+    const cornerSize = 60;
+    const lineThickness = 4;
+
+    const graphics = this.add.graphics();
+    graphics.lineStyle(lineThickness, 0xD4AF37, 0.6);
+    graphics.lineBetween(margin + cornerSize, margin, width - margin - cornerSize, margin);
+    graphics.lineBetween(margin + cornerSize, height - margin, width - margin - cornerSize, height - margin);
+    graphics.lineBetween(margin, margin + cornerSize, margin, height - margin - cornerSize);
+    graphics.lineBetween(width - margin, margin + cornerSize, width - margin, height - margin - cornerSize);
+
+    const corners = [
+      { x: margin, y: margin },
+      { x: width - margin, y: margin },
+      { x: margin, y: height - margin },
+      { x: width - margin, y: height - margin },
+    ];
+
+    corners.forEach((corner, index) => {
+      const flipX = index % 2 === 1 ? -1 : 1;
+      const flipY = index > 1 ? -1 : 1;
+
+      graphics.lineStyle(lineThickness, 0xD4AF37, 0.8);
+      graphics.lineBetween(corner.x, corner.y, corner.x + cornerSize * flipX, corner.y);
+      graphics.lineBetween(corner.x, corner.y, corner.x, corner.y + cornerSize * flipY);
+
+      graphics.lineStyle(2, 0xF4E5B8, 0.4);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + (cornerSize - 15) * flipX, corner.y + 10 * flipY);
+      graphics.lineBetween(corner.x + 10 * flipX, corner.y + 10 * flipY, corner.x + 10 * flipX, corner.y + (cornerSize - 15) * flipY);
+
+      graphics.fillStyle(0xD4AF37, 0.8);
+      graphics.fillCircle(corner.x + 10 * flipX, corner.y + 10 * flipY, 4);
     });
   }
 }
