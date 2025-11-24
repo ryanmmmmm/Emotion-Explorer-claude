@@ -33,6 +33,7 @@ export class HubScene extends BaseScene {
   create(): void {
     this.setEmotion('joy'); // Default welcoming atmosphere
     this.fadeIn();
+    this.initializeTheme(); // Initialize age-based theme
 
     // Initialize visual effects manager
     this.vfx = new VisualEffectsManager(this);
@@ -63,9 +64,10 @@ export class HubScene extends BaseScene {
 
     const centerX = this.scale.width / 2;
 
-    // Title with adventure styling
+    // Title - age-appropriate
+    const titleText = this.isAdult() ? 'Emotion Explorer' : 'The Emotional Realm';
     const title = this.add
-      .text(centerX, 60, 'The Emotional Realm', {
+      .text(centerX, 60, titleText, {
         fontSize: '56px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -77,7 +79,7 @@ export class HubScene extends BaseScene {
 
     // Gold glow around title
     const titleGlow = this.add
-      .text(centerX, 60, 'The Emotional Realm', {
+      .text(centerX, 60, titleText, {
         fontSize: '56px',
         color: '#D4AF37',
         fontFamily: 'Cinzel, serif',
@@ -181,13 +183,20 @@ export class HubScene extends BaseScene {
       .setOrigin(0.5)
       .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
+    // Age-appropriate message
+    const messageContent = this.isAdult()
+      ? 'Welcome to the Emotion Explorer.\n\n' +
+        'Each symbol represents a different emotion.\n' +
+        'Select an emotion to begin exploring your feelings.'
+      : 'You have entered the Emotional Realm,\na mystical space where feelings take form.\n\n' +
+        'Each glowing crystal represents an emotion.\n' +
+        'Choose one to begin your journey of discovery.';
+
     const messageText = this.add
       .text(
         0,
         0,
-        'You have entered the Emotional Realm,\na mystical space where feelings take form.\n\n' +
-        'Each glowing crystal represents an emotion.\n' +
-        'Choose one to begin your journey of discovery.',
+        messageContent,
         {
           fontSize: '24px',
           color: '#D4C5B0',
@@ -198,10 +207,11 @@ export class HubScene extends BaseScene {
       )
       .setOrigin(0.5);
 
+    const buttonText = this.isAdult() ? 'Continue' : 'Begin Exploration';
     const continueButton = this.createButton(
       0,
       140,
-      'Begin Exploration',
+      buttonText,
       () => {
         this.tweens.add({
           targets: overlay,
