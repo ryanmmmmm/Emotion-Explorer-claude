@@ -116,6 +116,7 @@ function App() {
         title={modalState.title}
         placeholder={modalState.placeholder}
         initialValue={modalState.initialValue}
+        guidance={modalState.guidance}
         onSubmit={(value) => modalState.onSubmit?.(value)}
         onCancel={() => modalState.onCancel?.()}
       />

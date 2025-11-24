@@ -5,6 +5,7 @@ interface ModalState {
   title: string;
   placeholder: string;
   initialValue: string;
+  guidance: string;
   onSubmit: ((value: string) => void) | null;
   onCancel: (() => void) | null;
 }
@@ -15,7 +16,8 @@ interface ModalStore extends ModalState {
     placeholder: string,
     initialValue: string,
     onSubmit: (value: string) => void,
-    onCancel: () => void
+    onCancel: () => void,
+    guidance?: string
   ) => void;
   closeModal: () => void;
 }
@@ -25,15 +27,17 @@ export const useModalStore = create<ModalStore>((set) => ({
   title: '',
   placeholder: '',
   initialValue: '',
+  guidance: '',
   onSubmit: null,
   onCancel: null,
 
-  openModal: (title, placeholder, initialValue, onSubmit, onCancel) => {
+  openModal: (title, placeholder, initialValue, onSubmit, onCancel, guidance = '') => {
     set({
       isOpen: true,
       title,
       placeholder,
       initialValue,
+      guidance,
       onSubmit,
       onCancel,
     });
@@ -45,6 +49,7 @@ export const useModalStore = create<ModalStore>((set) => ({
       title: '',
       placeholder: '',
       initialValue: '',
+      guidance: '',
       onSubmit: null,
       onCancel: null,
     });
@@ -55,7 +60,8 @@ export const useModalStore = create<ModalStore>((set) => ({
 export const showTextInput = (
   title: string,
   placeholder: string,
-  initialValue: string = ''
+  initialValue: string = '',
+  guidance: string = ''
 ): Promise<string | null> => {
   return new Promise((resolve) => {
     useModalStore.getState().openModal(
@@ -69,7 +75,8 @@ export const showTextInput = (
       () => {
         useModalStore.getState().closeModal();
         resolve(null);
-      }
+      },
+      guidance
     );
   });
 };

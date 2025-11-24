@@ -411,10 +411,20 @@ export class Module5MirrorPortal extends BaseScene {
     });
 
     textBox.on('pointerdown', async () => {
+      const guidance = `
+        <p><strong>Shift your perspective</strong> and write from a different point of view:</p>
+        <ul style="margin: 8px 0; padding-left: 20px;">
+          <li><strong>Another person involved:</strong> What might they think or feel about this situation?</li>
+          <li><strong>Your future self:</strong> Looking back a year from now, what wisdom would you offer?</li>
+          <li><strong>A compassionate observer:</strong> What would a wise, kind friend say about your feelings?</li>
+        </ul>
+        <p style="margin-top: 12px;">This exercise helps you gain insight and empathy by seeing the emotion from outside yourself.</p>
+      `;
+
       const response = await this.showTextInputModal(
-        'Reverse Letter Writing',
-        'Write from a different perspective...',
-        'Write a letter from the perspective of someone else involved in the situation, your future self looking back, or a compassionate observer. How would they view this emotion?',
+        'The Mirror Portal',
+        'Begin writing your reverse letter...',
+        guidance,
         30, // minimum 30 words
         this.reverseLetter
       );

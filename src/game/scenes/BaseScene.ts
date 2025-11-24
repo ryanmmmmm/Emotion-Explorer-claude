@@ -272,12 +272,12 @@ export abstract class BaseScene extends Phaser.Scene {
   protected async showTextInputModal(
     title: string,
     placeholder: string,
-    _guidance: string, // Future: could pass to modal for instructions
+    guidance: string = '', // Guidance text shown in modal for longer writing exercises
     _minWords: number = 0, // Future: could enforce minimum word count
     initialValue: string = ''
   ): Promise<string | null> {
     const { showTextInput } = await import('@/stores/modalStore');
-    return showTextInput(title, placeholder, initialValue);
+    return showTextInput(title, placeholder, initialValue, guidance);
   }
 
   /**
