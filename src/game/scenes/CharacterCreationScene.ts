@@ -14,6 +14,7 @@ import {
   HAIR_COLORS,
   EYE_COLORS,
 } from '@/types/player.types';
+import { VisualEffectsManager } from '../effects/VisualEffectsManager';
 
 interface SceneData {
   age: number;
@@ -26,6 +27,7 @@ export class CharacterCreationScene extends BaseScene {
   private companionName: string = '';
   private currentAvatar: AvatarCustomization;
   private previewContainer!: Phaser.GameObjects.Container;
+  private vfx!: VisualEffectsManager;
 
   // UI state
   private nameText!: Phaser.GameObjects.Text;
@@ -55,6 +57,9 @@ export class CharacterCreationScene extends BaseScene {
   create(): void {
     this.setEmotion('playful');
     this.fadeIn();
+
+    // Initialize VFX manager
+    this.vfx = new VisualEffectsManager(this);
 
     // Adventure theme background
     this.cameras.main.setBackgroundColor('#1A0F08');
