@@ -72,7 +72,7 @@ export class CharacterCreationScene extends BaseScene {
 
     // Title with adventure styling
     this.add
-      .text(centerX, centerY - 300, 'Welcome to Your Journey', {
+      .text(centerX, 180, 'Welcome to Your Journey', {
         fontSize: '64px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -86,7 +86,7 @@ export class CharacterCreationScene extends BaseScene {
     this.add
       .text(
         centerX,
-        centerY - 220,
+        250,
         "Let's begin by introducing ourselves",
         {
           fontSize: '28px',
@@ -99,13 +99,13 @@ export class CharacterCreationScene extends BaseScene {
       .setShadow(0, 2, 'rgba(0, 0, 0, 0.8)', 6);
 
     // Avatar creation button
-    this.createAvatarButton(centerX, centerY - 80);
+    this.createAvatarButton(centerX, 350);
 
-    // Name inputs
-    this.createNameInputs(centerX, centerY + 120);
+    // Name inputs (better spacing)
+    this.createNameInputs(centerX, 520);
 
-    // Complete button
-    this.createCompleteButton(centerX, centerY + 260);
+    // Complete button (moved way down to avoid overlap)
+    this.createCompleteButton(centerX, 750);
 
     // Add age-appropriate visual elements
     if (this.isTeen()) {
@@ -291,7 +291,7 @@ export class CharacterCreationScene extends BaseScene {
   private createNameInputs(centerX: number, startY: number): void {
     const inputWidth = 400;
     const inputHeight = 60;
-    const spacing = 100;
+    const spacing = 140;
 
     // Your Name with adventure styling
     this.add
