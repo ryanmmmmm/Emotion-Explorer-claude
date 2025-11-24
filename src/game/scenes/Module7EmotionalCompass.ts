@@ -394,12 +394,13 @@ export class Module7EmotionalCompass extends BaseScene {
       });
 
       textBox.on('pointerdown', async () => {
+        const currentValue = (this as any)[key] as string;
         const response = await this.showTextInputModal(
           label,
           'Write your thoughts...',
           prompt,
           15, // minimum 15 words
-          this[key as keyof Module7EmotionalCompass] as string
+          currentValue
         );
 
         if (response && response.trim()) {

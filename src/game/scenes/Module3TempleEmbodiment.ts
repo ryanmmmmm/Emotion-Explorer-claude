@@ -70,6 +70,7 @@ export class Module3TempleEmbodiment extends BaseScene {
     this.vfx.createFloatingOrbs(20, this.emotionColor);
     this.createEmotionalWisps();
 
+
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 

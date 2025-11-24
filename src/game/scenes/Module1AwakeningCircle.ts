@@ -59,6 +59,7 @@ export class Module1AwakeningCircle extends BaseScene {
 
     // Get narrative content based on age group
     const narrative = this.narrative!.module1;
+
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
 
     // Title - adventure theme

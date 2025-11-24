@@ -53,6 +53,7 @@ export class Module2MemoryConstellation extends BaseScene {
     this.vfx.createParallaxStars(3);
     this.vfx.createFloatingOrbs(25, this.emotionColor);
 
+
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 

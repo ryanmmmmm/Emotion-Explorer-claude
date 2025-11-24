@@ -71,9 +71,10 @@ export interface ModuleData {
   emotionSelected?: EmotionType;
   intensity?: number;
   intensityDescription?: string;
+  bodySensations?: string;
 
   // Module 2: Memory Constellation
-  memoryAssociations?: string[]; // 5 associations
+  memoryAssociations?: string; // Free-text associations
 
   // Module 3: Body Language
   bodyLocation?: string;
@@ -81,6 +82,13 @@ export interface ModuleData {
   bodyVoice?: string;
   bodyNeed?: string;
   bodyAction?: string;
+  bodyLanguageResponses?: {
+    whereFeeling: string;
+    whatFeelsLike: string;
+    ifCouldTalk: string;
+    ifCouldAsk: string;
+    actionWouldTake: string;
+  };
 
   // Module 4: Letter Writing
   letterRecipient?: string;
@@ -92,6 +100,7 @@ export interface ModuleData {
   perspectiveChoice?: string;
   perspectivePerson?: string;
   reverseLetterBody?: string;
+  reverseLetter?: string;
 
   // Module 6: Feelings Journal
   journalEntry?: string;
@@ -115,6 +124,9 @@ export interface ModuleData {
     do: string;
     result: string;
   };
+  trajectoryPast?: string;
+  trajectoryPresent?: string;
+  trajectoryFuture?: string;
 
   // Module 8: Wisdom Tree
   lessonsLearned?: string[];
