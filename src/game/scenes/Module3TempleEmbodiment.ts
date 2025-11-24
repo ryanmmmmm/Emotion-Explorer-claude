@@ -61,6 +61,9 @@ export class Module3TempleEmbodiment extends BaseScene {
   create(): void {
     this.fadeIn();
 
+    // Initialize theme and narrative
+    this.initializeTheme();
+
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
 
@@ -74,9 +77,12 @@ export class Module3TempleEmbodiment extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title - adventure theme
+    // Get narrative content based on age group
+    const narrative = this.narrative!.module3;
+
+    // Title - uses age-appropriate name
     this.add
-      .text(centerX, 60, 'Temple of Embodiment', {
+      .text(centerX, 60, narrative.title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -86,8 +92,9 @@ export class Module3TempleEmbodiment extends BaseScene {
       .setStroke('#2C1810', 6)
       .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 10);
 
+    // Subtitle - age-appropriate
     this.add
-      .text(centerX, 120, 'Module 3: Body Awareness', {
+      .text(centerX, 120, narrative.subtitle, {
         fontSize: '24px',
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
@@ -105,18 +112,21 @@ export class Module3TempleEmbodiment extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Instructions - adventure theme
+    // Instructions - age-appropriate
     this.instructionText = this.add
       .text(
         centerX,
         220,
-        'Click on the body parts where you feel this emotion.\nEach area you select will glow with energy.',
+        this.isTeen()
+          ? 'Click on the body parts where you feel this emotion.\nEach area you select will glow with energy.'
+          : narrative.instructions,
         {
           fontSize: '20px',
           color: '#D4C5B0',
           fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
+          wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5);

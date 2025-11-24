@@ -47,6 +47,9 @@ export class Module9RipplePool extends BaseScene {
   create(): void {
     this.fadeIn();
 
+    // Initialize theme and narrative
+    this.initializeTheme();
+
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
 
@@ -59,9 +62,12 @@ export class Module9RipplePool extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Get narrative content based on age group
+    const narrative = this.narrative!.module9;
+
+    // Title - uses age-appropriate name
     this.add
-      .text(centerX, 60, 'The Ripple Pool', {
+      .text(centerX, 60, narrative.title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -71,8 +77,9 @@ export class Module9RipplePool extends BaseScene {
       .setStroke('#2C1810', 6)
       .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
+    // Subtitle - age-appropriate
     this.add
-      .text(centerX, 120, 'Module 9: Integration and Reflection', {
+      .text(centerX, 120, narrative.subtitle, {
         fontSize: '24px',
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
@@ -89,18 +96,21 @@ export class Module9RipplePool extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Instructions
+    // Instructions - age-appropriate
     this.instructionText = this.add
       .text(
         centerX,
         220,
-        'Click the pool to create ripples of reflection.\nEach ripple reveals a new way to think about your journey.',
+        this.isTeen()
+          ? 'Click the pool to create ripples of reflection.\nEach ripple reveals a new way to think about your journey.'
+          : narrative.instructions,
         {
           fontSize: '20px',
           color: '#D4C5B0',
           fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
+          wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5);

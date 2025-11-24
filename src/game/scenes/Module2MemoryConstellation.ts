@@ -43,6 +43,9 @@ export class Module2MemoryConstellation extends BaseScene {
   create(): void {
     this.fadeIn();
 
+    // Initialize theme and narrative
+    this.initializeTheme();
+
     this.vfx = new VisualEffectsManager(this);
 
     // Enhanced visual atmosphere with adventure theme
@@ -57,9 +60,12 @@ export class Module2MemoryConstellation extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title - adventure theme
+    // Get narrative content based on age group
+    const narrative = this.narrative!.module2;
+
+    // Title - uses age-appropriate name
     this.add
-      .text(centerX, 80, 'Memory Constellation', {
+      .text(centerX, 80, narrative.title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -69,8 +75,9 @@ export class Module2MemoryConstellation extends BaseScene {
       .setStroke('#2C1810', 6)
       .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 10);
 
+    // Subtitle - age-appropriate
     this.add
-      .text(centerX, 140, 'Module 2: Mapping Emotional Memories', {
+      .text(centerX, 140, narrative.subtitle, {
         fontSize: '24px',
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
@@ -88,18 +95,21 @@ export class Module2MemoryConstellation extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Instructions - adventure theme
+    // Instructions - age-appropriate
     this.instructionText = this.add
       .text(
         centerX,
         250,
-        'Click anywhere to place a memory star.\nEach star represents a moment when you felt this emotion.',
+        this.isTeen()
+          ? 'Click anywhere to place a memory star.\nEach star represents a moment when you felt this emotion.'
+          : narrative.instructions,
         {
           fontSize: '20px',
           color: '#D4C5B0',
           fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
+          wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5);

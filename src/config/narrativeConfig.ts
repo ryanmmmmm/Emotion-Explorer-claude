@@ -165,25 +165,25 @@ export const ADULT_NARRATIVE: NarrativeConfig = {
   emotionSelectionPrompt: 'Which emotion would you like to work with today? Choose one to begin your therapeutic process.',
 
   module1: {
-    title: 'Mood Meter',
-    subtitle: 'Module 1: Measure Emotional Intensity',
-    instructions: 'How intense is your feeling? On a scale from 1% to 100%? How much space is this feeling taking up in your inner life? Write a few words or phrases to describe the intensity of this emotion, how it plays out in your inner life and your day... Move the slider on the left to show how much or how little you are feeling this emotion.',
+    title: 'Emotion Recognition',
+    subtitle: 'Identify and measure your emotional intensity',
+    instructions: 'How intense is your feeling? On a scale from 1% to 100%? How much space is this feeling taking up in your inner life? Write a few words or phrases to describe the intensity of this emotion, how it plays out in your inner life and your day. Move the slider to show how much or how little you are feeling this emotion.',
     companionGuidance: 'Be honest with yourself. This assessment is for your benefit. There are no right or wrong answers.',
     completionMessage: 'Assessment complete. You have established awareness of your emotional intensity, the first step in emotional regulation.',
   },
 
   module2: {
-    title: 'Map Your Feelings',
-    subtitle: 'Module 2: Connect Memories and Associations',
-    instructions: 'Write whatever words, phrases, scenes, names, or times of life that your mind associates with this feeling right now...',
+    title: 'Memory Reflection',
+    subtitle: 'Connect memories and associations',
+    instructions: 'Write whatever words, phrases, scenes, names, or times of life that your mind associates with this feeling right now. Let your mind wander freely through these associations.',
     companionGuidance: 'Past experiences shape our emotional responses. Recognizing patterns is key to change.',
     completionMessage: 'You have identified important emotional patterns. This awareness enables more conscious responses.',
   },
 
   module3: {
-    title: 'Body Language',
-    subtitle: 'Module 3: Physical Sensations and Expression',
-    instructions: 'Where in your body are you experiencing this feeling? What does it feel like (achy, tight, butterflies ect)? If that part of your body could talk, what would it say? If that part of your body could ask for something, what would it ask for? If that part of your body could take action, what would it do?',
+    title: 'Body Awareness',
+    subtitle: 'Explore physical sensations and body signals',
+    instructions: 'Where in your body are you experiencing this feeling? What does it feel like (achy, tight, butterflies, etc.)? If that part of your body could talk, what would it say? If that part of your body could ask for something, what would it ask for? If that part of your body could take action, what would it do?',
     companionGuidance: 'Our bodies hold emotional wisdom. Physical awareness deepens emotional understanding.',
     completionMessage: 'You have connected with your body\'s emotional signals. This embodied awareness supports regulation.',
   },
@@ -221,17 +221,17 @@ export const ADULT_NARRATIVE: NarrativeConfig = {
   },
 
   module8: {
-    title: 'Spiritual Awakening',
-    subtitle: 'Module 8: Deeper Meaning and Purpose',
-    instructions: 'What is the highest way or the highest light in which you can see this situation? Look for the Lessons: What are the lessons you are learning right now... and the thoughts you would like to take away with you?',
+    title: 'Integration',
+    subtitle: 'Connect insights with deeper meaning',
+    instructions: 'What is the highest way or the highest light in which you can see this situation? Look for the lessons: What are the lessons you are learning right now, and the thoughts you would like to take away with you?',
     companionGuidance: 'Emotions often carry messages about what matters most. Listen deeply.',
     completionMessage: 'You have connected with deeper meaning. This wisdom transcends the immediate emotion.',
   },
 
   module9: {
-    title: 'Intentions and Next Steps',
-    subtitle: 'Module 9: Action and Integration',
-    instructions: 'What are the new insights you have from processing your feelings and situations? How do you imagine what you now see will impact your relationships in your present and your future? Write these insights in the pool below and watch the ripple effect... know that what you are now seeing will flow in and through your life and your relationships subtly shifting things in positive ways... Set your intention for today... Talking the next step... next to the footprints below write three positive "steps" you can take, to empower yourself and improve your feeling about yourself... They can be as small as "walk across the room", or "take a walk" or as big as "get a job" or "go to school"...',
+    title: 'Community Connection',
+    subtitle: 'Set intentions and identify next steps',
+    instructions: 'What are the new insights you have from processing your feelings and situations? How do you imagine what you now see will impact your relationships in your present and your future? Write these insights below and consider the ripple effect. Know that what you are now seeing will flow in and through your life and your relationships, subtly shifting things in positive ways. Set your intention for today. Taking the next step: Write three positive steps you can take to empower yourself and improve your feeling about yourself. They can be as small as "walk across the room" or "take a walk," or as big as "get a job" or "go to school."',
     companionGuidance: 'Awareness without action rarely leads to change. Commit to specific steps.',
     completionMessage: 'You have completed your action plan. Implementation is key to lasting change.',
   },

@@ -47,6 +47,9 @@ export class Module8WisdomTree extends BaseScene {
   create(): void {
     this.fadeIn();
 
+    // Initialize theme and narrative
+    this.initializeTheme();
+
     this.vfx = new VisualEffectsManager(this);
     this.createBackground();
 
@@ -59,9 +62,12 @@ export class Module8WisdomTree extends BaseScene {
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
-    // Title
+    // Get narrative content based on age group
+    const narrative = this.narrative!.module8;
+
+    // Title - uses age-appropriate name
     this.add
-      .text(centerX, 60, 'The Wisdom Tree', {
+      .text(centerX, 60, narrative.title, {
         fontSize: '52px',
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
@@ -71,8 +77,9 @@ export class Module8WisdomTree extends BaseScene {
       .setStroke('#2C1810', 6)
       .setShadow(0, 3, 'rgba(0, 0, 0, 0.8)', 8);
 
+    // Subtitle - age-appropriate
     this.add
-      .text(centerX, 120, 'Module 8: Learning and Growth', {
+      .text(centerX, 120, narrative.subtitle, {
         fontSize: '24px',
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
@@ -89,18 +96,21 @@ export class Module8WisdomTree extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Instructions
+    // Instructions - age-appropriate
     this.instructionText = this.add
       .text(
         centerX,
         220,
-        'Click the glowing orbs to reveal wisdom about your emotion.\nEach fact helps the tree grow and deepens your understanding.',
+        this.isTeen()
+          ? 'Click the glowing orbs to reveal wisdom about your emotion.\nEach fact helps the tree grow and deepens your understanding.'
+          : narrative.instructions,
         {
           fontSize: '20px',
           color: '#D4C5B0',
           fontFamily: 'Crimson Text, serif',
           align: 'center',
           lineSpacing: 6,
+          wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5);

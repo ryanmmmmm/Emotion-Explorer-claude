@@ -38,10 +38,10 @@ export class Module1AwakeningCircle extends BaseScene {
   }
 
   create(): void {
+    this.fadeIn();
+
     // Initialize theme and narrative first
     this.initializeTheme();
-
-    this.fadeIn();
 
     // Initialize visual effects
     this.vfx = new VisualEffectsManager(this);
