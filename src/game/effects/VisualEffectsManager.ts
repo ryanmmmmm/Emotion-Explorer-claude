@@ -1195,7 +1195,7 @@ export class VisualEffectsManager {
   /**
    * Create gentle pulsing dot (meditation focus point)
    */
-  createMeditationDot(x: number, y: number, color: number = 0xFFFFFF): Phaser.GameObjects.Circle {
+  createMeditationDot(x: number, y: number, color: number = 0xFFFFFF): void {
     const dot = this.scene.add.circle(x, y, 6, color, 0.6);
     dot.setBlendMode(Phaser.BlendModes.ADD);
     dot.setDepth(15);
@@ -1215,8 +1215,6 @@ export class VisualEffectsManager {
       repeat: -1,
       ease: 'Sine.easeInOut'
     });
-
-    return dot;
   }
 
   /**
@@ -1232,10 +1230,10 @@ export class VisualEffectsManager {
       const symbol = this.scene.add.text(x, y, symbols[i % symbols.length], {
         fontSize: '28px',
         color: `#${color.toString(16).padStart(6, '0')}`,
-        fontFamily: 'Arial',
-        alpha: 0.25
+        fontFamily: 'Arial'
       });
       symbol.setOrigin(0.5);
+      symbol.setAlpha(0.25);
       symbol.setBlendMode(Phaser.BlendModes.ADD);
       symbol.setDepth(8);
 
