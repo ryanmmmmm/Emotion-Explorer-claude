@@ -1,26 +1,26 @@
 /**
- * Claude LLM Service
- * Integration with Anthropic Claude API for companion chat
+ * OpenAI LLM Service
+ * Integration with OpenAI API for companion chat
  */
 
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import type { ConversationMessage, MessageContext } from '@/types';
 import { CRISIS_KEYWORDS, CRISIS_RESPONSE } from '@/types';
 
-const CLAUDE_API_KEY = import.meta.env.VITE_CLAUDE_API_KEY;
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
-class ClaudeService {
-  private client: Anthropic | null = null;
+class LLMService {
+  private client: OpenAI | null = null;
 
   constructor() {
-    if (CLAUDE_API_KEY) {
-      this.client = new Anthropic({
-        apiKey: CLAUDE_API_KEY,
+    if (OPENAI_API_KEY) {
+      this.client = new OpenAI({
+        apiKey: OPENAI_API_KEY,
         dangerouslyAllowBrowser: true, // For MVP; move to backend later
       });
     } else {
       console.warn(
-        '⚠️ Claude API key not found. Companion chat will use fallback responses.'
+        '⚠️ OpenAI API key not found. Companion chat will use fallback responses.'
       );
     }
   }
@@ -122,13 +122,22 @@ Use this context to provide personalized, relevant guidance that builds on their
   }
 
   private formatConversationHistory(
-    history: ConversationMessage[]
-  ): Array<{ role: 'user' | 'assistant'; content: string }> {
+    history: ConversationMessage[],
+    systemPrompt: string
+  ): Array<{ role: 'system' | 'user' | 'assistant'; content: string }> {
     // Take last 10 messages for context window efficiency
-    return history.slice(-10).map((msg) => ({
-      role: msg.sender === 'player' ? ('user' as const) : ('assistant' as const),
-      content: msg.text,
-    }));
+    const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+      { role: 'system', content: systemPrompt }
+    ];
+
+    history.slice(-10).forEach((msg) => {
+      messages.push({
+        role: msg.sender === 'player' ? 'user' : 'assistant',
+        content: msg.text,
+      });
+    });
+
+    return messages;
   }
 
   async sendMessage(
@@ -148,26 +157,23 @@ Use this context to provide personalized, relevant guidance that builds on their
 
     try {
       const systemPrompt = this.buildSystemPrompt(context);
-      const messages = this.formatConversationHistory(conversationHistory);
+      const messages = this.formatConversationHistory(conversationHistory, systemPrompt);
       messages.push({
         role: 'user',
         content: userMessage,
       });
 
-      const response = await this.client.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
+      const response = await this.client.chat.completions.create({
+        model: 'gpt-4',
         max_tokens: 1024,
-        system: systemPrompt,
+        temperature: 0.7,
         messages,
       });
 
-      const responseText =
-        response.content[0].type === 'text'
-          ? response.content[0].text
-          : 'I understand.';
+      const responseText = response.choices[0]?.message?.content || 'I understand.';
       return responseText;
     } catch (error) {
-      console.error('Claude API error:', error);
+      console.error('OpenAI API error:', error);
       return this.getFallbackResponse(context);
     }
   }
@@ -185,4 +191,4 @@ Use this context to provide personalized, relevant guidance that builds on their
   }
 }
 
-export const claudeService = new ClaudeService();
+export const claudeService = new LLMService();

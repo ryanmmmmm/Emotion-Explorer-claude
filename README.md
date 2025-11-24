@@ -18,18 +18,18 @@ Transform emotional exploration into an epic adventure. Help players aged 12-20 
 **Platform:** Web (browser-based)
 **Target Audience:** Ages 12-20 (with future adult adaptation)
 **Timeline:** 16 weeks (4 months) for MVP
-**Tech Stack:** Phaser 3, React, TypeScript, Claude API
+**Tech Stack:** Phaser 3, React, TypeScript, OpenAI API
 
 ---
 
-## 🔑 Setup: Claude API Key (Required for Companion Chat)
+## 🔑 Setup: OpenAI API Key (Required for Companion Chat)
 
-The AI companion chat requires a Claude API key to function. Follow these steps:
+The AI companion chat requires an OpenAI API key to function. Follow these steps:
 
 **1. Get Your API Key:**
-- Go to [https://console.anthropic.com/](https://console.anthropic.com/)
+- Go to [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 - Sign up or log in
-- Navigate to "API Keys" and create a new key
+- Create a new API key
 
 **2. Configure Locally:**
 ```bash
@@ -37,7 +37,7 @@ The AI companion chat requires a Claude API key to function. Follow these steps:
 cp .env.example .env
 
 # Edit .env and add your API key:
-VITE_CLAUDE_API_KEY=sk-ant-your-actual-key-here
+VITE_OPENAI_API_KEY=sk-proj-your-actual-key-here
 ```
 
 **3. Restart Dev Server:**
@@ -212,7 +212,7 @@ Module 9: The Ripple Pool → Set intentions for change
 - **Dexie.js** - IndexedDB wrapper (local storage)
 
 **AI Integration:**
-- **Claude API** (Anthropic) - Companion chat
+- **OpenAI API** (GPT-4) - Companion chat
 
 **Deployment:**
 - **Vercel** or **Netlify** - Hosting
@@ -255,7 +255,7 @@ Module 9: The Ripple Pool → Set intentions for change
 - Node.js 18+
 - npm or yarn
 - Modern browser (Chrome, Firefox, Safari)
-- Claude API key (from Anthropic)
+- OpenAI API key (from OpenAI)
 
 ### Installation
 
@@ -269,7 +269,7 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
-# Add your VITE_CLAUDE_API_KEY to .env
+# Add your VITE_OPENAI_API_KEY to .env
 
 # Start development server
 npm run dev
