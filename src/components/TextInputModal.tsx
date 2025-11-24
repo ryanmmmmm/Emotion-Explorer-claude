@@ -64,10 +64,10 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
         style={{
           background: 'linear-gradient(135deg, #2C1810 0%, #1A0F08 100%)',
           borderRadius: '16px',
-          padding: '40px',
-          maxWidth: isLongForm ? '720px' : '540px',
+          padding: '24px',
+          maxWidth: isLongForm ? '640px' : '500px',
           width: '90%',
-          maxHeight: '90vh',
+          maxHeight: '85vh',
           overflowY: 'auto',
           border: '4px solid',
           borderImage: 'linear-gradient(135deg, #D4AF37 0%, #F4E5B8 50%, #D4AF37 100%) 1',
@@ -125,8 +125,8 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
         <h2
           style={{
             color: '#F4E5B8',
-            fontSize: '32px',
-            marginBottom: '24px',
+            fontSize: '26px',
+            marginBottom: '16px',
             fontFamily: 'Cinzel, serif',
             textAlign: 'center',
             textShadow: '0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4)',
@@ -143,12 +143,12 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
               backgroundColor: 'rgba(212, 175, 55, 0.08)',
               border: '2px solid rgba(212, 175, 55, 0.25)',
               borderRadius: '8px',
-              padding: '20px',
-              marginBottom: '24px',
+              padding: '14px',
+              marginBottom: '16px',
               fontFamily: 'Crimson Text, serif',
               color: '#D4C5B0',
-              fontSize: '16px',
-              lineHeight: '1.8',
+              fontSize: '15px',
+              lineHeight: '1.6',
               boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.3)',
             }}
           >
@@ -177,7 +177,7 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
         {isLongForm ? (
           <div style={{
             position: 'relative',
-            marginBottom: '28px',
+            marginBottom: '16px',
           }}>
             {/* Parchment scroll background */}
             <div style={{
@@ -231,11 +231,11 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
               onKeyDown={handleKeyPress}
               placeholder={placeholder}
               autoFocus
-              rows={10}
+              rows={6}
               style={{
                 width: '100%',
-                padding: '24px',
-                fontSize: '17px',
+                padding: '16px',
+                fontSize: '16px',
                 backgroundColor: 'rgba(244, 237, 213, 0.12)',
                 color: '#F4E5B8',
                 border: '2px solid rgba(212, 175, 55, 0.25)',
@@ -244,7 +244,7 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
                 fontFamily: 'Crimson Text, serif',
                 boxSizing: 'border-box',
                 resize: 'vertical',
-                minHeight: '280px',
+                minHeight: '160px',
                 lineHeight: '1.8',
                 position: 'relative',
                 zIndex: 1,
@@ -316,12 +316,12 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
           />
         )}
 
-        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
           <button
             onClick={onCancel}
             style={{
-              padding: '14px 28px',
-              fontSize: '18px',
+              padding: '12px 24px',
+              fontSize: '16px',
               background: 'linear-gradient(135deg, #5C4A3A 0%, #3D2F24 100%)',
               color: '#D4C5B0',
               border: '2px solid #5C4A3A',
@@ -349,8 +349,8 @@ export const TextInputModal: React.FC<TextInputModalProps> = ({
           <button
             onClick={handleSubmit}
             style={{
-              padding: '14px 36px',
-              fontSize: '18px',
+              padding: '12px 28px',
+              fontSize: '16px',
               background: 'linear-gradient(135deg, #D4AF37 0%, #F4E5B8 50%, #D4AF37 100%)',
               color: '#2C1810',
               border: '2px solid #D4AF37',
