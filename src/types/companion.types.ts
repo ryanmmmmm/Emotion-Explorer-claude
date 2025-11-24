@@ -27,6 +27,7 @@ export interface ConversationMessage {
 export interface MessageContext {
   currentEmotion?: EmotionType;
   currentModule?: number;
+  playerAge?: number; // For age-appropriate responses
   playerMood?: string;
   recentPlayerWriting?: string; // Last thing player wrote
 }
