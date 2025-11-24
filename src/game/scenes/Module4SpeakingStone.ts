@@ -168,6 +168,11 @@ export class Module4SpeakingStone extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 4 - The Speaking Stone: Ready (Adventure Theme)');
   }
 
@@ -194,6 +199,40 @@ export class Module4SpeakingStone extends BaseScene {
     // Guardian statues watching over the speaking stone
     this.vfx.createGuardianStatue(100, this.scale.height - 200);
     this.vfx.createGuardianStatue(this.scale.width - 100, this.scale.height - 200);
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+
+    // Add breathing circle around the speaking stone
+    this.vfx.createBreathingCircle(centerX, 400, this.emotionColor, 85);
+
+    // Add calm ambient particles for expression
+    this.vfx.createCalmAmbientParticles(12, 0xB0C4DE);
+
+    // Add mindfulness ripples for thoughtful expression
+    this.vfx.createMindfulnessRipples(centerX, 400, 0x87CEEB);
+    this.vfx.createMindfulnessRipples(centerX, 580, 0xDDA0DD);
+
+    // Add grounding elements for stable expression
+    this.vfx.createGroundingElement(170, this.scale.height - 140, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 170, this.scale.height - 140, 0x8B7355);
+
+    // Add therapeutic halo around stone and text area
+    this.vfx.createTherapeuticHalo(centerX, 400, 0xFFE4B5, 190);
+    this.vfx.createTherapeuticHalo(centerX, 580, 0xDDA0DD, 160);
+
+    // Add calm waves for expression flow
+    this.vfx.createCalmWaves(this.scale.height - 170, 0x87CEEB);
+
+    // Add meditation dot for focus
+    this.vfx.createMeditationDot(centerX, 250, 0xFFFFFF);
+
+    // Add mindfulness symbols for clarity
+    this.vfx.createMindfulnessSymbols(5, 0xB0C4DE);
+
+    // Add focus rings around writing area
+    this.vfx.createFocusRings(centerX, 580, 0x87CEEB);
   }
 
   private createBackground(): void {

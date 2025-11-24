@@ -154,6 +154,11 @@ export class Module2MemoryConstellation extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     // Continue button (appears after placing at least 3 memories AND writing associations)
     const continueBtn = this.createButton(
       centerX,
@@ -225,6 +230,41 @@ export class Module2MemoryConstellation extends BaseScene {
 
     // Add magical compass to guide memory placement
     this.vfx.createMagicalCompass(centerX + 350, 200);
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+
+    // Add breathing circles for reflective constellation viewing
+    this.vfx.createBreathingCircle(centerX, 500, 0x87CEEB, 70);
+    this.vfx.createBreathingCircle(300, 400, 0xDDA0DD, 50);
+
+    // Add calm ambient particles like stardust
+    this.vfx.createCalmAmbientParticles(15, 0xB0C4DE);
+
+    // Add mindfulness ripples in constellation space
+    this.vfx.createMindfulnessRipples(centerX - 150, 450, 0x87CEEB);
+    this.vfx.createMindfulnessRipples(centerX + 150, 450, 0xB0C4DE);
+
+    // Add grounding elements for memory stability
+    this.vfx.createGroundingElement(180, this.scale.height - 140, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 180, this.scale.height - 140, 0x8B7355);
+
+    // Add therapeutic halos around constellation area
+    this.vfx.createTherapeuticHalo(centerX, 550, 0xFFE4B5, 250);
+
+    // Add calm waves for memory flow
+    this.vfx.createCalmWaves(this.scale.height - 160, 0x87CEEB);
+
+    // Add meditation dots for memory anchoring
+    this.vfx.createMeditationDot(centerX - 200, 350, 0xFFFFFF);
+    this.vfx.createMeditationDot(centerX + 200, 350, 0xFFFFFF);
+
+    // Add mindfulness symbols
+    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
+
+    // Add focus rings around constellation center
+    this.vfx.createFocusRings(centerX, 550, 0x87CEEB);
   }
 
   private createMemoryAssociationsInput(centerX: number): void {

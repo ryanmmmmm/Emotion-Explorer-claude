@@ -120,6 +120,11 @@ export class HubScene extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Add adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     // UI Elements
     this.createUIPanel();
 
@@ -175,6 +180,45 @@ export class HubScene extends BaseScene {
 
     // Add magical compass near player
     this.vfx.createMagicalCompass(this.scale.width / 2, this.scale.height - 350);
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2 - 50;
+
+    // Add gentle breathing circles for mindfulness
+    this.vfx.createBreathingCircle(centerX, centerY, 0x87CEEB, 100);
+    this.vfx.createBreathingCircle(200, 300, 0xB0C4DE, 60);
+    this.vfx.createBreathingCircle(this.scale.width - 200, 300, 0xB0C4DE, 60);
+
+    // Add calm ambient particles throughout
+    this.vfx.createCalmAmbientParticles(20, 0xB0C4DE);
+
+    // Add mindfulness ripples at center
+    this.vfx.createMindfulnessRipples(centerX, centerY, 0x87CEEB);
+
+    // Add grounding elements for stability
+    this.vfx.createGroundingElement(150, this.scale.height - 150, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 150, this.scale.height - 150, 0x8B7355);
+
+    // Add therapeutic halos around emotion crystals area
+    this.vfx.createTherapeuticHalo(centerX, centerY, 0xFFE4B5, 250);
+    this.vfx.createTherapeuticHalo(centerX, centerY, 0xDDA0DD, 350);
+
+    // Add calm waves at bottom for tranquility
+    this.vfx.createCalmWaves(this.scale.height - 200, 0x87CEEB);
+
+    // Add therapeutic gradient overlay
+    this.vfx.createTherapeuticGradient(0x4A5568);
+
+    // Add meditation dots for focus
+    this.vfx.createMeditationDot(centerX, 150, 0xFFFFFF);
+
+    // Add mindfulness symbols floating gently
+    this.vfx.createMindfulnessSymbols(8, 0xB0C4DE);
+
+    // Add focus rings around center
+    this.vfx.createFocusRings(centerX, centerY, 0x87CEEB);
   }
 
   private createHubBackground(): void {

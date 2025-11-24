@@ -163,6 +163,11 @@ export class Module5MirrorPortal extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 5 - The Mirror Portal: Ready (Adventure Theme)');
   }
 
@@ -209,6 +214,41 @@ export class Module5MirrorPortal extends BaseScene {
         this.vfx.createFlyingCreature(startX, startY, this.emotionColor);
       }
     });
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+
+    // Add breathing circles for perspective shifting
+    this.vfx.createBreathingCircle(centerX, 500, 0x87CEEB, 75);
+    this.vfx.createBreathingCircle(centerX - 200, 400, 0xDDA0DD, 55);
+    this.vfx.createBreathingCircle(centerX + 200, 400, 0xB0C4DE, 55);
+
+    // Add calm ambient particles for reflection
+    this.vfx.createCalmAmbientParticles(13, 0xB0C4DE);
+
+    // Add mindfulness ripples around mirror/cards
+    this.vfx.createMindfulnessRipples(centerX, 450, 0x87CEEB);
+
+    // Add grounding elements for perspective stability
+    this.vfx.createGroundingElement(150, this.scale.height - 135, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 150, this.scale.height - 135, 0x8B7355);
+
+    // Add therapeutic halos for reframing
+    this.vfx.createTherapeuticHalo(centerX, 500, 0xFFE4B5, 230);
+
+    // Add therapeutic gradient for mirror effect
+    this.vfx.createTherapeuticGradient(0xDDA0DD);
+
+    // Add meditation dots for perspective anchors
+    this.vfx.createMeditationDot(centerX, 280, 0xFFFFFF);
+
+    // Add mindfulness symbols for multiple viewpoints
+    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
+
+    // Add focus rings around perspective cards
+    this.vfx.createFocusRings(centerX - 150, 450, 0x87CEEB);
+    this.vfx.createFocusRings(centerX + 150, 450, 0xDDA0DD);
   }
 
   private createBackground(): void {

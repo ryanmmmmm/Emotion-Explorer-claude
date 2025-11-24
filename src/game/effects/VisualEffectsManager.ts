@@ -948,4 +948,343 @@ export class VisualEffectsManager {
 
     return container;
   }
+
+  // ===== ADULT-THEMED CALMING VISUAL EFFECTS =====
+
+  /**
+   * Create gentle breathing circle for mindfulness
+   */
+  createBreathingCircle(x: number, y: number, color: number = 0x87CEEB, size: number = 80): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+
+    // Outer breathing ring
+    const outerRing = this.scene.add.circle(0, 0, size, color, 0);
+    outerRing.setStrokeStyle(2, color, 0.3);
+    outerRing.setBlendMode(Phaser.BlendModes.ADD);
+
+    // Inner breathing ring
+    const innerRing = this.scene.add.circle(0, 0, size * 0.7, color, 0);
+    innerRing.setStrokeStyle(2, color, 0.2);
+    innerRing.setBlendMode(Phaser.BlendModes.ADD);
+
+    // Gentle glow
+    const glow = this.scene.add.circle(0, 0, size * 0.5, color, 0.1);
+    glow.setBlendMode(Phaser.BlendModes.ADD);
+
+    container.add([glow, innerRing, outerRing]);
+    container.setDepth(10);
+
+    // Breathing animation (4 seconds in, 4 seconds out)
+    this.scene.tweens.add({
+      targets: [outerRing, innerRing],
+      scaleX: 1.3,
+      scaleY: 1.3,
+      alpha: 0.5,
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    this.scene.tweens.add({
+      targets: glow,
+      scaleX: 1.2,
+      scaleY: 1.2,
+      alpha: 0.2,
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return container;
+  }
+
+  /**
+   * Create soft ambient particles that float gently
+   */
+  createCalmAmbientParticles(count: number = 15, color: number = 0xB0C4DE): void {
+    for (let i = 0; i < count; i++) {
+      const x = Phaser.Math.Between(0, this.scene.scale.width);
+      const y = Phaser.Math.Between(0, this.scene.scale.height);
+
+      const particle = this.scene.add.circle(x, y, Phaser.Math.Between(2, 4), color, 0.3);
+      particle.setBlendMode(Phaser.BlendModes.ADD);
+      particle.setDepth(5);
+
+      // Slow, gentle floating
+      this.scene.tweens.add({
+        targets: particle,
+        y: y + Phaser.Math.Between(-60, 60),
+        x: x + Phaser.Math.Between(-40, 40),
+        duration: 6000 + Math.random() * 4000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        delay: Math.random() * 2000
+      });
+
+      // Gentle fade
+      this.scene.tweens.add({
+        targets: particle,
+        alpha: 0.6,
+        duration: 3000 + Math.random() * 2000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    }
+  }
+
+  /**
+   * Create mindfulness ripples (water-inspired tranquility)
+   */
+  createMindfulnessRipples(x: number, y: number, color: number = 0x87CEEB): void {
+    this.scene.time.addEvent({
+      delay: 3000,
+      loop: true,
+      callback: () => {
+        for (let i = 0; i < 3; i++) {
+          this.scene.time.delayedCall(i * 800, () => {
+            const ripple = this.scene.add.circle(x, y, 10, color, 0);
+            ripple.setStrokeStyle(2, color, 0.4);
+            ripple.setBlendMode(Phaser.BlendModes.ADD);
+            ripple.setDepth(8);
+
+            this.scene.tweens.add({
+              targets: ripple,
+              scaleX: 6,
+              scaleY: 6,
+              alpha: 0,
+              duration: 2400,
+              ease: 'Sine.easeOut',
+              onComplete: () => ripple.destroy()
+            });
+          });
+        }
+      }
+    });
+  }
+
+  /**
+   * Create grounding element (stable, centering visual)
+   */
+  createGroundingElement(x: number, y: number, color: number = 0x8B7355): Phaser.GameObjects.Container {
+    const container = this.scene.add.container(x, y);
+    const graphics = this.scene.add.graphics();
+
+    // Centered square (grounding symbol)
+    graphics.lineStyle(3, color, 0.5);
+    graphics.strokeRect(-30, -30, 60, 60);
+
+    // Inner square
+    graphics.lineStyle(2, color, 0.3);
+    graphics.strokeRect(-20, -20, 40, 40);
+
+    // Center point
+    graphics.fillStyle(color, 0.6);
+    graphics.fillCircle(0, 0, 5);
+
+    // Corner marks
+    const cornerSize = 8;
+    const offset = 30;
+    const corners = [
+      [-offset, -offset],
+      [offset, -offset],
+      [-offset, offset],
+      [offset, offset]
+    ];
+
+    corners.forEach(([cx, cy]) => {
+      graphics.lineStyle(2, color, 0.4);
+      graphics.lineBetween(cx, cy, cx + (cx > 0 ? -cornerSize : cornerSize), cy);
+      graphics.lineBetween(cx, cy, cx, cy + (cy > 0 ? -cornerSize : cornerSize));
+    });
+
+    container.add(graphics);
+    container.setDepth(10);
+
+    // Subtle pulse
+    this.scene.tweens.add({
+      targets: graphics,
+      alpha: 0.7,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return container;
+  }
+
+  /**
+   * Create therapeutic light halo
+   */
+  createTherapeuticHalo(x: number, y: number, color: number = 0xFFE4B5, radius: number = 100): void {
+    const halo = this.scene.add.circle(x, y, radius, color, 0.08);
+    halo.setBlendMode(Phaser.BlendModes.ADD);
+    halo.setDepth(3);
+
+    this.scene.tweens.add({
+      targets: halo,
+      scaleX: 1.15,
+      scaleY: 1.15,
+      alpha: 0.15,
+      duration: 3500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+  }
+
+  /**
+   * Create calm wave pattern (ocean-inspired)
+   */
+  createCalmWaves(y: number, color: number = 0x87CEEB): void {
+    const width = this.scene.scale.width;
+
+    for (let i = 0; i < 2; i++) {
+      const graphics = this.scene.add.graphics();
+      graphics.setDepth(2);
+      graphics.setAlpha(0.15 - i * 0.05);
+
+      const waveY = y + i * 40;
+      const points: Phaser.Math.Vector2[] = [];
+
+      for (let x = 0; x <= width; x += 30) {
+        const yOffset = Math.sin((x / width) * Math.PI * 3 + i) * 20;
+        points.push(new Phaser.Math.Vector2(x, waveY + yOffset));
+      }
+
+      graphics.lineStyle(2, color, 0.3);
+      const curve = new Phaser.Curves.Spline(points);
+      curve.draw(graphics, 100);
+
+      // Gentle wave motion
+      this.scene.tweens.add({
+        targets: graphics,
+        y: graphics.y + 10,
+        duration: 4000 + i * 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    }
+  }
+
+  /**
+   * Create soft gradient overlay for therapeutic atmosphere
+   */
+  createTherapeuticGradient(color: number = 0x4A5568): Phaser.GameObjects.Graphics {
+    const graphics = this.scene.add.graphics();
+    const width = this.scene.scale.width;
+    const height = this.scene.scale.height;
+
+    graphics.fillGradientStyle(
+      color, color, 0x000000, 0x000000,
+      0.05, 0.03, 0, 0
+    );
+
+    graphics.fillRect(0, 0, width, height / 2);
+    graphics.setDepth(1);
+    graphics.setBlendMode(Phaser.BlendModes.MULTIPLY);
+
+    return graphics;
+  }
+
+  /**
+   * Create gentle pulsing dot (meditation focus point)
+   */
+  createMeditationDot(x: number, y: number, color: number = 0xFFFFFF): Phaser.GameObjects.Circle {
+    const dot = this.scene.add.circle(x, y, 6, color, 0.6);
+    dot.setBlendMode(Phaser.BlendModes.ADD);
+    dot.setDepth(15);
+
+    const glow = this.scene.add.circle(x, y, 12, color, 0.2);
+    glow.setBlendMode(Phaser.BlendModes.ADD);
+    glow.setDepth(14);
+
+    // Slow pulse (meditation rhythm)
+    this.scene.tweens.add({
+      targets: [dot, glow],
+      scaleX: 1.3,
+      scaleY: 1.3,
+      alpha: { from: 0.6, to: 0.3 },
+      duration: 2500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+
+    return dot;
+  }
+
+  /**
+   * Create floating mindfulness symbols (peaceful icons)
+   */
+  createMindfulnessSymbols(count: number = 6, color: number = 0xB0C4DE): void {
+    const symbols = ['○', '◇', '△', '□', '☆', '◯'];
+
+    for (let i = 0; i < count; i++) {
+      const x = Phaser.Math.Between(100, this.scene.scale.width - 100);
+      const y = Phaser.Math.Between(100, this.scene.scale.height - 100);
+
+      const symbol = this.scene.add.text(x, y, symbols[i % symbols.length], {
+        fontSize: '28px',
+        color: `#${color.toString(16).padStart(6, '0')}`,
+        fontFamily: 'Arial',
+        alpha: 0.25
+      });
+      symbol.setOrigin(0.5);
+      symbol.setBlendMode(Phaser.BlendModes.ADD);
+      symbol.setDepth(8);
+
+      // Slow, gentle movement
+      this.scene.tweens.add({
+        targets: symbol,
+        y: y + Phaser.Math.Between(-40, 40),
+        x: x + Phaser.Math.Between(-30, 30),
+        duration: 8000 + Math.random() * 4000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        delay: Math.random() * 2000
+      });
+
+      // Gentle fade
+      this.scene.tweens.add({
+        targets: symbol,
+        alpha: 0.4,
+        duration: 4000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    }
+  }
+
+  /**
+   * Create centered focus rings (attention/presence indicators)
+   */
+  createFocusRings(x: number, y: number, color: number = 0x87CEEB): void {
+    for (let i = 0; i < 3; i++) {
+      const ring = this.scene.add.circle(x, y, 40 + i * 30, color, 0);
+      ring.setStrokeStyle(1, color, 0.2 - i * 0.05);
+      ring.setBlendMode(Phaser.BlendModes.ADD);
+      ring.setDepth(7);
+
+      // Gentle expansion
+      this.scene.tweens.add({
+        targets: ring,
+        scaleX: 1.2,
+        scaleY: 1.2,
+        alpha: 0.1,
+        duration: 3000 + i * 500,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        delay: i * 800
+      });
+    }
+  }
 }

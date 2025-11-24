@@ -163,6 +163,11 @@ export class Module8WisdomTree extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 8 - The Wisdom Tree: Ready (Adventure Theme)');
   }
 
@@ -206,6 +211,41 @@ export class Module8WisdomTree extends BaseScene {
         this.vfx.createFlyingCreature(startX, startY, 0x228B22);
       }
     });
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+    const treeY = 500;
+
+    // Add breathing circles around wisdom orbs
+    this.vfx.createBreathingCircle(centerX - 120, treeY - 150, 0x87CEEB, 60);
+    this.vfx.createBreathingCircle(centerX + 120, treeY - 150, 0xDDA0DD, 60);
+    this.vfx.createBreathingCircle(centerX, treeY - 250, this.emotionColor, 65);
+
+    // Add calm ambient particles like tree energy
+    this.vfx.createCalmAmbientParticles(12, 0xB0C4DE);
+
+    // Add mindfulness ripples around wisdom tree
+    this.vfx.createMindfulnessRipples(centerX, treeY, 0x87CEEB);
+
+    // Add grounding elements at tree roots
+    this.vfx.createGroundingElement(145, this.scale.height - 115, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 145, this.scale.height - 115, 0x8B7355);
+    this.vfx.createGroundingElement(centerX, this.scale.height - 105, 0x8B7355);
+
+    // Add multiple therapeutic halos for wisdom layers
+    this.vfx.createTherapeuticHalo(centerX, treeY - 150, 0xFFE4B5, 260);
+    this.vfx.createTherapeuticHalo(centerX, treeY - 250, 0xDDA0DD, 200);
+
+    // Add meditation dots at wisdom orb positions
+    this.vfx.createMeditationDot(centerX, treeY - 350, 0xFFFFFF);
+
+    // Add mindfulness symbols for wisdom
+    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
+
+    // Add focus rings around tree canopy
+    this.vfx.createFocusRings(centerX, treeY - 200, 0x87CEEB);
+    this.vfx.createFocusRings(centerX, treeY - 300, 0xDDA0DD);
   }
 
   private createBackground(): void {

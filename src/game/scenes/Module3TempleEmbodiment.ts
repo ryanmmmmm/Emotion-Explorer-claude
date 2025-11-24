@@ -188,6 +188,11 @@ export class Module3TempleEmbodiment extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 3 - Temple of Embodiment: Ready (Adventure Theme)');
   }
 
@@ -231,6 +236,43 @@ export class Module3TempleEmbodiment extends BaseScene {
         this.vfx.createFlyingCreature(startX, startY, this.emotionColor);
       }
     });
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+    const bodyY = 550;
+
+    // Add breathing circles around body areas for somatic awareness
+    this.vfx.createBreathingCircle(centerX, bodyY - 180, 0x87CEEB, 55); // head
+    this.vfx.createBreathingCircle(centerX, bodyY - 40, this.emotionColor, 75); // chest
+    this.vfx.createBreathingCircle(centerX, bodyY + 30, 0xDDA0DD, 65); // stomach
+
+    // Add calm ambient particles for body awareness
+    this.vfx.createCalmAmbientParticles(10, 0xB0C4DE);
+
+    // Add mindfulness ripples at body center points
+    this.vfx.createMindfulnessRipples(centerX, bodyY - 40, 0x87CEEB);
+
+    // Add grounding elements for embodiment
+    this.vfx.createGroundingElement(160, this.scale.height - 130, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 160, this.scale.height - 130, 0x8B7355);
+    this.vfx.createGroundingElement(centerX, this.scale.height - 120, 0x8B7355);
+
+    // Add therapeutic halos around body figure
+    this.vfx.createTherapeuticHalo(centerX, bodyY, 0xFFE4B5, 220);
+    this.vfx.createTherapeuticHalo(centerX, bodyY - 100, 0xDDA0DD, 180);
+
+    // Add therapeutic gradient overlay
+    this.vfx.createTherapeuticGradient(0x87CEEB);
+
+    // Add meditation dot for body centering
+    this.vfx.createMeditationDot(centerX, bodyY - 180, 0xFFFFFF);
+
+    // Add mindfulness symbols
+    this.vfx.createMindfulnessSymbols(5, 0xB0C4DE);
+
+    // Add focus rings around body center
+    this.vfx.createFocusRings(centerX, bodyY, 0x87CEEB);
   }
 
   private createBackground(): void {

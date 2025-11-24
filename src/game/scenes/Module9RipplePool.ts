@@ -190,6 +190,11 @@ export class Module9RipplePool extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 9 - The Ripple Pool: Ready (Adventure Theme)');
   }
 
@@ -247,6 +252,44 @@ export class Module9RipplePool extends BaseScene {
         this.vfx.createFlyingCreature(startX, startY, 0x40E0D0);
       }
     });
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+    const poolY = 520;
+
+    // Add breathing circles for ripple reflection
+    this.vfx.createBreathingCircle(centerX, poolY, 0x87CEEB, 80);
+    this.vfx.createBreathingCircle(centerX - 150, poolY - 80, 0xDDA0DD, 55);
+    this.vfx.createBreathingCircle(centerX + 150, poolY - 80, 0xB0C4DE, 55);
+
+    // Add calm ambient particles like pool mist
+    this.vfx.createCalmAmbientParticles(15, 0xB0C4DE);
+
+    // Add mindfulness ripples in the pool
+    this.vfx.createMindfulnessRipples(centerX, poolY, 0x87CEEB);
+    this.vfx.createMindfulnessRipples(centerX - 100, poolY + 50, 0xDDA0DD);
+    this.vfx.createMindfulnessRipples(centerX + 100, poolY + 50, 0xB0C4DE);
+
+    // Add grounding elements around pool
+    this.vfx.createGroundingElement(155, this.scale.height - 125, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 155, this.scale.height - 125, 0x8B7355);
+
+    // Add therapeutic halo around pool
+    this.vfx.createTherapeuticHalo(centerX, poolY, 0xFFE4B5, 270);
+
+    // Add calm waves for reflection
+    this.vfx.createCalmWaves(poolY + 150, 0x87CEEB);
+    this.vfx.createCalmWaves(this.scale.height - 155, 0xB0C4DE);
+
+    // Add meditation dot for final centering
+    this.vfx.createMeditationDot(centerX, poolY, 0xFFFFFF);
+
+    // Add mindfulness symbols for completion
+    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
+
+    // Add focus rings around pool
+    this.vfx.createFocusRings(centerX, poolY, 0x87CEEB);
   }
 
   private createBackground(): void {

@@ -168,6 +168,11 @@ export class Module7EmotionalCompass extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 7 - The Emotional Compass: Ready (Adventure Theme)');
   }
 
@@ -211,6 +216,40 @@ export class Module7EmotionalCompass extends BaseScene {
         this.vfx.createFlyingCreature(startX, startY, 0xDAA520);
       }
     });
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+    const compassY = 400;
+
+    // Add breathing circles at compass center
+    this.vfx.createBreathingCircle(centerX, compassY, this.emotionColor, 75);
+
+    // Add calm ambient particles for pattern awareness
+    this.vfx.createCalmAmbientParticles(11, 0xB0C4DE);
+
+    // Add mindfulness ripples at compass points
+    this.vfx.createMindfulnessRipples(centerX, compassY, 0x87CEEB);
+    this.vfx.createMindfulnessRipples(centerX - 150, compassY, 0xDDA0DD);
+    this.vfx.createMindfulnessRipples(centerX + 150, compassY, 0xB0C4DE);
+
+    // Add grounding elements at compass base
+    this.vfx.createGroundingElement(155, this.scale.height - 120, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 155, this.scale.height - 120, 0x8B7355);
+    this.vfx.createGroundingElement(centerX, this.scale.height - 110, 0x8B7355);
+
+    // Add therapeutic halo around compass
+    this.vfx.createTherapeuticHalo(centerX, compassY, 0xFFE4B5, 240);
+
+    // Add meditation dot at compass center
+    this.vfx.createMeditationDot(centerX, compassY, 0xFFFFFF);
+
+    // Add mindfulness symbols for trajectory markers
+    this.vfx.createMindfulnessSymbols(5, 0xB0C4DE);
+
+    // Add focus rings around compass and trajectory inputs
+    this.vfx.createFocusRings(centerX, compassY, 0x87CEEB);
+    this.vfx.createFocusRings(centerX, 700, 0xDDA0DD);
   }
 
   private createBackground(): void {

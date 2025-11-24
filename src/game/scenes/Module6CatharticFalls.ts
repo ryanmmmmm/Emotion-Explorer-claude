@@ -166,6 +166,11 @@ export class Module6CatharticFalls extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     console.log('✅ Module 6 - The Cathartic Falls: Ready (Adventure Theme)');
   }
 
@@ -201,6 +206,40 @@ export class Module6CatharticFalls extends BaseScene {
         this.vfx.createShootingStar(0x87CEEB);
       }
     });
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+
+    // Add large breathing circle synchronized with breathing exercise
+    this.vfx.createBreathingCircle(centerX, 480, this.emotionColor, 90);
+
+    // Add calm ambient particles like gentle rainfall
+    this.vfx.createCalmAmbientParticles(14, 0xB0C4DE);
+
+    // Add mindfulness ripples for cathartic release
+    this.vfx.createMindfulnessRipples(centerX - 100, 480, 0x87CEEB);
+    this.vfx.createMindfulnessRipples(centerX + 100, 480, 0xB0C4DE);
+
+    // Add grounding elements for breath anchoring
+    this.vfx.createGroundingElement(165, this.scale.height - 125, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 165, this.scale.height - 125, 0x8B7355);
+
+    // Add therapeutic halos for breath regulation
+    this.vfx.createTherapeuticHalo(centerX, 480, 0xFFE4B5, 210);
+
+    // Add calm waves for waterfall theme
+    this.vfx.createCalmWaves(this.scale.height - 165, 0x87CEEB);
+    this.vfx.createCalmWaves(this.scale.height - 200, 0xB0C4DE);
+
+    // Add meditation dot for breath focus
+    this.vfx.createMeditationDot(centerX, 480, 0xFFFFFF);
+
+    // Add mindfulness symbols for tranquility
+    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
+
+    // Add focus rings for breathing circle
+    this.vfx.createFocusRings(centerX, 480, 0x87CEEB);
   }
 
   private createBackground(): void {

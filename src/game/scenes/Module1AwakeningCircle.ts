@@ -131,6 +131,11 @@ export class Module1AwakeningCircle extends BaseScene {
       this.createAdventureElements();
     }
 
+    // Adult-only calming visuals
+    if (this.isAdult()) {
+      this.createCalmingElements();
+    }
+
     // Continue button
     this.createContinueButton();
 
@@ -176,6 +181,39 @@ export class Module1AwakeningCircle extends BaseScene {
     // Add guardian statues watching over the circle
     this.vfx.createGuardianStatue(80, this.scale.height - 200);
     this.vfx.createGuardianStatue(this.scale.width - 80, this.scale.height - 200);
+  }
+
+  private createCalmingElements(): void {
+    const centerX = this.scale.width / 2;
+
+    // Add multiple breathing circles for mindfulness focus
+    this.vfx.createBreathingCircle(centerX, 400, this.emotionColor, 80);
+    this.vfx.createBreathingCircle(250, 320, 0x87CEEB, 60);
+    this.vfx.createBreathingCircle(this.scale.width - 250, 320, 0xB0C4DE, 60);
+
+    // Add calm ambient particles for tranquility
+    this.vfx.createCalmAmbientParticles(12, 0xB0C4DE);
+
+    // Add mindfulness ripples at key focus points
+    this.vfx.createMindfulnessRipples(centerX, 550, 0x87CEEB);
+    this.vfx.createMindfulnessRipples(centerX, 450, 0xDDA0DD);
+
+    // Add grounding elements for stability
+    this.vfx.createGroundingElement(150, this.scale.height - 150, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 150, this.scale.height - 150, 0x8B7355);
+
+    // Add therapeutic halos around emotion circle
+    this.vfx.createTherapeuticHalo(centerX, 550, 0xFFE4B5, 200);
+    this.vfx.createTherapeuticHalo(centerX, 550, 0xDDA0DD, 150);
+
+    // Add meditation dot for centering
+    this.vfx.createMeditationDot(centerX, 200, 0xFFFFFF);
+
+    // Add mindfulness symbols for peace
+    this.vfx.createMindfulnessSymbols(5, 0xB0C4DE);
+
+    // Add focus rings around main activity area
+    this.vfx.createFocusRings(centerX, 550, 0x87CEEB);
   }
 
   private createBackground(): void {
