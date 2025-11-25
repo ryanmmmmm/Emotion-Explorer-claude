@@ -55,17 +55,36 @@ export class Module2MemoryConstellation extends BaseScene {
     this.vfx.createParallaxStars(2); // Reduced from 3 to 2 layers
     this.vfx.createFloatingOrbs(5, this.emotionColor); // Reduced from 25 to 5!
 
-
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
     const centerX = this.scale.width / 2;
 
     // Get narrative content based on age group
     const narrative = this.narrative!.module2;
 
+    // RESPONSIVE LAYOUT: Detect compact mode for 13-inch laptops
+    const isCompact = this.scale.height <= 900;
+    const layout = {
+      title: isCompact ? 60 : 80,
+      subtitle: isCompact ? 100 : 140,
+      emotionDisplay: isCompact ? 140 : 190,
+      instructionText: isCompact ? 180 : 250,
+      memoryCounter: isCompact ? 240 : 310,
+      interactiveCenter: isCompact ? 380 : 550,
+      interactiveHeight: isCompact ? 220 : 500,
+    };
+
+    const fontSize = {
+      title: isCompact ? '42px' : '52px',
+      subtitle: isCompact ? '20px' : '24px',
+      emotion: isCompact ? '28px' : '32px',
+      instruction: isCompact ? '18px' : '20px',
+      counter: isCompact ? '20px' : '22px',
+    };
+
     // Title - uses age-appropriate name
     this.add
-      .text(centerX, 80, narrative.title, {
-        fontSize: '52px',
+      .text(centerX, layout.title, narrative.title, {
+        fontSize: fontSize.title,
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
         fontStyle: 'bold',
@@ -76,8 +95,8 @@ export class Module2MemoryConstellation extends BaseScene {
 
     // Subtitle - age-appropriate
     this.add
-      .text(centerX, 140, narrative.subtitle, {
-        fontSize: '24px',
+      .text(centerX, layout.subtitle, narrative.subtitle, {
+        fontSize: fontSize.subtitle,
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
         fontStyle: 'italic',
@@ -87,8 +106,8 @@ export class Module2MemoryConstellation extends BaseScene {
 
     // Emotion display
     this.add
-      .text(centerX, 190, `Exploring: ${this.emotionName}`, {
-        fontSize: '32px',
+      .text(centerX, layout.emotionDisplay, `Exploring: ${this.emotionName}`, {
+        fontSize: fontSize.emotion,
         color: '#D4AF37',
         fontFamily: 'Cinzel, serif',
       })
@@ -98,12 +117,12 @@ export class Module2MemoryConstellation extends BaseScene {
     this.instructionText = this.add
       .text(
         centerX,
-        250,
+        layout.instructionText,
         this.isTeen()
           ? 'Click anywhere to place a memory star.\nEach star represents a moment when you felt this emotion.'
           : narrative.instructions,
         {
-          fontSize: '20px',
+          fontSize: fontSize.instruction,
           color: '#D4C5B0',
           fontFamily: 'Crimson Text, serif',
           align: 'center',
@@ -115,16 +134,16 @@ export class Module2MemoryConstellation extends BaseScene {
 
     // Memory counter - adventure theme
     const counterText = this.add
-      .text(centerX, 310, 'Memories Mapped: 0', {
-        fontSize: '22px',
+      .text(centerX, layout.memoryCounter, 'Memories Mapped: 0', {
+        fontSize: fontSize.counter,
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5);
 
-    // Interactive area
+    // Interactive area - responsive size
     const interactiveZone = this.add
-      .rectangle(centerX, 550, 900, 500, 0x000000, 0.0)
+      .rectangle(centerX, layout.interactiveCenter, 900, layout.interactiveHeight, 0x000000, 0.0)
       .setInteractive({ useHandCursor: true });
 
     interactiveZone.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -145,8 +164,8 @@ export class Module2MemoryConstellation extends BaseScene {
       }
     });
 
-    // Add text input for memory associations
-    this.createMemoryAssociationsInput(centerX);
+    // Add text input for memory associations - responsive positioning
+    this.createMemoryAssociationsInput(centerX, isCompact);
 
     // Teen-only adventure visuals
     if (this.isTeen()) {
@@ -158,14 +177,16 @@ export class Module2MemoryConstellation extends BaseScene {
       this.createCalmingElements();
     }
 
-    // Continue button (appears after placing at least 3 memories AND writing associations)
+    // Continue button - responsive positioning
+    const buttonY = isCompact ? 660 : this.scale.height - 100;
+    const buttonHeight = isCompact ? 50 : 60;
     const continueBtn = this.createButton(
       centerX,
-      this.scale.height - 100,
+      buttonY,
       'Continue to Next Step',
       () => this.completeModule(),
       300,
-      60
+      buttonHeight
     );
     continueBtn.setAlpha(0.3);
 
@@ -215,12 +236,17 @@ export class Module2MemoryConstellation extends BaseScene {
     this.vfx.createCalmWaves(this.scale.height - 160, 0x87CEEB);
   }
 
-  private createMemoryAssociationsInput(centerX: number): void {
-    const y = this.scale.height - 220;
+  private createMemoryAssociationsInput(centerX: number, isCompact: boolean): void {
+    // Responsive positioning
+    const labelY = isCompact ? 510 : this.scale.height - 250;
+    const inputY = isCompact ? 550 : this.scale.height - 170;
+    const inputHeight = isCompact ? 80 : 120;
+    const labelFontSize = isCompact ? '18px' : '20px';
+    const inputFontSize = isCompact ? '16px' : '18px';
 
     this.add
-      .text(centerX, y - 30, 'Write words, phrases, scenes, names, or times associated with this feeling:', {
-        fontSize: '20px',
+      .text(centerX, labelY, 'Write words, phrases, scenes, names, or times associated with this feeling:', {
+        fontSize: labelFontSize,
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
         fontStyle: 'italic',
@@ -230,13 +256,13 @@ export class Module2MemoryConstellation extends BaseScene {
       .setOrigin(0.5);
 
     const textBox = this.add
-      .rectangle(centerX, y + 50, 800, 120, 0x2C1810, 0.9)
+      .rectangle(centerX, inputY, 800, inputHeight, 0x2C1810, 0.9)
       .setStrokeStyle(3, 0xD4AF37, 0.7)
       .setInteractive({ useHandCursor: true });
 
     const boxText = this.add
-      .text(centerX, y + 50, 'Click to write your memory associations...', {
-        fontSize: '18px',
+      .text(centerX, inputY, 'Click to write your memory associations...', {
+        fontSize: inputFontSize,
         color: '#D4C5B0',
         fontFamily: 'Crimson Text, serif',
         align: 'center',
