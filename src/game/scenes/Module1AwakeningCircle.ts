@@ -48,24 +48,42 @@ export class Module1AwakeningCircle extends BaseScene {
 
     this.createBackground();
 
-    // Enhanced visual atmosphere (more particles for teens, less for adults)
-    this.vfx.createAuroraBackground(this.emotionColor);
+    // MINIMAL visual atmosphere - keep it clean!
     this.vfx.createParallaxStars(2);
-    this.vfx.createFloatingOrbs(this.isTeen() ? 15 : 8, this.emotionColor);
-
-    if (this.isTeen()) {
-      this.createEmotionalWisps();
-    }
+    this.vfx.createFloatingOrbs(5, this.emotionColor); // Reduced from 15/8 to 5!
 
     // Get narrative content based on age group
     const narrative = this.narrative!.module1;
 
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
 
+    // RESPONSIVE LAYOUT: Detect compact mode for 13-inch laptops
+    const isCompact = this.scale.height <= 900;
+    const layout = {
+      title: isCompact ? 50 : 80,
+      subtitle: isCompact ? 90 : 150,
+      emotionDisplay: isCompact ? 130 : 230,
+      emotionCircleY: isCompact ? 320 : 550,
+      instructions: isCompact ? 220 : 360,
+      sliderY: isCompact ? 460 : 720,
+      intensityDescY: isCompact ? 540 : 800,
+      bodyDescY: isCompact ? 660 : 960,
+      companionY: isCompact ? null : this.scale.height - 150, // Hide on compact
+      continueButtonY: isCompact ? this.scale.height - 60 : this.scale.height - 70,
+    };
+
+    const fontSize = {
+      title: isCompact ? '42px' : '56px',
+      subtitle: isCompact ? '22px' : '28px',
+      emotion: isCompact ? '28px' : '36px',
+      instructions: isCompact ? '18px' : '22px',
+      intensityLabel: isCompact ? '20px' : '24px',
+    };
+
     // Title - adventure theme
     this.add
-      .text(this.scale.width / 2, 80, narrative.title, {
-        fontSize: '56px',
+      .text(this.scale.width / 2, layout.title, narrative.title, {
+        fontSize: fontSize.title,
         color: '#F4E5B8',
         fontFamily: 'Cinzel, serif',
         fontStyle: 'bold',
@@ -76,8 +94,8 @@ export class Module1AwakeningCircle extends BaseScene {
 
     // Subtitle - adventure theme
     this.add
-      .text(this.scale.width / 2, 150, narrative.subtitle, {
-        fontSize: '28px',
+      .text(this.scale.width / 2, layout.subtitle, narrative.subtitle, {
+        fontSize: fontSize.subtitle,
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
         fontStyle: 'italic',
@@ -87,133 +105,80 @@ export class Module1AwakeningCircle extends BaseScene {
 
     // Emotion display
     this.add
-      .text(this.scale.width / 2, 230, `Exploring: ${this.emotionName}`, {
-        fontSize: '36px',
+      .text(this.scale.width / 2, layout.emotionDisplay, `Exploring: ${this.emotionName}`, {
+        fontSize: fontSize.emotion,
         color: '#D4AF37',
         fontFamily: 'Cinzel, serif',
       })
       .setOrigin(0.5);
 
-    // Central emotion visualization
-    this.createEmotionVisualization();
+    // Central emotion visualization (responsive position)
+    this.createEmotionVisualization(layout.emotionCircleY, isCompact);
 
-    // Instructions - adventure theme
+    // Instructions - adventure theme with better contrast
     this.add
       .text(
         this.scale.width / 2,
-        360,
-        narrative.instructions,
+        layout.instructions,
+        isCompact ? 'Use the slider to show your emotional intensity:' : narrative.instructions,
         {
-          fontSize: '22px',
-          color: '#D4C5B0',
+          fontSize: fontSize.instructions,
+          color: '#F4E5B8', // Better contrast!
           fontFamily: 'Crimson Text, serif',
           align: 'center',
-          lineSpacing: 8,
+          lineSpacing: 6,
           wordWrap: { width: this.scale.width * 0.8 },
         }
       )
       .setOrigin(0.5);
 
     // Create intensity slider
-    this.createIntensitySlider();
+    this.createIntensitySlider(layout.sliderY, isCompact);
 
     // Create intensity description text area (LARGE)
-    this.createIntensityDescriptionInput();
+    this.createIntensityDescriptionInput(layout.intensityDescY, isCompact);
 
     // Create body sensation input
-    this.createDescriptionInput();
+    this.createDescriptionInput(layout.bodyDescY, isCompact);
 
-    // Companion guidance
-    this.createCompanionGuidance();
+    // Companion guidance (hide on compact screens)
+    if (!isCompact && layout.companionY) {
+      this.createCompanionGuidance(layout.companionY);
+    }
 
-    // Teen-only adventure visuals
+    // Teen-only adventure visuals (MINIMAL!)
     if (this.isTeen()) {
       this.createAdventureElements();
     }
 
-    // Adult-only calming visuals
+    // Adult-only calming visuals (MINIMAL!)
     if (this.isAdult()) {
       this.createCalmingElements();
     }
 
     // Continue button
-    this.createContinueButton();
+    this.createContinueButton(layout.continueButtonY, isCompact);
 
     console.log('✅ Module 1 - Awakening Circle: Ready (Adventure Theme)');
   }
 
   private createAdventureElements(): void {
-    const centerX = this.scale.width / 2;
-    const centerY = 550;
+    // MINIMAL effects - only edge decorations, NO floating books!
 
-    // Add floating magical books around the circle
-    this.vfx.createFloatingBook(centerX - 250, centerY - 150, 0x8B4513);
-    this.vfx.createFloatingBook(centerX + 250, centerY - 150, 0x654321);
-    this.vfx.createFloatingBook(centerX - 280, centerY + 150, 0x8B4513);
-    this.vfx.createFloatingBook(centerX + 280, centerY + 150, 0x654321);
-
-    // Add mystical runes floating around the awakening circle
-    this.vfx.createFloatingRunes(10, this.emotionColor);
-
-    // Add magical compass as a guide
-    this.vfx.createMagicalCompass(centerX - 350, 250);
-
-    // Add ancient pillars to frame the circle
-    this.vfx.createAncientPillar(150, this.scale.height - 100, 150);
-    this.vfx.createAncientPillar(this.scale.width - 150, this.scale.height - 100, 150);
-
-    // Add magical torches
-    this.vfx.createMagicalTorch(200, 350, this.emotionColor);
-    this.vfx.createMagicalTorch(this.scale.width - 200, 350, this.emotionColor);
-
-    // Add periodic flying creatures
-    this.time.addEvent({
-      delay: 10000,
-      loop: true,
-      callback: () => {
-        const side = Math.random() > 0.5;
-        const startX = side ? -50 : this.scale.width + 50;
-        const startY = Phaser.Math.Between(150, 350);
-        this.vfx.createFlyingCreature(startX, startY, this.emotionColor);
-      }
-    });
-
-    // Add guardian statues watching over the circle
-    this.vfx.createGuardianStatue(80, this.scale.height - 200);
-    this.vfx.createGuardianStatue(this.scale.width - 80, this.scale.height - 200);
+    // Only pillars at bottom edges - nothing in the center!
+    this.vfx.createAncientPillar(80, this.scale.height - 80, 100);
+    this.vfx.createAncientPillar(this.scale.width - 80, this.scale.height - 80, 100);
   }
 
   private createCalmingElements(): void {
-    const centerX = this.scale.width / 2;
+    // MINIMAL effects - only edge decorations, NO center clutter!
 
-    // Add multiple breathing circles for mindfulness focus
-    this.vfx.createBreathingCircle(centerX, 400, this.emotionColor, 80);
-    this.vfx.createBreathingCircle(250, 320, 0x87CEEB, 60);
-    this.vfx.createBreathingCircle(this.scale.width - 250, 320, 0xB0C4DE, 60);
+    // Only grounding elements at bottom edges
+    this.vfx.createGroundingElement(100, this.scale.height - 120, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 100, this.scale.height - 120, 0x8B7355);
 
-    // Add calm ambient particles for tranquility
-    this.vfx.createCalmAmbientParticles(12, 0xB0C4DE);
-
-    // Add mindfulness ripples at key focus points
-    this.vfx.createMindfulnessRipples(centerX, 550, 0x87CEEB);
-    this.vfx.createMindfulnessRipples(centerX, 450, 0xDDA0DD);
-
-    // Add grounding elements for stability
-    this.vfx.createGroundingElement(150, this.scale.height - 150, 0x8B7355);
-    this.vfx.createGroundingElement(this.scale.width - 150, this.scale.height - 150, 0x8B7355);
-
-    // Add therapeutic halos around emotion circle
-    this.vfx.createTherapeuticHalo(centerX, 550, 0xFFE4B5, 200);
-    this.vfx.createTherapeuticHalo(centerX, 550, 0xDDA0DD, 150);
-
-    // Add meditation dot for centering
-    this.vfx.createMeditationDot(centerX, 200, 0xFFFFFF);
-
-    // Add mindfulness symbols for peace
-    this.vfx.createMindfulnessSymbols(5, 0xB0C4DE);
-
-    // Add focus rings around main activity area
-    this.vfx.createFocusRings(centerX, 550, 0x87CEEB);
+    // Subtle ambient particles (reduced from 12 to 5)
+    this.vfx.createCalmAmbientParticles(5, 0xB0C4DE);
   }
 
   private createBackground(): void {
@@ -239,21 +204,19 @@ export class Module1AwakeningCircle extends BaseScene {
     }
   }
 
-  private createEmotionVisualization(): void {
+  private createEmotionVisualization(centerY: number, isCompact: boolean): void {
     const centerX = this.scale.width / 2;
-    const centerY = 550;
 
-    // Add light rays emanating from center
-    this.vfx.createLightRays(centerX, centerY, this.emotionColor, 24);
+    // MINIMAL visualization - NO light rays, NO emotion glow, NO sparkles!
+    // Just the simple pulsing circle
 
-    // Emotion glow
-    this.vfx.createEmotionGlow(centerX, centerY, this.emotionColor, 500);
+    const circleSize = isCompact ? 60 : 80;
 
     // Central emotion circle that grows with intensity
     this.emotionCircle = this.add.circle(
       centerX,
       centerY,
-      80,
+      circleSize,
       this.emotionColor,
       0.3
     );
@@ -268,8 +231,8 @@ export class Module1AwakeningCircle extends BaseScene {
       repeat: -1,
     });
 
-    // Inner glow
-    const innerGlow = this.add.circle(centerX, centerY, 60, this.emotionColor, 0.5);
+    // Inner glow (subtle)
+    const innerGlow = this.add.circle(centerX, centerY, circleSize - 20, this.emotionColor, 0.5);
     innerGlow.setBlendMode(Phaser.BlendModes.ADD);
     this.tweens.add({
       targets: innerGlow,
@@ -279,15 +242,11 @@ export class Module1AwakeningCircle extends BaseScene {
       yoyo: true,
       repeat: -1,
     });
-
-    // Sparkle particles around the emotion
-    this.vfx.createSparkles(centerX, centerY, this.emotionColor, 120);
   }
 
-  private createIntensitySlider(): void {
+  private createIntensitySlider(sliderY: number, isCompact: boolean): void {
     const centerX = this.scale.width / 2;
-    const sliderY = 720;
-    const sliderWidth = 600;
+    const sliderWidth = isCompact ? 500 : 600;
 
     // Labels at ends
     this.add
@@ -433,35 +392,38 @@ export class Module1AwakeningCircle extends BaseScene {
     this.emotionCircle.setAlpha(alpha);
   }
 
-  private createIntensityDescriptionInput(): void {
+  private createIntensityDescriptionInput(y: number, isCompact: boolean): void {
     const centerX = this.scale.width / 2;
-    const y = 800;
+    const boxWidth = isCompact ? 650 : 750;
+    const boxHeight = isCompact ? 80 : 120;
+    const labelFontSize = isCompact ? '20px' : '24px';
+    const textFontSize = isCompact ? '16px' : '18px';
 
     this.add
       .text(centerX, y, 'Describe how this intensity feels in your inner life and day:', {
-        fontSize: '24px',
+        fontSize: labelFontSize,
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
         align: 'center',
-        wordWrap: { width: 700 },
+        wordWrap: { width: boxWidth - 50 },
       })
       .setOrigin(0.5);
 
     const textBox = this.add
-      .rectangle(centerX, y + 80, 750, 120, 0x2C1810, 0.9)
+      .rectangle(centerX, y + (isCompact ? 50 : 80), boxWidth, boxHeight, 0x2C1810, 0.9)
       .setStrokeStyle(3, 0xD4AF37, 0.7)
       .setInteractive({ useHandCursor: true });
 
     const boxText = this.add
-      .text(centerX, y + 80, 'Click to write about this intensity...', {
-        fontSize: '18px',
+      .text(centerX, y + (isCompact ? 50 : 80), 'Click to write about this intensity...', {
+        fontSize: textFontSize,
         color: '#D4C5B0',
         fontFamily: 'Crimson Text, serif',
         align: 'center',
-        wordWrap: { width: 700 },
+        wordWrap: { width: boxWidth - 50 },
       })
       .setOrigin(0.5)
-      .setAlpha(0.7);
+      .setAlpha(0.9); // Better visibility!
 
     textBox.on('pointerdown', async () => {
       const description = await this.showTextInputModal(
@@ -483,31 +445,34 @@ export class Module1AwakeningCircle extends BaseScene {
     });
   }
 
-  private createDescriptionInput(): void {
+  private createDescriptionInput(y: number, isCompact: boolean): void {
     const centerX = this.scale.width / 2;
-    const y = 960;
+    const boxWidth = isCompact ? 500 : 600;
+    const boxHeight = isCompact ? 50 : 60;
+    const labelFontSize = isCompact ? '22px' : '28px';
+    const textFontSize = isCompact ? '18px' : '20px';
 
     this.add
       .text(centerX, y, 'Where do you feel this in your body?', {
-        fontSize: '28px',
+        fontSize: labelFontSize,
         color: '#D4AF37',
         fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5);
 
     const descBox = this.add
-      .rectangle(centerX, y + 60, 600, 60, 0x2C1810, 0.9)
+      .rectangle(centerX, y + (isCompact ? 45 : 60), boxWidth, boxHeight, 0x2C1810, 0.9)
       .setStrokeStyle(3, 0xD4AF37, 0.7)
       .setInteractive({ useHandCursor: true });
 
     const descText = this.add
-      .text(centerX, y + 60, 'Click to describe...', {
-        fontSize: '20px',
+      .text(centerX, y + (isCompact ? 45 : 60), 'Click to describe...', {
+        fontSize: textFontSize,
         color: '#D4C5B0',
         fontFamily: 'Crimson Text, serif',
       })
       .setOrigin(0.5)
-      .setAlpha(0.7);
+      .setAlpha(0.9); // Better visibility!
 
     // Use beautiful modal system from BaseScene
     descBox.on('pointerdown', async () => {
@@ -525,8 +490,8 @@ export class Module1AwakeningCircle extends BaseScene {
     });
   }
 
-  private createCompanionGuidance(): void {
-    const companionBox = this.add.container(200, this.scale.height - 150);
+  private createCompanionGuidance(companionY: number): void {
+    const companionBox = this.add.container(200, companionY);
 
     // Companion avatar (small)
     const companionGlow = this.add.circle(0, 0, 25, 0x9370db, 0.3);
@@ -566,14 +531,17 @@ export class Module1AwakeningCircle extends BaseScene {
     });
   }
 
-  private createContinueButton(): void {
+  private createContinueButton(buttonY: number, isCompact: boolean): void {
+    const buttonHeight = isCompact ? 55 : 70;
+    const buttonWidth = isCompact ? 300 : 350;
+
     const button = this.createButton(
       this.scale.width / 2,
-      this.scale.height - 70,
+      buttonY,
       'Continue to Next Step',
       () => this.completeModule(),
-      350,
-      70
+      buttonWidth,
+      buttonHeight
     );
 
     // Pulsing hint
