@@ -48,13 +48,12 @@ export class Module2MemoryConstellation extends BaseScene {
 
     this.vfx = new VisualEffectsManager(this);
 
-    // Enhanced visual atmosphere with adventure theme
+    // Subtle visual atmosphere - keep it minimal
     this.cameras.main.setBackgroundColor('#1A0F08');
     this.createParchmentBackground();
     this.createOrnateFrame();
-    this.vfx.createAuroraBackground(this.emotionColor);
-    this.vfx.createParallaxStars(3);
-    this.vfx.createFloatingOrbs(25, this.emotionColor);
+    this.vfx.createParallaxStars(2); // Reduced from 3 to 2 layers
+    this.vfx.createFloatingOrbs(5, this.emotionColor); // Reduced from 25 to 5!
 
 
     const emotion = EMOTION_DEFINITIONS[this.emotionId];
@@ -185,86 +184,35 @@ export class Module2MemoryConstellation extends BaseScene {
   }
 
   private createAdventureElements(): void {
-    const centerX = this.scale.width / 2;
+    // MINIMAL effects - keep screen clean for gameplay
 
-    // Add periodic shooting stars
+    // Only edge decorations - nothing in the center!
+    this.vfx.createAncientPillar(60, this.scale.height - 80, 100);
+    this.vfx.createAncientPillar(this.scale.width - 60, this.scale.height - 80, 100);
+
+    // Rare shooting stars (reduced frequency from 5s to 15s)
     this.time.addEvent({
-      delay: 5000,
+      delay: 15000,
       loop: true,
       callback: () => {
         const color = parseInt(EMOTION_DEFINITIONS[this.emotionId].color.replace('#', ''), 16);
         this.vfx.createShootingStar(color);
       }
     });
-
-    // Add mystical runes forming constellations
-    this.vfx.createFloatingRunes(12, this.emotionColor);
-
-    // Add floating books containing star maps
-    this.vfx.createFloatingBook(200, 250, 0x2C1810);
-    this.vfx.createFloatingBook(this.scale.width - 200, 280, 0x3D2F24);
-
-    // Add magical torches to illuminate the stargazing area
-    this.vfx.createMagicalTorch(150, 400, 0x87CEEB);
-    this.vfx.createMagicalTorch(this.scale.width - 150, 400, 0xB0C4DE);
-
-    // Add ancient pillars framing the constellation area
-    this.vfx.createAncientPillar(100, this.scale.height - 80, 120);
-    this.vfx.createAncientPillar(this.scale.width - 100, this.scale.height - 80, 120);
-
-    // Add guardian statues protecting the memories
-    this.vfx.createGuardianStatue(80, this.scale.height - 150);
-    this.vfx.createGuardianStatue(this.scale.width - 80, this.scale.height - 150);
-
-    // Add flying creatures representing fleeting memories
-    this.time.addEvent({
-      delay: 12000,
-      loop: true,
-      callback: () => {
-        const side = Math.random() > 0.5;
-        const startX = side ? -50 : this.scale.width + 50;
-        const startY = Phaser.Math.Between(200, 400);
-        this.vfx.createFlyingCreature(startX, startY, 0x87CEEB);
-      }
-    });
-
-    // Add magical compass to guide memory placement
-    this.vfx.createMagicalCompass(centerX + 350, 200);
   }
 
   private createCalmingElements(): void {
-    const centerX = this.scale.width / 2;
+    // MINIMAL effects - keep screen clean for therapy work
 
-    // Add breathing circles for reflective constellation viewing
-    this.vfx.createBreathingCircle(centerX, 500, 0x87CEEB, 70);
-    this.vfx.createBreathingCircle(300, 400, 0xDDA0DD, 50);
+    // Only subtle edge decorations - nothing in the center!
+    this.vfx.createGroundingElement(80, this.scale.height - 140, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 80, this.scale.height - 140, 0x8B7355);
 
-    // Add calm ambient particles like stardust
-    this.vfx.createCalmAmbientParticles(15, 0xB0C4DE);
+    // Subtle ambient particles (reduced from 15 to 5)
+    this.vfx.createCalmAmbientParticles(5, 0xB0C4DE);
 
-    // Add mindfulness ripples in constellation space
-    this.vfx.createMindfulnessRipples(centerX - 150, 450, 0x87CEEB);
-    this.vfx.createMindfulnessRipples(centerX + 150, 450, 0xB0C4DE);
-
-    // Add grounding elements for memory stability
-    this.vfx.createGroundingElement(180, this.scale.height - 140, 0x8B7355);
-    this.vfx.createGroundingElement(this.scale.width - 180, this.scale.height - 140, 0x8B7355);
-
-    // Add therapeutic halos around constellation area
-    this.vfx.createTherapeuticHalo(centerX, 550, 0xFFE4B5, 250);
-
-    // Add calm waves for memory flow
+    // Gentle waves at bottom only
     this.vfx.createCalmWaves(this.scale.height - 160, 0x87CEEB);
-
-    // Add meditation dots for memory anchoring
-    this.vfx.createMeditationDot(centerX - 200, 350, 0xFFFFFF);
-    this.vfx.createMeditationDot(centerX + 200, 350, 0xFFFFFF);
-
-    // Add mindfulness symbols
-    this.vfx.createMindfulnessSymbols(6, 0xB0C4DE);
-
-    // Add focus rings around constellation center
-    this.vfx.createFocusRings(centerX, 550, 0x87CEEB);
   }
 
   private createMemoryAssociationsInput(centerX: number): void {
