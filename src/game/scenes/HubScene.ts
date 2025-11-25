@@ -43,20 +43,26 @@ export class HubScene extends BaseScene {
     this.createParchmentBackground();
     this.createOrnateFrame();
 
-    // Add stunning visual effects with gold theme
-    this.vfx.createAuroraBackground(0x5C4A3A);
-    this.vfx.createParallaxStars(3);
-    this.vfx.createFloatingOrbs(25, 0xD4AF37);
-    this.vfx.createFireflies(20, 0xD4AF37);
+    // MINIMAL visual effects - keep it clean
+    this.vfx.createParallaxStars(2); // Reduced from 3
+    this.vfx.createFloatingOrbs(5, 0xD4AF37); // Reduced from 25!
 
-    // Center portal effect with gold
-    this.vfx.createPortalEffect(
+    // Subtle center glow only - no portal
+    const centerGlow = this.add.circle(
       this.scale.width / 2,
-      this.scale.height / 2 - 50,
-      0xD4AF37
+      this.scale.height / 2,
+      200,
+      0xD4AF37,
+      0.05
     );
-
-    this.createEmotionalWisps();
+    this.tweens.add({
+      targets: centerGlow,
+      alpha: 0.08,
+      scale: 1.1,
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+    });
 
     // Get player profile
     const playerProfile = usePlayerStore.getState().profile;
@@ -132,93 +138,25 @@ export class HubScene extends BaseScene {
   }
 
   private createAdventureElements(): void {
-    // Add ancient pillars in the background
-    this.vfx.createAncientPillar(150, this.scale.height - 50, 180);
-    this.vfx.createAncientPillar(this.scale.width - 150, this.scale.height - 50, 200);
-    this.vfx.createAncientPillar(300, this.scale.height - 80, 160);
-    this.vfx.createAncientPillar(this.scale.width - 300, this.scale.height - 80, 170);
+    // MINIMAL - just edge decorations, no clutter
 
-    // Add treasure chests around emotion crystals (every 4th crystal)
-    this.emotionCrystals.forEach((crystal, index) => {
-      if (index % 4 === 0) {
-        const emotion = EMOTION_DEFINITIONS[crystal.emotion];
-        const color = parseInt(emotion.color.replace('#', ''), 16);
-        this.vfx.createTreasureChest(
-          crystal.x + 60,
-          crystal.y,
-          color
-        );
-      }
-    });
-
-    // Add magical torches in corners
-    this.vfx.createMagicalTorch(120, 180, 0xFFA500);
-    this.vfx.createMagicalTorch(this.scale.width - 120, 180, 0xFF6347);
-    this.vfx.createMagicalTorch(200, this.scale.height - 180, 0xFFD700);
-    this.vfx.createMagicalTorch(this.scale.width - 200, this.scale.height - 180, 0xFF8C00);
-
-    // Add floating mystical runes
-    this.vfx.createFloatingRunes(6, 0xD4AF37);
-
-    // Add floating magical books
-    this.vfx.createFloatingBook(250, 250, 0x8B4513);
-    this.vfx.createFloatingBook(this.scale.width - 250, 300, 0x654321);
-
-    // Add periodic flying creatures
-    this.time.addEvent({
-      delay: 8000,
-      loop: true,
-      callback: () => {
-        const side = Math.random() > 0.5;
-        const startX = side ? -50 : this.scale.width + 50;
-        const startY = Phaser.Math.Between(100, 300);
-        const colors = [0x9370DB, 0xD4AF37, 0xFF6B9D, 0x00CED1];
-        const color = Phaser.Utils.Array.GetRandom(colors);
-        this.vfx.createFlyingCreature(startX, startY, color);
-      }
-    });
-
-    // Add magical compass near player
-    this.vfx.createMagicalCompass(this.scale.width / 2, this.scale.height - 350);
+    // Only 2 pillars at far edges
+    this.vfx.createAncientPillar(80, this.scale.height - 50, 140);
+    this.vfx.createAncientPillar(this.scale.width - 80, this.scale.height - 50, 140);
   }
 
   private createCalmingElements(): void {
-    const centerX = this.scale.width / 2;
-    const centerY = this.scale.height / 2 - 50;
+    // MINIMAL - just edge decorations, no clutter
 
-    // Add gentle breathing circles for mindfulness
-    this.vfx.createBreathingCircle(centerX, centerY, 0x87CEEB, 100);
-    this.vfx.createBreathingCircle(200, 300, 0xB0C4DE, 60);
-    this.vfx.createBreathingCircle(this.scale.width - 200, 300, 0xB0C4DE, 60);
+    // Only edge grounding elements
+    this.vfx.createGroundingElement(80, this.scale.height - 150, 0x8B7355);
+    this.vfx.createGroundingElement(this.scale.width - 80, this.scale.height - 150, 0x8B7355);
 
-    // Add calm ambient particles throughout
-    this.vfx.createCalmAmbientParticles(20, 0xB0C4DE);
+    // Subtle ambient particles (reduced from 20 to 5)
+    this.vfx.createCalmAmbientParticles(5, 0xB0C4DE);
 
-    // Add mindfulness ripples at center
-    this.vfx.createMindfulnessRipples(centerX, centerY, 0x87CEEB);
-
-    // Add grounding elements for stability
-    this.vfx.createGroundingElement(150, this.scale.height - 150, 0x8B7355);
-    this.vfx.createGroundingElement(this.scale.width - 150, this.scale.height - 150, 0x8B7355);
-
-    // Add therapeutic halos around emotion crystals area
-    this.vfx.createTherapeuticHalo(centerX, centerY, 0xFFE4B5, 250);
-    this.vfx.createTherapeuticHalo(centerX, centerY, 0xDDA0DD, 350);
-
-    // Add calm waves at bottom for tranquility
+    // Gentle waves at bottom only
     this.vfx.createCalmWaves(this.scale.height - 200, 0x87CEEB);
-
-    // Add therapeutic gradient overlay
-    this.vfx.createTherapeuticGradient(0x4A5568);
-
-    // Add meditation dots for focus
-    this.vfx.createMeditationDot(centerX, 150, 0xFFFFFF);
-
-    // Add mindfulness symbols floating gently
-    this.vfx.createMindfulnessSymbols(8, 0xB0C4DE);
-
-    // Add focus rings around center
-    this.vfx.createFocusRings(centerX, centerY, 0x87CEEB);
   }
 
   private createHubBackground(): void {
@@ -335,8 +273,9 @@ export class HubScene extends BaseScene {
   }
 
   private createPlayerAvatar(): void {
-    const x = this.scale.width / 2;
-    const y = this.scale.height - 200;
+    // Move to BOTTOM-LEFT corner to avoid emotion wheel overlap
+    const x = 120;
+    const y = this.scale.height - 120;
 
     this.playerSprite = this.add.container(x, y);
 
@@ -416,11 +355,23 @@ export class HubScene extends BaseScene {
         ease: 'Sine.easeInOut',
       });
     }
+
+    // Player name label below avatar
+    this.add
+      .text(x, y + 85, playerProfile.name, {
+        fontSize: '20px',
+        color: '#F4E5B8',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.9)', 4);
   }
 
   private createCompanion(): void {
-    const x = this.scale.width / 2 - 120;
-    const y = this.scale.height - 250;
+    // Move to BOTTOM-RIGHT corner to avoid emotion wheel overlap
+    const x = this.scale.width - 120;
+    const y = this.scale.height - 120;
 
     this.companionSprite = this.add.container(x, y);
 
@@ -507,31 +458,34 @@ export class HubScene extends BaseScene {
     const container = this.add.container(x, y);
     const color = parseInt(colorHex.replace('#', ''), 16);
 
-    // Crystal shape (diamond)
-    const graphics = this.add.graphics();
-    graphics.fillStyle(color, 0.7);
-    graphics.beginPath();
-    graphics.moveTo(0, -25);
-    graphics.lineTo(15, 0);
-    graphics.lineTo(0, 25);
-    graphics.lineTo(-15, 0);
-    graphics.closePath();
-    graphics.fillPath();
+    // MUCH BETTER - Solid circular button with color
+    const circle = this.add.circle(0, 0, 40, color, 1.0); // Solid color, bigger
 
-    // Glow
-    const glow = this.add.circle(0, 0, 30, color, 0.2);
+    // Bright gold border
+    const borderCircle = this.add.circle(0, 0, 42, 0xD4AF37, 0)
+      .setStrokeStyle(3, 0xD4AF37, 1);
 
-    // Label
+    // Inner highlight for depth
+    const innerCircle = this.add.circle(0, -8, 12, 0xFFFFFF, 0.4);
+
+    // Subtle glow (much less than before)
+    const glow = this.add.circle(0, 0, 50, color, 0.15);
+
+    // Better label with dark background for readability
+    const labelBg = this.add.rectangle(0, 60, emotionName.length * 10 + 20, 28, 0x1A0F08, 0.85)
+      .setStrokeStyle(2, 0xD4AF37, 0.6);
+
     const label = this.add
-      .text(0, 45, emotionName, {
-        fontSize: '16px',
-        color: '#ffffff',
-        fontFamily: 'Raleway, sans-serif',
+      .text(0, 60, emotionName, {
+        fontSize: '18px',
+        color: '#F4E5B8',
+        fontFamily: 'Cinzel, serif',
+        fontStyle: 'bold',
       })
       .setOrigin(0.5)
-      .setAlpha(0.8);
+      .setShadow(0, 2, 'rgba(0, 0, 0, 0.9)', 4);
 
-    container.add([glow, graphics, label]);
+    container.add([glow, circle, innerCircle, borderCircle, labelBg, label]);
 
     // Make interactive
     const hitArea = this.add.circle(0, 0, 35, 0xffffff, 0).setInteractive({ useHandCursor: true });
@@ -539,18 +493,24 @@ export class HubScene extends BaseScene {
 
     // Hover effect
     hitArea.on('pointerover', () => {
-      graphics.setScale(1.2);
-      label.setScale(1.1);
-      glow.setScale(1.5);
+      circle.setScale(1.15);
+      borderCircle.setScale(1.15);
+      innerCircle.setScale(1.15);
+      label.setScale(1.05);
+      labelBg.setScale(1.05);
+      glow.setScale(1.3);
       this.tweens.add({
-        targets: [graphics, label],
+        targets: [circle, borderCircle, innerCircle],
         duration: 200,
       });
     });
 
     hitArea.on('pointerout', () => {
-      graphics.setScale(1);
+      circle.setScale(1);
+      borderCircle.setScale(1);
+      innerCircle.setScale(1);
       label.setScale(1);
+      labelBg.setScale(1);
       glow.setScale(1);
     });
 
