@@ -164,7 +164,7 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Create a simple button
+   * Create a simple button with proper adventure theme styling
    */
   protected createButton(
     x: number,
@@ -176,28 +176,29 @@ export abstract class BaseScene extends Phaser.Scene {
   ): Phaser.GameObjects.Container {
     const button = this.add.container(x, y);
 
-    // Background
+    // Solid gold background - ALWAYS visible
     const bg = this.add
-      .rectangle(0, 0, width, height, this.emotionColor, 0.8)
+      .rectangle(0, 0, width, height, 0xD4AF37, 1.0) // Solid gold, no transparency!
       .setInteractive({ useHandCursor: true })
-      .setStrokeStyle(2, 0xffffff, 0.5);
+      .setStrokeStyle(4, 0xF4E5B8, 1); // Bright gold border
 
-    // Text
+    // Dark brown text for high contrast on gold background
     const buttonText = this.add
       .text(0, 0, text, {
-        fontSize: '32px',
-        color: '#ffffff',
-        fontFamily: 'Raleway, sans-serif',
+        fontSize: '28px',
+        color: '#2C1810', // Dark brown - high contrast
+        fontFamily: 'Cinzel, serif',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setStroke('#1A0F08', 2); // Dark stroke for extra readability
 
     button.add([bg, buttonText]);
     button.setDepth(DEPTHS.UI);
 
     // Hover effects
     bg.on('pointerover', () => {
-      bg.setFillStyle(this.emotionColor, 1);
+      bg.setFillStyle(0xF4E5B8, 1); // Lighter gold on hover
       this.tweens.add({
         targets: button,
         scaleX: 1.05,
@@ -207,7 +208,7 @@ export abstract class BaseScene extends Phaser.Scene {
     });
 
     bg.on('pointerout', () => {
-      bg.setFillStyle(this.emotionColor, 0.8);
+      bg.setFillStyle(0xD4AF37, 1); // Back to gold
       this.tweens.add({
         targets: button,
         scaleX: 1,
