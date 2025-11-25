@@ -101,11 +101,11 @@ export class CharacterCreationScene extends BaseScene {
     // Avatar creation button
     this.createAvatarButton(centerX, 330);
 
-    // Name inputs (better spacing)
-    this.createNameInputs(centerX, 480);
+    // Name inputs (MUCH better spacing to prevent ANY overlap)
+    this.createNameInputs(centerX, 450);
 
-    // Complete button (moved way down to avoid overlap)
-    this.createCompleteButton(centerX, 900);
+    // Complete button (moved way down with plenty of space)
+    this.createCompleteButton(centerX, 980);
 
     // Add age-appropriate visual elements
     if (this.isTeen()) {
@@ -291,7 +291,7 @@ export class CharacterCreationScene extends BaseScene {
   private createNameInputs(centerX: number, startY: number): void {
     const inputWidth = 400;
     const inputHeight = 60;
-    const spacing = 260; // Increased from 200 to guarantee no overlap
+    const spacing = 350; // MASSIVELY increased to guarantee NO overlap whatsoever
 
     // Your Name with adventure styling
     this.add
